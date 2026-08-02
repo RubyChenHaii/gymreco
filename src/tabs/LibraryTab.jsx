@@ -134,8 +134,7 @@ function LibItemDetail({ item, onUpdate, onDelete, onBack }) {
               placeholder={t.libNotePlaceholder}
               style={{ width:"100%", background:"none", border:"none", fontSize:14,
                 color:C.sub, resize:"none", boxSizing:"border-box", outline:"none",
-                fontFamily:"inherit", lineHeight:1.7, display:"block", overflow:"hidden",
-                minHeight:"80px" }}
+                fontFamily:"inherit", lineHeight:1.7, display:"block", overflow:"hidden" }}
             />
           </div>
           {noteDirty && (
@@ -234,6 +233,9 @@ export function LibraryTab({ library, setLibrary, openItemId, setOpenItemId }) {
             </div>
           </Card>
         )}
+        <div style={{ fontSize:12, color:C.label, lineHeight:1.6, marginBottom:12, padding:"10px 12px", background:C.f3, borderRadius:10, border:`1px solid ${C.sep}` }}>
+          💡 {t.libCalendarHint}
+        </div>
         <div style={{ position:"relative", marginBottom:16 }}>
           <span style={{ position:"absolute", left:12, top:"50%", transform:"translateY(-50%)", color:C.label, fontSize:15 }}>🔍</span>
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder={t.libSearch}

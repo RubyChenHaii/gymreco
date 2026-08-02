@@ -54,10 +54,15 @@ function Calendar({ workouts, library, onDayClick }) {
               </span>
               {w && (
                 <div style={{ display:"flex", gap:2, justifyContent:"center", flexWrap:"wrap", maxWidth:28 }}>
-                  {w.exercises.slice(0, 3).map((ex, i) => {
-                    const it = library.find(l => l.id === ex.libId);
-                    return <div key={i} style={{ width:5, height:5, borderRadius:"50%", background:it?it.color:C.blue }} />;
-                  })}
+                  {/* 每種顏色只顯示一次，依出現順序排列，最多3個點 */}
+                  {w.exercises
+                    .map(ex => library.find(l => l.id === ex.libId))
+                    .filter(Boolean)
+                    .filter((it, _, arr) => arr.findIndex(x => x.color === it.color) === arr.indexOf(it))
+                    .slice(0, 3)
+                    .map((it, i) => (
+                      <div key={i} style={{ width:5, height:5, borderRadius:"50%", background:it.color }} />
+                    ))}
                 </div>
               )}
             </div>
@@ -70,12 +75,8 @@ function Calendar({ workouts, library, onDayClick }) {
 
 export function HomeTab({ workouts, library, setTab, lang, setLang, darkMode, setDarkMode, openDayDetail }) {
   const t = T[lang]; const C = useC();
-  const now = new Date();
-const startOfWeek = new Date(now);
-startOfWeek.setDate(now.getDate() - now.getDay()); // 回到本週日
-startOfWeek.setHours(0, 0, 0, 0);
-const thisWeek = workouts.filter(w => localDate(w.date) >= startOfWeek);
-
+  const now = new Date(), weekAgo = new Date(now); weekAgo.setDate(now.getDate() - 7);
+  const thisWeek = workouts.filter(w => localDate(w.date) >= weekAgo);
 
   // 最近紀錄：以日為單位，去除同日重複，取最近 3 天
   const recentDates = [...new Set(

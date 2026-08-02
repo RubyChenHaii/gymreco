@@ -41,6 +41,7 @@ export const T = {
     detailSaveEdit:"儲存修改",
     // Library list
     libSubtitle:"管理動作", libTitle:"動作庫",
+    libCalendarHint:"為提升辨識度，月曆中每日每種顏色僅顯示一次，方便快速辨識當天訓練類型。",
     libAdd:"＋ 新增", libSearch:"搜尋動作名稱或部位…",
     libNoHistory:"尚無訓練紀錄", libRecords:"次紀錄 · 最近",
     libHasNote:"有筆記", libEmpty:"找不到相關動作",
@@ -103,6 +104,7 @@ export const T = {
     detailDeleteConfirm:"Delete this workout? This cannot be undone.",
     detailSaveEdit:"Save Changes",
     libSubtitle:"Manage Exercises", libTitle:"Exercise Library",
+    libCalendarHint:"Calendar displays up to one dot per color each day, making different workout types easier to distinguish at a glance.",
     libAdd:"＋ Add", libSearch:"Search exercise or muscle…",
     libNoHistory:"No workout history yet", libRecords:"sessions · Last",
     libHasNote:"Has notes", libEmpty:"No matching exercises",
@@ -136,5 +138,5 @@ export const T = {
 export const MG_EN = {
   "胸肌":"Chest","背部":"Back","腿部":"Legs","肩部":"Shoulders",
   "手臂":"Arms","腹部":"Abs","核心":"Core",
-  "臀部":"Glutes","有氧":"Cardio","其他":"Other",
+  "臀部":"Glutes","有氧":"Cardio","伸展運動":"Stretching","其他":"Other",
 };
