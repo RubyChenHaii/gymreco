@@ -4,7 +4,7 @@ import { useC } from "../theme.js";
 import { Card, SLabel } from "../components/ui.jsx";
 
 // ── 版本號：每次發布只需改這一行 ──────────────────────────────
-const APP_VERSION = "1.9.0";
+const APP_VERSION = "1.9.1";
 
 export function AboutTab({ workouts, library, onImport }) {
   const lang = useLang(); const t = T[lang]; const C = useC();
