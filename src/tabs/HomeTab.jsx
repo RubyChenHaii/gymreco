@@ -14,7 +14,7 @@ function Calendar({ workouts, library, onDayClick }) {
   const todStr = todayStr();
 
   const byDate = {};
-  workouts.forEach(w => {
+  [...workouts].reverse().forEach(w => {
     if (!byDate[w.date]) byDate[w.date] = { date: w.date, exercises: [] };
     byDate[w.date].exercises.push(...w.exercises);
   });

@@ -1,16 +1,18 @@
 import { useState, useRef } from "react";
-import { useLang, T, MG_EN } from "../data/i18n.js";
+import { useLang, T } from "../data/i18n.js";
 import { useC } from "../theme.js";
 import { Card, SLabel } from "../components/ui.jsx";
 
 // ── 版本號：每次發布只需改這一行 ──────────────────────────────
 const APP_VERSION = "1.9.1";
 
-export function AboutTab({ workouts, library, onImport }) {
+export function AboutTab({ workouts, library, onImport, onReset, onClear }) {
   const lang = useLang(); const t = T[lang]; const C = useC();
   const isZh = lang === "zh";
-  const [importConfirm, setImportConfirm] = useState(null);
-  const [importError,   setImportError]   = useState(null);
+  const [importConfirm,  setImportConfirm]  = useState(null);
+  const [importError,    setImportError]    = useState(null);
+  const [resetConfirm,   setResetConfirm]   = useState(false);
+  const [clearConfirm,   setClearConfirm]   = useState(false);
   const fileInputRef = useRef(null);
 
   const exportJSON = () => {
@@ -22,30 +24,25 @@ export function AboutTab({ workouts, library, onImport }) {
     a.click(); URL.revokeObjectURL(url);
   };
 
- const exportCSV = () => {
-  const isZh = lang === "zh";
-  const header = isZh
-    ? ["日期","星期","部位","動作","重量","組次","器材","感受"]
-    : ["Date","Weekday","Muscle Group","Exercise","Weight","Reps","Equipment","Feeling"];
-  const rows = [header];
-  const sorted = [...workouts].sort((a, b) => a.date.localeCompare(b.date));
-  sorted.forEach(w => {
-    w.exercises.forEach(ex => {
-      const lib = library.find(l => l.id === ex.libId);
-      const name = lib ? lib.name : (isZh ? "(已刪除)" : "(Deleted)");
-      const mg = lib ? (isZh ? lib.muscleGroup : MG_EN[lib.muscleGroup] || lib.muscleGroup) : "";
-      ex.weightSets.forEach(ws => {
-        rows.push([w.date, w.weekday, mg, name, ws.weight, ws.reps.join("/"), ex.equipment || "", ex.feeling || ""]);
+  const exportCSV = () => {
+    const rows = [["日期","星期","部位","動作","重量","組次","器材","感受"]];
+    workouts.forEach(w => {
+      w.exercises.forEach(ex => {
+        const lib = library.find(l => l.id === ex.libId);
+        const name = lib ? lib.name : "(已刪除)";
+        const mg = lib ? lib.muscleGroup : "";
+        ex.weightSets.forEach(ws => {
+          rows.push([w.date, w.weekday, mg, name, ws.weight, ws.reps.join("/"), ex.equipment || "", ex.feeling || ""]);
+        });
       });
     });
-  });
-  const csv = rows.map(r => r.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(",")).join("\n");
-  const blob = new Blob(["\uFEFF" + csv], { type:"text/csv;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a"); a.href = url;
-  a.download = `gymreco-${new Date().toISOString().slice(0, 10)}.csv`;
-  a.click(); URL.revokeObjectURL(url);
-};
+    const csv = rows.map(r => r.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const blob = new Blob(["\uFEFF" + csv], { type:"text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a"); a.href = url;
+    a.download = `gymreco-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click(); URL.revokeObjectURL(url);
+  };
 
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
@@ -165,7 +162,7 @@ export function AboutTab({ workouts, library, onImport }) {
         </Card>
 
         <SLabel>{t.exportTitle}</SLabel>
-        <Card style={{ marginBottom:32 }}>
+        <Card style={{ marginBottom:16 }}>
           <div style={{ padding:"14px 16px 6px" }}>
             <div style={{ fontSize:12, color:C.label, marginBottom:12 }}>{t.exportSub}</div>
             <button onClick={exportJSON}
@@ -196,6 +193,58 @@ export function AboutTab({ workouts, library, onImport }) {
             {importError && <div style={{ fontSize:12, color:C.red, marginTop:6, paddingLeft:4 }}>{importError}</div>}
           </div>
         </Card>
+
+        <SLabel>{t.maintenanceTitle}</SLabel>
+        <Card style={{ marginBottom:32 }}>
+          <div style={{ padding:"14px 16px" }}>
+            {/* Reset */}
+            <button onClick={() => setResetConfirm(true)}
+              style={{ width:"100%", padding:"12px 16px", background:C.f5, border:`1px solid ${C.sep}`, borderRadius:12, color:C.text, fontSize:14, fontWeight:600, cursor:"pointer", marginBottom:10, textAlign:"left", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+              <div>
+                <div>{t.resetBtn}</div>
+                <div style={{ fontSize:11, fontWeight:400, color:C.label, marginTop:2 }}>{t.resetSub}</div>
+              </div>
+              <span style={{ fontSize:16 }}>↺</span>
+            </button>
+            {/* Clear */}
+            <button onClick={() => setClearConfirm(true)}
+              style={{ width:"100%", padding:"12px 16px", background:`${C.blue}15`, border:`1.5px solid ${C.blue}`, borderRadius:12, color:C.blue, fontSize:14, fontWeight:600, cursor:"pointer", textAlign:"left", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+              <div>
+                <div>{t.clearBtn}</div>
+                <div style={{ fontSize:11, fontWeight:400, color:`${C.blue}99`, marginTop:2 }}>{t.clearSub}</div>
+              </div>
+              <span style={{ fontSize:16 }}>✕</span>
+            </button>
+          </div>
+        </Card>
+
+        {/* Reset 確認對話框 */}
+        {resetConfirm && (
+          <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.5)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:300, padding:"20px" }}>
+            <div style={{ background:C.card, borderRadius:16, padding:"24px 20px", width:"100%", maxWidth:320 }}>
+              <div style={{ fontSize:17, fontWeight:700, color:C.text, marginBottom:10, textAlign:"center" }}>{t.resetConfirmTitle}</div>
+              <div style={{ fontSize:14, color:C.sub, marginBottom:20, textAlign:"center", lineHeight:1.6 }}>{t.resetConfirmMsg}</div>
+              <div style={{ display:"flex", gap:10 }}>
+                <button onClick={() => setResetConfirm(false)} style={{ flex:1, padding:"12px", background:C.f5, border:"none", borderRadius:12, fontSize:15, fontWeight:600, color:C.sub, cursor:"pointer" }}>{t.confirmCancel}</button>
+                <button onClick={() => { onReset(); setResetConfirm(false); }} style={{ flex:1, padding:"12px", background:C.blue, border:"none", borderRadius:12, fontSize:15, fontWeight:600, color:"#fff", cursor:"pointer" }}>{t.confirmProceed}</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Clear 確認對話框 */}
+        {clearConfirm && (
+          <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.5)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:300, padding:"20px" }}>
+            <div style={{ background:C.card, borderRadius:16, padding:"24px 20px", width:"100%", maxWidth:320 }}>
+              <div style={{ fontSize:17, fontWeight:700, color:C.blue, marginBottom:10, textAlign:"center" }}>{t.clearConfirmTitle}</div>
+              <div style={{ fontSize:14, color:C.sub, marginBottom:20, textAlign:"center", lineHeight:1.6 }}>{t.clearConfirmMsg}</div>
+              <div style={{ display:"flex", gap:10 }}>
+                <button onClick={() => setClearConfirm(false)} style={{ flex:1, padding:"12px", background:C.f5, border:"none", borderRadius:12, fontSize:15, fontWeight:600, color:C.sub, cursor:"pointer" }}>{t.confirmCancel}</button>
+                <button onClick={() => { onClear(); setClearConfirm(false); }} style={{ flex:1, padding:"12px", background:C.blue, border:"none", borderRadius:12, fontSize:15, fontWeight:600, color:"#fff", cursor:"pointer" }}>{t.confirmProceed}</button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
