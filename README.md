@@ -111,7 +111,9 @@ GymReco 提供「**輸出為JSON**」功能，輸出一個輕量檔案進行存�
 輸出為 JSON 功能，位於「關於」頁面。
 
 
-JSON/CSV export and JSON import are now available in the About page. handy for backing up or restoring your data!
+JSON/CSV export and JSON import are now available in the About page.
+
+handy for backing up or restoring your data!
 
 ---
 
