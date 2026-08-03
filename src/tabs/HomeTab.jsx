@@ -54,15 +54,20 @@ function Calendar({ workouts, library, onDayClick }) {
               </span>
               {w && (
                 <div style={{ display:"flex", gap:2, justifyContent:"center", flexWrap:"wrap", maxWidth:28 }}>
-                  {/* 每種顏色只顯示一次，依出現順序排列，最多3個點 */}
-                  {w.exercises
-                    .map(ex => library.find(l => l.id === ex.libId))
-                    .filter(Boolean)
-                    .filter((it, _, arr) => arr.findIndex(x => x.color === it.color) === arr.indexOf(it))
-                    .slice(0, 3)
-                    .map((it, i) => (
+                  {(() => {
+                    const seen = new Set();
+                    const dots = [];
+                    for (const ex of w.exercises) {
+                      const it = library.find(l => l.id === ex.libId);
+                      if (!it || seen.has(it.color)) continue;
+                      seen.add(it.color);
+                      dots.push(it);
+                      if (dots.length === 3) break;
+                    }
+                    return dots.map((it, i) => (
                       <div key={i} style={{ width:5, height:5, borderRadius:"50%", background:it.color }} />
-                    ))}
+                    ));
+                  })()}
                 </div>
               )}
             </div>
