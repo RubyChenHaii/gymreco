@@ -13,7 +13,96 @@ export function AboutTab({ workouts, library, onImport, onReset, onClear }) {
   const [importError,    setImportError]    = useState(null);
   const [resetConfirm,   setResetConfirm]   = useState(false);
   const [clearConfirm,   setClearConfirm]   = useState(false);
+  const [copyDone,       setCopyDone]       = useState(false);
   const fileInputRef = useRef(null);
+
+  // ── 今日訓練 ──────────────────────────────────────────────
+  const todayStr = (() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+  })();
+  const todayWorkouts = workouts.filter(w => w.date === todayStr);
+  const hasToday = todayWorkouts.length > 0;
+
+  // ── 格式化單筆訓練為純文字 ────────────────────────────────
+  const formatWorkoutText = (w) => {
+    const lines = [];
+    w.exercises.forEach(ex => {
+      const lib = library.find(l => l.id === ex.libId);
+      const name = lib ? lib.name : (isZh ? "(已刪除)" : "(Deleted)");
+      const mg   = lib ? (isZh ? lib.muscleGroup : (lib.muscleGroup)) : "";
+      lines.push(`[${name}${mg ? ` / ${mg}` : ""}]`);
+      if (ex.equipment) lines.push(`  ${isZh ? "器材" : "Equipment"}: ${ex.equipment}`);
+      ex.weightSets.forEach((ws, i) => {
+        const reps = ws.reps.join("/");
+        lines.push(`  Set ${i+1}: ${ws.weight} × ${reps}`);
+      });
+      if (ex.feeling) lines.push(`  ${isZh ? "感受" : "Feeling"}: ${ex.feeling}`);
+    });
+    return lines.join("\n");
+  };
+
+  // ── 複製今日訓練到剪貼簿 ─────────────────────────────────
+  const copyToday = async () => {
+    if (!hasToday) return;
+    const header = isZh
+      ? `📋 GymReco 今日訓練紀錄（${todayStr}）\n${"=".repeat(30)}`
+      : `📋 GymReco Today's Workout (${todayStr})\n${"=".repeat(30)}`;
+    const body = todayWorkouts.map((w, i) => {
+      const sessionLabel = todayWorkouts.length > 1
+        ? (isZh ? `\n第 ${i+1} 次訓練\n${"-".repeat(20)}` : `\nSession ${i+1}\n${"-".repeat(20)}`)
+        : "";
+      return sessionLabel + "\n" + formatWorkoutText(w);
+    }).join("\n");
+    const text = header + "\n" + body;
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopyDone(true);
+      setTimeout(() => setCopyDone(false), 2500);
+    } catch(e) {
+      console.warn("Clipboard write failed:", e);
+    }
+  };
+
+  // ── 匯出 Markdown ─────────────────────────────────────────
+  const exportMD = () => {
+    const sorted = [...workouts].sort((a, b) => a.date.localeCompare(b.date));
+    // 依日期分組
+    const byDate = {};
+    sorted.forEach(w => {
+      if (!byDate[w.date]) byDate[w.date] = [];
+      byDate[w.date].push(w);
+    });
+    const lines = [];
+    lines.push(`# GymReco ${isZh ? "訓練日誌" : "Workout Log"}`);
+    lines.push(`${isZh ? "匯出時間" : "Exported"}: ${new Date().toISOString()}\n`);
+    Object.entries(byDate).forEach(([date, dayWorkouts]) => {
+      lines.push(`## ${date}`);
+      dayWorkouts.forEach((w, i) => {
+        if (dayWorkouts.length > 1) {
+          lines.push(`### ${isZh ? `第 ${i+1} 次訓練` : `Session ${i+1}`}`);
+        }
+        w.exercises.forEach(ex => {
+          const lib = library.find(l => l.id === ex.libId);
+          const name = lib ? lib.name : (isZh ? "(已刪除)" : "(Deleted)");
+          const mg   = lib ? lib.muscleGroup : "";
+          lines.push(`\n#### ${name}${mg ? ` _(${mg})_` : ""}`);
+          if (ex.equipment) lines.push(`- **${isZh ? "器材" : "Equipment"}**: ${ex.equipment}`);
+          ex.weightSets.forEach((ws, si) => {
+            lines.push(`- **Set ${si+1}**: ${ws.weight} × ${ws.reps.join("/")} reps`);
+          });
+          if (ex.feeling) lines.push(`- **${isZh ? "感受" : "Feeling"}**: ${ex.feeling}`);
+          if (lib?.note) lines.push(`- **${isZh ? "筆記" : "Notes"}**: ${lib.note.replace(/\n/g, " ")}`);
+        });
+      });
+      lines.push("");
+    });
+    const blob = new Blob([lines.join("\n")], { type:"text/markdown;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a"); a.href = url;
+    a.download = `gymreco-log-${todayStr}.md`;
+    a.click(); URL.revokeObjectURL(url);
+  };
 
   const exportJSON = () => {
     const data = { version: APP_VERSION, exportedAt: new Date().toISOString(), workouts, library };
@@ -180,6 +269,24 @@ export function AboutTab({ workouts, library, onImport, onReset, onClear }) {
                 <div style={{ fontSize:11, fontWeight:400, color:C.label, marginTop:2 }}>{t.exportCSVSub}</div>
               </div>
               <span style={{ fontSize:18, color:C.label }}>↓</span>
+            </button>
+            <button onClick={exportMD}
+              style={{ width:"100%", padding:"12px 16px", background:C.f5, border:`1px solid ${C.sep}`, borderRadius:12, color:C.text, fontSize:14, fontWeight:600, cursor:"pointer", marginBottom:10, textAlign:"left", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+              <div>
+                <div>{t.exportMD}</div>
+                <div style={{ fontSize:11, fontWeight:400, color:C.label, marginTop:2 }}>{t.exportMDSub}</div>
+              </div>
+              <span style={{ fontSize:18, color:C.label }}>↓</span>
+            </button>
+            <button onClick={copyToday} disabled={!hasToday}
+              style={{ width:"100%", padding:"12px 16px", background:hasToday?`${C.indigo}15`:C.f3, border:`1px solid ${hasToday?C.indigo:C.sep}`, borderRadius:12, color:hasToday?C.indigo:C.label, fontSize:14, fontWeight:600, cursor:hasToday?"pointer":"not-allowed", marginBottom:10, textAlign:"left", display:"flex", justifyContent:"space-between", alignItems:"center", opacity:hasToday?1:0.6 }}>
+              <div>
+                <div>{copyDone ? t.copyTodayDone : t.copyToday}</div>
+                <div style={{ fontSize:11, fontWeight:400, color:hasToday?`${C.indigo}99`:C.label, marginTop:2 }}>
+                  {hasToday ? t.copyTodaySub : t.copyTodayNone}
+                </div>
+              </div>
+              <span style={{ fontSize:16 }}>{copyDone ? "✓" : "⎘"}</span>
             </button>
             <input ref={fileInputRef} type="file" accept=".json" onChange={handleFileSelect} style={{ display:"none" }} />
             <button onClick={() => fileInputRef.current.click()}
