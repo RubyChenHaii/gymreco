@@ -80,8 +80,15 @@ function Calendar({ workouts, library, onDayClick }) {
 
 export function HomeTab({ workouts, library, setTab, lang, setLang, darkMode, setDarkMode, openDayDetail }) {
   const t = T[lang]; const C = useC();
-  const now = new Date(), weekAgo = new Date(now); weekAgo.setDate(now.getDate() - 7);
-  const thisWeek = workouts.filter(w => localDate(w.date) >= weekAgo);
+  const now = new Date();
+  const thisMonthDays = new Set(
+    workouts
+      .filter(w => {
+        const d = localDate(w.date);
+        return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+      })
+      .map(w => w.date)
+  ).size;
 
   // 最近紀錄：以日為單位，去除同日重複，取最近 3 天
   const recentDates = [...new Set(
@@ -116,8 +123,8 @@ export function HomeTab({ workouts, library, setTab, lang, setLang, darkMode, se
       <div style={{ padding:"16px" }}>
         <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, marginBottom:16 }}>
           <Card style={{ padding:"14px 16px" }}>
-            <div style={{ fontSize:26, fontWeight:700, color:C.text }}>{thisWeek.length}<span style={{ fontSize:13, fontWeight:500, color:C.label }}> {t.times}</span></div>
-            <div style={{ fontSize:12, color:C.label, marginTop:2 }}>{t.statWeekCount}</div>
+            <div style={{ fontSize:26, fontWeight:700, color:C.text }}>{thisMonthDays}<span style={{ fontSize:13, fontWeight:500, color:C.label }}> {t.days}</span></div>
+            <div style={{ fontSize:12, color:C.label, marginTop:2 }}>{t.statMonthDays}</div>
           </Card>
           <Card style={{ padding:"14px 16px" }}>
             <div style={{ fontSize:26, fontWeight:700, color:C.text }}>{library.length}<span style={{ fontSize:13, fontWeight:500, color:C.label }}> {t.pieces}</span></div>

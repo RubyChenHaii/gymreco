@@ -9,7 +9,8 @@ export const T = {
     navHome:"主頁", navHistory:"歷史", navLog:"記錄", navLibrary:"動作庫", navAbout:"關於",
     // Home
     homeSubtitle:"健身日誌", homeTitle:"總覽",
-    statWeekCount:"本週訓練次數", statLibCount:"動作庫收錄動作",
+    statMonthDays:"本月運動天數", statLibCount:"動作庫收錄動作",
+    days:"日",
     sectionCalendar:"訓練日曆", sectionRecent:"最近紀錄",
     emptyRecent:"還沒有紀錄，點「記錄」開始吧！",
     btnStartToday:"＋ 開始今日訓練",
@@ -88,7 +89,8 @@ export const T = {
   en: {
     navHome:"Home", navHistory:"History", navLog:"Log", navLibrary:"Library", navAbout:"About",
     homeSubtitle:"Workout Journal", homeTitle:"Overview",
-    statWeekCount:"Workouts this week", statLibCount:"Exercises in library",
+    statMonthDays:"Workout days this month", statLibCount:"Exercises in library",
+    days:"days",
     sectionCalendar:"Training Calendar", sectionRecent:"Recent Workouts",
     emptyRecent:"No workouts yet. Tap \"Log\" to start!",
     btnStartToday:"＋ Start Today's Workout",
