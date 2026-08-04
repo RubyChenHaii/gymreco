@@ -1,4 +1,4 @@
-# 💪 GymReco
+# 💪 GymReco 🤳
 
 **A mobile-first PWA workout tracker｜手機優先的健身紀錄 App （漸進式網頁應用程式）**
 
@@ -64,15 +64,15 @@
 
 Open with iPhone Safari or Android Chrome:
 
-👉 **https://rubychenhaii.github.io/workout-tracker**
+👉 **https://rubychenhaii.github.io/gymreco/**
 
 Then: **Share → Add to Home Screen** for full-screen experience.
 
 請以 iPhone Safari 或 Android Chrome 打開以下連結：
 
-👉 **https://rubychenhaii.github.io/workout-tracker**
+👉 **https://rubychenhaii.github.io/gymreco/**
 
-接著：分享 → 加入主畫面，以全螢幕使用。原生App體驗！
+接著：**分享 → 加入主畫面**，以全螢幕使用。原生App體驗！
 
 ---
 
@@ -110,7 +110,6 @@ GymReco 提供「**輸出為JSON**」功能，輸出一個輕量檔案進行存�
 
 輸出為 JSON 功能，位於「關於」頁面。
 
-
 JSON/CSV export and JSON import are now available in the About page.
 
 handy for backing up or restoring your data!
@@ -123,7 +122,6 @@ App 中預設顯示之紀錄為範例資料。目的為展示資料型態，讓�
 
 GymReco 提供「**清除 GymReco**」功能，一鍵將範例資料全數刪除。讓嶄新的 GymReco 陪你開始健身旅程。
 
-
 清除 GymReco 功能，位於「關於」頁面。
 
 The workout records shown by default are sample data. Feel free to delete them!
@@ -131,45 +129,6 @@ The workout records shown by default are sample data. Feel free to delete them!
 Start Fresh as a feature, is now available in the About Page. 
 
 Ready to make GymReco yours? Remove the sample data and start from day one! 
-
----
-
-## 📋 Changelog｜版本紀錄
-
-**v1.9.1**
-
-- Calendar dots now deduplicated by colour (one dot per colour per day), preserving workout order
-- Added "Stretching" as a new muscle group category in the exercise library
-- Exercise library now shows a hint explaining the calendar dot behaviour
-- Maintenance tools in About page: Reset to sample data / Start Fresh (clear all data)
-- CSV export now sorted chronologically by date
-- CSV export language now follows the app's current language setting
-
-**v1.9.0**
-
-- Full codebase refactor into 15 modular component files
-- Monthly grouping with collapsible sections in History tab
-- Inline session editing in Detail view
-- Add new exercises to library directly from the Log screen
-- Smart delete navigation: stays on DayDetailTab if other sessions remain that day
-- Library history now synced on edit and delete
-- Back-log: log workouts up to 10 days in the past, with a custom date picker
-- Service Worker updated to network-first strategy for automatic silent updates
-- Refactored entire codebase from a single 1,700-line file into modular components
-- Fixed session ordering and exercise display order in history
-- Library item detail: last equipment and sets are now read-only (no accidental overwrites)
-- Detail view: single-layered UI, delete button moved to header
-- Monthly collapsible sections in History tab
-- Strengthened JSON import validation
-- Full i18n audit: all UI strings now go through the translation system
-
-**v1.6.0**
-
-- JSON/CSV export and JSON import (About page)
-
-**v1.0–1.5**
-
-- Initial build, feature expansion, PWA deployment, security hardening
 
 ---
 
@@ -206,38 +165,75 @@ npm run deploy
 
 ---
 
-## 🤖 Development Story｜開發歷程
+## 🎯 Product Philosophy
 
-This project was developed entirely through AI-assisted development using Claude Sonnet 4.6, without writing a single line of code manually.
+GymReco is built around one simple goal:
 
-Human role:
+> **Create a workout tracker that I genuinely enjoy using every day.**
 
-- Product design
-- UX decisions
-- Testing & iteration
+Every feature in GymReco exists because it solves a real problem encountered during my own training.
 
-AI role:
+Some examples:
 
-- Code generation
-- Debugging
-- Refactoring support
+- 📴 **Local-first.** No accounts, no cloud sync, and no external APIs.
+- ⚡ **Lightweight by design.** Small bundle size, fast startup, and offline support through PWA.
+- 📅 **Simple over complex.** Monthly history is enough—no unnecessary nesting or configuration.
+- ⏪ **10-day Back-log.** Enough flexibility to catch up, while encouraging timely workout logging.
+- 🎨 **Meaningful calendar.** Calendar dots represent workout categories rather than every individual exercise.
+- 📈 **Record first, analyze later.** Advanced analytics intentionally belong in GymStats (coming soon), keeping GymReco focused and lightweight.
 
-The development process unfolded across several days of iterative prompting:
+As the saying goes:
 
-**Day 1 — Prototype**
-Starting from a simple idea — replacing an iPhone Notes workout log - the first React prototype was generated through a series of prompts describing the desired UI, data structure, and interaction patterns.
+> **If it ain't broke, don't fix it.**
 
-**Day 2 — Feature Expansion**
-The app gained a full exercise library system with persistent knowledge notes, a training calendar, bilingual (zh/EN) support, colour token system, and a bottom navigation bar.
+GymReco evolves only when real-world use reveals a genuine need.
 
-**Day 3 — Deployment**
-The app was deployed to GitHub Pages as a PWA via step-by-step prompting through the entire toolchain: Node.js, Create React App, gh-pages, Git, and Netlify.
+---
 
-**Day 4 — Hardening**
-A collaborative security and functionality audit surfaced, and were all resolved: ID collision risks, date sorting bugs, i18n gaps, routing issues, and iOS PWA incompatibilities. All were fixed through targeted prompts.
+### 🤖 Development
 
-**Day 5 & counting — Refactor & Bug Fixes**
-v1.8.0: The entire 1,700-line codebase was modularised into 13 focused files. Five bugs were fixed (session ordering, display logic, read-only library fields, single-layer detail view). A full security audit was conducted, and monthly collapsible history was added.
+GymReco was created through conversational AI-assisted development with Claude.
+
+Instead of writing code directly, I focused on product design, workflow planning, UX refinement, testing, debugging, and iterative decision-making.
+
+Today, GymReco continues to evolve through daily real-world use rather than feature chasing.
+
+---
+
+## 📋 Changelog｜版本紀錄
+
+**v1.9.1**
+
+- Calendar dots now deduplicated by colour (one dot per colour per day), preserving workout order
+- Exercise library now shows a hint explaining the calendar dot behaviour
+
+- Added "Stretching" as a new muscle group category in the exercise library
+
+- Maintenance tools in About page: Reset to sample data / Start Fresh (clear all data)
+
+**v1.9.0**
+
+- Full codebase refactor: from a single 1,700-line file into 15 modular component files
+
+- Service Worker updated to network-first strategy for automatic silent updates
+
+- Strengthened JSON import validation
+
+- Full i18n audit: all UI strings now go through the translation system
+
+- Monthly grouping with collapsible sections in History tab
+
+- Inline session editing in Detail view
+
+- Back-log: log workouts up to 10 days in the past, with a custom date picker
+
+**v1.6.0**
+
+- JSON/CSV export and JSON import (About page)
+
+**v1.0–1.5**
+
+- Initial build, feature expansion, PWA deployment, security hardening
 
 ---
 
