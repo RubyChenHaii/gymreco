@@ -135,8 +135,8 @@ Ready to make GymReco yours? Remove the sample data and start from day one!
 ## 🛠️ Local Development｜本機開發
 
 ```bash
-git clone https://github.com/rubychenhaii/workout-tracker.git
-cd workout-tracker
+git clone https://github.com/rubychenhaii/gymreco.git
+cd gymreco
 npm install
 npm start
 ```
