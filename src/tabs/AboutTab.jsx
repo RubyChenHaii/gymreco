@@ -237,7 +237,7 @@ export function AboutTab({ workouts, library, onImport, onReset, onClear }) {
             </div>
             <div style={{ flex:1 }}>
               <div style={{ fontSize:14, fontWeight:600, color:C.text }}>GitHub</div>
-              <div style={{ fontSize:12, color:C.label }}>rubychenhaii/workout-tracker</div>
+              <div style={{ fontSize:12, color:C.label }}>rubychenhaii/gymreco</div>
             </div>
             <svg viewBox="0 0 24 24" fill={C.sep} width="14" height="14"><path d="M10 6l6 6-6 6V6z"/></svg>
           </a>
