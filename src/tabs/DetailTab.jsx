@@ -110,13 +110,44 @@ function DetailTabInner({ workout, library, onBack, onOpenLibItem, onUpdateWorko
 
 export function DayDetailTab({ dayWorkouts, library, onBack, onOpenLibItem, onEditWorkout }) {
   const lang = useLang(); const t = T[lang]; const C = useC();
+  const isZh = lang === "zh";
+  const [copyDone, setCopyDone] = useState(false);
   if (!dayWorkouts || dayWorkouts.length === 0) return null;
 
-  // dayWorkouts 從 App.jsx 傳入時已是舊→新順序，直接使用
+  // dayWorkouts 從 App.jsx 傳入時已是舊→新順序（已 reverse），直接使用
   const sorted = dayWorkouts;
   const d = localDate(sorted[0].date);
   const wdLabel = lang === "zh" ? WEEKDAY_CN[d.getDay()] : WEEKDAYS[d.getDay()].slice(0, 3);
   const allMGs = [...new Set(sorted.flatMap(w => w.muscleGroups))];
+
+  const copyDay = async () => {
+    const date = sorted[0].date;
+    const lines = [];
+    lines.push(`📋 GymReco ${date}`);
+    lines.push("=".repeat(28));
+    sorted.forEach((w, wi) => {
+      if (sorted.length > 1) {
+        lines.push(`\n${isZh ? `第 ${wi+1} 次訓練` : `Session ${wi+1}`}`);
+        lines.push("-".repeat(20));
+      }
+      w.exercises.forEach(ex => {
+        const lib = library.find(l => l.id === ex.libId);
+        const name = lib ? lib.name : (isZh ? "(已刪除)" : "(Deleted)");
+        const mg   = lib ? lib.muscleGroup : "";
+        lines.push(`\n[${name}${mg ? ` / ${mg}` : ""}]`);
+        if (ex.equipment) lines.push(`  ${isZh ? "器材" : "Equipment"}: ${ex.equipment}`);
+        ex.weightSets.forEach((ws, i) => {
+          lines.push(`  Set ${i+1}: ${ws.weight} × ${ws.reps.join("/")}`);
+        });
+        if (ex.feeling) lines.push(`  ${isZh ? "感受" : "Feeling"}: ${ex.feeling}`);
+      });
+    });
+    try {
+      await navigator.clipboard.writeText(lines.join("\n"));
+      setCopyDone(true);
+      setTimeout(() => setCopyDone(false), 2500);
+    } catch(e) { console.warn("Clipboard failed:", e); }
+  };
 
   return (
     <div style={{ flex:1, overflowY:"auto", background:C.bg }}>
@@ -188,6 +219,22 @@ export function DayDetailTab({ dayWorkouts, library, onBack, onOpenLibItem, onEd
             </button>
           </div>
         ))}
+
+        {/* 複製本日訓練內容 — 整頁最底部，一個按鈕 */}
+        <button onClick={copyDay}
+          style={{
+            width:"100%", padding:"13px",
+            background: copyDone ? `${C.green}15` : C.f5,
+            border: `1px solid ${copyDone ? C.green : C.sep}`,
+            borderRadius:14, fontSize:14, fontWeight:600,
+            color: copyDone ? C.green : C.label,
+            cursor:"pointer", marginTop:4,
+            display:"flex", alignItems:"center", justifyContent:"center", gap:8,
+            transition:"all 0.2s",
+          }}>
+          <span>{copyDone ? "✓" : "⎘"}</span>
+          <span>{copyDone ? t.copyDayDone : t.copyDayBtn}</span>
+        </button>
       </div>
     </div>
   );

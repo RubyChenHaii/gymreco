@@ -5,36 +5,9 @@ import { useC } from "../theme.js";
 import { localDate } from "../utils/date.js";
 import { Card } from "../components/ui.jsx";
 
-// 格式化單天所有訓練為純文字
-function formatDayText(date, dayWorkouts, library, isZh) {
-  const lines = [];
-  lines.push(`📋 GymReco ${date}`);
-  lines.push("=".repeat(28));
-  dayWorkouts.forEach((w, wi) => {
-    if (dayWorkouts.length > 1) {
-      lines.push(`\n${isZh ? `第 ${wi+1} 次訓練` : `Session ${wi+1}`}`);
-      lines.push("-".repeat(20));
-    }
-    w.exercises.forEach(ex => {
-      const lib = library.find(l => l.id === ex.libId);
-      const name = lib ? lib.name : (isZh ? "(已刪除)" : "(Deleted)");
-      const mg   = lib ? lib.muscleGroup : "";
-      lines.push(`\n[${name}${mg ? ` / ${mg}` : ""}]`);
-      if (ex.equipment) lines.push(`  ${isZh ? "器材" : "Equipment"}: ${ex.equipment}`);
-      ex.weightSets.forEach((ws, i) => {
-        lines.push(`  Set ${i+1}: ${ws.weight} × ${ws.reps.join("/")}`);
-      });
-      if (ex.feeling) lines.push(`  ${isZh ? "感受" : "Feeling"}: ${ex.feeling}`);
-    });
-  });
-  return lines.join("\n");
-}
-
 export function HistoryTab({ workouts, library, onOpenDay }) {
   const lang = useLang(); const t = T[lang]; const C = useC();
-  const isZh = lang === "zh";
   const [search, setSearch] = useState("");
-  const [copiedDate, setCopiedDate] = useState(null);
 
   // ── 搜尋過濾 ──────────────────────────────────────────────
   const filtered = workouts.filter(w => {
@@ -144,64 +117,33 @@ export function HistoryTab({ workouts, library, onOpenDay }) {
                     const allMGs = [...new Set(day.workouts.flatMap(w => w.muscleGroups))];
                     const allExercises = [...day.workouts].reverse().flatMap(w => w.exercises);
                     return (
-                      <div key={date}
+                      <div key={date} onClick={() => onOpenDay(date)}
                         style={{ background:C.card, borderRadius:16, marginBottom:10,
-                          boxShadow:"0 1px 4px rgba(0,0,0,0.12)" }}>
-                        {/* 可點擊進入 DayDetailTab 的主體區塊 */}
-                        <div onClick={() => onOpenDay(date)}
-                          style={{ padding:"14px 16px 10px", cursor:"pointer" }}>
-                          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:8 }}>
-                            <div style={{ display:"flex", alignItems:"center", gap:6, flexWrap:"wrap" }}>
-                              <span style={{ fontSize:15, fontWeight:700, color:C.text }}>{d.getMonth() + 1}/{d.getDate()}</span>
-                              <span style={{ fontSize:12, fontWeight:500, color:C.blue, background:`${C.blue}12`, borderRadius:6, padding:"2px 8px" }}>{wdLabel}</span>
-                              {allMGs.map(mg => (
-                                <span key={mg} style={{ fontSize:12, fontWeight:500, color:C.indigo, background:`${C.indigo}12`, borderRadius:6, padding:"2px 8px" }}>
-                                  {lang === "en" ? MG_EN[mg] || mg : mg}
-                                </span>
-                              ))}
-                            </div>
-                            <svg viewBox="0 0 24 24" fill={C.sep} width="14" height="14"><path d="M10 6l6 6-6 6V6z"/></svg>
+                          boxShadow:"0 1px 4px rgba(0,0,0,0.12)", cursor:"pointer", padding:"14px 16px" }}>
+                        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:8 }}>
+                          <div style={{ display:"flex", alignItems:"center", gap:6, flexWrap:"wrap" }}>
+                            <span style={{ fontSize:15, fontWeight:700, color:C.text }}>{d.getMonth() + 1}/{d.getDate()}</span>
+                            <span style={{ fontSize:12, fontWeight:500, color:C.blue, background:`${C.blue}12`, borderRadius:6, padding:"2px 8px" }}>{wdLabel}</span>
+                            {allMGs.map(mg => (
+                              <span key={mg} style={{ fontSize:12, fontWeight:500, color:C.indigo, background:`${C.indigo}12`, borderRadius:6, padding:"2px 8px" }}>
+                                {lang === "en" ? MG_EN[mg] || mg : mg}
+                              </span>
+                            ))}
                           </div>
-                          {allExercises.map((ex, i) => {
-                            const it = library.find(l => l.id === ex.libId);
-                            return (
-                              <div key={i} style={{ display:"flex", alignItems:"baseline", gap:8, marginBottom:3 }}>
-                                {it && <div style={{ width:7, height:7, borderRadius:"50%", background:it.color, flexShrink:0, marginBottom:1 }} />}
-                                <span style={{ fontSize:14, fontWeight:500, color:C.text, flexShrink:0 }}>{it ? it.name : (lang === "en" ? "(Deleted)" : "(已刪除)")}</span>
-                                <span style={{ fontSize:12, color:C.label, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
-                                  {ex.weightSets.map(ws => `${ws.weight} x${ws.reps.join("/")}${t.repsUnit}`).join("  ")}
-                                </span>
-                              </div>
-                            );
-                          })}
+                          <svg viewBox="0 0 24 24" fill={C.sep} width="14" height="14"><path d="M10 6l6 6-6 6V6z"/></svg>
                         </div>
-                        {/* 複製按鈕 */}
-                        <div style={{ padding:"0 16px 12px" }}>
-                          <button
-                            onClick={async (e) => {
-                              e.stopPropagation();
-                              const text = formatDayText(date, day.workouts, library, isZh);
-                              try {
-                                await navigator.clipboard.writeText(text);
-                                setCopiedDate(date);
-                                setTimeout(() => setCopiedDate(null), 2500);
-                              } catch(err) { console.warn("Clipboard failed:", err); }
-                            }}
-                            style={{
-                              width:"100%", padding:"7px 12px",
-                              background: copiedDate===date ? `${C.green}15` : C.f5,
-                              border: `1px solid ${copiedDate===date ? C.green : C.sep}`,
-                              borderRadius:10, fontSize:12, fontWeight:500,
-                              color: copiedDate===date ? C.green : C.label,
-                              cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", gap:6,
-                              transition:"all 0.2s",
-                            }}>
-                            <span>{copiedDate===date ? "✓" : "⎘"}</span>
-                            <span>{copiedDate===date
-                              ? (isZh ? "已複製" : "Copied!")
-                              : (isZh ? "複製訓練內容" : "Copy workout")}</span>
-                          </button>
-                        </div>
+                        {allExercises.map((ex, i) => {
+                          const it = library.find(l => l.id === ex.libId);
+                          return (
+                            <div key={i} style={{ display:"flex", alignItems:"baseline", gap:8, marginBottom:3 }}>
+                              {it && <div style={{ width:7, height:7, borderRadius:"50%", background:it.color, flexShrink:0, marginBottom:1 }} />}
+                              <span style={{ fontSize:14, fontWeight:500, color:C.text, flexShrink:0 }}>{it ? it.name : (lang === "en" ? "(Deleted)" : "(已刪除)")}</span>
+                              <span style={{ fontSize:12, color:C.label, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
+                                {ex.weightSets.map(ws => `${ws.weight} x${ws.reps.join("/")}${t.repsUnit}`).join("  ")}
+                              </span>
+                            </div>
+                          );
+                        })}
                       </div>
                     );
                   })}
