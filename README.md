@@ -202,9 +202,18 @@ Today, GymReco continues to evolve through daily real-world use rather than feat
 
 ## 📋 Changelog｜版本紀錄
 
+**v1.9.2**
+
+- Added **Copy this day's Workout (TXT)** to clipboard for one-tap sharing
+
+- Added **AI-ready workout export** with a structured Markdown format for long-term training analysis
+
+- Top left corner of the Home Page now shows "workout days this month" instead of "workouts this week"
+
 **v1.9.1**
 
 - Calendar dots now deduplicated by colour (one dot per colour per day), preserving workout order
+
 - Exercise library now shows a hint explaining the calendar dot behaviour
 
 - Added "Stretching" as a new muscle group category in the exercise library

@@ -91,6 +91,16 @@ export default function App() {
     setLibrary(newLibrary);
     showToast(lang === "zh" ? "✅ 資料已成功匯入！" : "✅ Data imported successfully!");
   };
+const handleReset = () => {
+    setWorkouts(INIT_WORKOUTS);
+    setLibrary(INIT_LIBRARY);
+    showToast(lang === "zh" ? "✅ 已還原為預設範例資料" : "✅ Restored to default sample data");
+  };
+  const handleClear = () => {
+    setWorkouts([]);
+    setLibrary([]);
+    showToast(lang === "zh" ? "✅ 所有資料已清除" : "✅ All data cleared");
+  };
 
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
@@ -144,7 +154,7 @@ export default function App() {
               : tab === "library"
                 ? <LibraryTab library={library} setLibrary={setLibrary} openItemId={libItemId} setOpenItemId={setLibItemId} />
               : tab === "about"
-                ? <AboutTab workouts={workouts} library={library} onImport={handleImport} />
+                ? <AboutTab workouts={workouts} library={library} onImport={handleImport} onReset={handleReset} onClear={handleClear}/>
               : <HomeTab workouts={workouts} library={library} setTab={navigate} lang={lang} setLang={setLang} darkMode={darkMode} setDarkMode={setDarkMode} openDayDetail={openDayDetail} />}
             </div>
             {tab !== "detail" && tab !== "daydetail" && <BottomNav tab={tab} setTab={setTab} />}
