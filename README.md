@@ -80,9 +80,9 @@ Then: **Share → Add to Home Screen** for full-screen experience.
   
   - 所有資料皆儲存在瀏覽器 localStorage，不需登入帳號。
 
-- Export to JSON / CSV and import from JSON.
+- Export / Import JSON for seamless, offline data backup.
   
-  - 存檔 / 讀檔：支援 JSON／CSV 匯出，以及 JSON 匯入。
+  - 存檔 / 讀檔：支援 JSON 匯出及匯入功能。
 
 - Restore sample data or start with a clean library anytime.
   
