@@ -92,7 +92,7 @@ Then: **Share → Add to Home Screen** for full-screen experience.
 
 ## 📸 Screenshots
 
-<img src="public/screenshots/IMG_2621.PNG" width="250"> <img src="public/screenshots/IMG_2622.PNG" width="250"> <img src="public/screenshots/IMG_2624.PNG" width="250">
+<img src="public/screenshots/1_Homepage.PNG" width="250"> <img src="public/screenshots/2_History.PNG" width="250"> <img src="public/screenshots/3_Log.PNG" width="250"> 
 
 ---
 
