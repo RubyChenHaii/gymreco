@@ -28,11 +28,11 @@ Then: **Share → Add to Home Screen** for full-screen experience.
 
 ### 📚 Workout Library｜訓練動作庫
 
-- Log workouts with weight, sets, reps, and session notes
+- Log workouts with weight, sets, reps, and session notes.
   
   - 紀錄重量、組數、次數與當次訓練筆記。
 
-- Personal exercise library with persistent exercise notes
+- Personal exercise library with persistent exercise notes.
   
   - 建立自己的動作庫，並為每個動作保存永久筆記。
 
@@ -229,6 +229,10 @@ Today, GymReco continues to evolve through daily real-world use rather than feat
 ---
 
 ## 📋 Changelog｜版本紀錄
+
+**v1.9.5**
+
+- Added monthly / yearly Markdown exports to About tab
 
 **v1.9.2**
 

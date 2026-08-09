@@ -2,9 +2,11 @@ import { useState, useRef } from "react";
 import { useLang, T } from "../data/i18n.js";
 import { useC } from "../theme.js";
 import { Card, SLabel } from "../components/ui.jsx";
+import { todayStr } from "../utils/date.js";
+import { exportMDByScope } from "../utils/exportUtils.js";
 
 // ── 版本號：每次發布只需改這一行 ──────────────────────────────
-const APP_VERSION = "1.9.2";
+const APP_VERSION = "1.9.5";
 
 export function AboutTab({ workouts, library, onImport, onReset, onClear }) {
   const lang = useLang(); const t = T[lang]; const C = useC();
@@ -13,69 +15,36 @@ export function AboutTab({ workouts, library, onImport, onReset, onClear }) {
   const [importError,    setImportError]    = useState(null);
   const [resetConfirm,   setResetConfirm]   = useState(false);
   const [clearConfirm,   setClearConfirm]   = useState(false);
+  const [showMDSheet,    setShowMDSheet]    = useState(false);
   const fileInputRef = useRef(null);
 
-  // ── 匯出 Markdown ─────────────────────────────────────────
-  const todayStr = (() => {
-    const d = new Date();
-    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+  // ── Markdown Bottom Sheet 匯出 ────────────────────────────
+  const today = todayStr();
+
+  // 與 HistoryTab 一致的年度顏色
+  const YEAR_COLORS = ["#007AFF","#34C759","#FF9500","#AF52DE","#FF3B30","#5AC8FA","#FF2D55","#5856D6"];
+
+  // 從 workouts 產生年/月結構供選單使用
+  const mdScopes = (() => {
+    const byYear = {};
+    workouts.forEach(w => {
+      const yr = w.date.slice(0, 4);
+      const mo = w.date.slice(0, 7);
+      if (!byYear[yr]) byYear[yr] = new Set();
+      byYear[yr].add(mo);
+    });
+    return Object.entries(byYear)
+      .sort(([a], [b]) => b.localeCompare(a))
+      .map(([yr, moSet]) => ({
+        yr,
+        yearColor: YEAR_COLORS[parseInt(yr) % YEAR_COLORS.length],
+        months: [...moSet].sort((a, b) => b.localeCompare(a)),
+      }));
   })();
-  const exportMD = () => {
-    const sorted = [...workouts].sort((a, b) => a.date.localeCompare(b.date));
-    const byDate = {};
-    sorted.forEach(w => {
-      if (!byDate[w.date]) byDate[w.date] = [];
-      byDate[w.date].push(w);
-    });
-    const lines = [];
 
-    // ── 標題 ──────────────────────────────────────────────────
-    lines.push(`# GymReco ${isZh ? "訓練日誌" : "Workout Log"}`);
-    lines.push(`${isZh ? "匯出時間" : "Exported"}: ${new Date().toISOString()}\n`);
-
-    // ── 動作列表及筆記（前言，不在每日重複） ──────────────────
-    lines.push(`## ${isZh ? "動作庫與知識筆記" : "Exercise Library & Notes"}`);
-    lines.push(isZh
-      ? "_以下為所有動作的基本資訊與知識筆記，每日訓練紀錄中不再重複。_\n"
-      : "_All exercise notes are listed here and will not be repeated in the daily logs below._\n");
-    library.forEach(lib => {
-      lines.push(`### ${lib.name}${lib.muscleGroup ? ` _(${lib.muscleGroup})_` : ""}`);
-      if (lib.note) {
-        lib.note.split("\n").filter(Boolean).forEach(l => lines.push(`> ${l}`));
-      } else {
-        lines.push(isZh ? "> _(尚無筆記)_" : "> _(No notes)_");
-      }
-      lines.push("");
-    });
-
-    // ── 每日訓練紀錄 ──────────────────────────────────────────
-    lines.push(`---\n`);
-    lines.push(`## ${isZh ? "訓練紀錄" : "Workout Log"}\n`);
-    Object.entries(byDate).forEach(([date, dayWorkouts]) => {
-      lines.push(`### ${date}`);
-      dayWorkouts.forEach((w, i) => {
-        if (dayWorkouts.length > 1) {
-          lines.push(`#### ${isZh ? `第 ${i+1} 次訓練` : `Session ${i+1}`}`);
-        }
-        w.exercises.forEach(ex => {
-          const lib = library.find(l => l.id === ex.libId);
-          const name = lib ? lib.name : (isZh ? "(已刪除)" : "(Deleted)");
-          lines.push(`\n**${name}**`);
-          if (ex.equipment) lines.push(`- **${isZh ? "器材" : "Equipment"}**: ${ex.equipment}`);
-          ex.weightSets.forEach((ws, si) => {
-            lines.push(`- **Set ${si+1}**: ${ws.weight} × ${ws.reps.join("/")} reps`);
-          });
-          if (ex.feeling) lines.push(`- **${isZh ? "感受" : "Feeling"}**: ${ex.feeling}`);
-        });
-      });
-      lines.push("");
-    });
-
-    const blob = new Blob([lines.join("\n")], { type:"text/markdown;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a"); a.href = url;
-    a.download = `gymreco-log-${todayStr}.md`;
-    a.click(); URL.revokeObjectURL(url);
+  const doExport = (scope) => {
+    exportMDByScope({ scope, workouts, library, isZh, todayStr: today });
+    setShowMDSheet(false);
   };
 
   const exportJSON = () => {
@@ -130,6 +99,82 @@ export function AboutTab({ workouts, library, onImport, onReset, onClear }) {
 
   return (
     <div style={{ flex:1, overflowY:"auto", background:C.bg }}>
+
+      {/* ── MD 匯出 Bottom Sheet ─────────────────────────────── */}
+      {showMDSheet && (
+        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.45)", display:"flex", flexDirection:"column", zIndex:200 }}
+          onClick={e => { if(e.target===e.currentTarget) setShowMDSheet(false); }}>
+          <div style={{ marginTop:"auto", background:C.card, borderRadius:"20px 20px 0 0", maxHeight:"75vh", display:"flex", flexDirection:"column" }}>
+            {/* Handle */}
+            <div style={{ display:"flex", justifyContent:"center", padding:"12px 0 4px" }}>
+              <div style={{ width:36, height:4, borderRadius:2, background:C.sep }}/>
+            </div>
+            {/* Header */}
+            <div style={{ padding:"8px 20px 14px", display:"flex", justifyContent:"space-between", alignItems:"center", borderBottom:`1px solid ${C.sep}` }}>
+              <div>
+                <div style={{ fontSize:17, fontWeight:700, color:C.text }}>{t.mdSheetTitle}</div>
+                <div style={{ fontSize:12, color:C.label, marginTop:2 }}>{t.mdSheetSub}</div>
+              </div>
+              <button onClick={() => setShowMDSheet(false)}
+                style={{ background:C.f5, border:"none", borderRadius:"50%", width:30, height:30, fontSize:18, color:C.label, cursor:"pointer" }}>×</button>
+            </div>
+            {/* 選項列表 */}
+            <div style={{ overflowY:"auto", padding:"12px 16px 32px" }}>
+              {/* 全部 */}
+              <button onClick={() => doExport("all")}
+                style={{ width:"100%", padding:"14px 16px", background:`${C.blue}10`, border:`1px solid ${C.blue}30`, borderRadius:12, cursor:"pointer",
+                  display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}>
+                <div style={{ textAlign:"left" }}>
+                  <div style={{ fontSize:14, fontWeight:600, color:C.blue }}>{t.mdScopeAll}</div>
+                  <div style={{ fontSize:11, color:C.label, marginTop:2 }}>{t.mdScopeAllSub}</div>
+                </div>
+                <span style={{ fontSize:16, color:C.blue }}>↓</span>
+              </button>
+              {/* 年/月 */}
+              {mdScopes.length === 0 && (
+                <div style={{ textAlign:"center", padding:"20px", color:C.label, fontSize:13 }}>
+                  {isZh ? "尚無訓練紀錄" : "No workout records yet"}
+                </div>
+              )}
+              {mdScopes.map(({ yr, yearColor, months }) => (
+                <div key={yr} style={{ marginBottom:12 }}>
+                  {/* 年度列 */}
+                  <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"8px 4px 6px" }}>
+                    <span style={{ fontSize:14, fontWeight:700, color:C.text }}>
+                      {isZh ? `${yr} 年` : yr}
+                    </span>
+                    <button onClick={() => doExport(yr)}
+                      style={{ background:C.f5, border:`1px solid ${C.sep}`, borderRadius:8, padding:"4px 12px", fontSize:12, fontWeight:500, color:C.sub, cursor:"pointer" }}>
+                      {t.mdExportYear}
+                    </button>
+                  </div>
+                  {/* 月份列 */}
+                  {months.map(mo => {
+                    const [, m] = mo.split("-");
+                    const mLabel = isZh ? `${parseInt(m)} 月` : new Date(parseInt(yr), parseInt(m)-1).toLocaleString("en", { month:"long" });
+                    return (
+                      <div key={mo} style={{ display:"flex", alignItems:"center", justifyContent:"space-between",
+                        padding:"7px 4px 7px 16px", borderLeft:`2px solid ${yearColor}60`, marginLeft:8, marginBottom:2 }}>
+                        <span style={{ fontSize:13, color:C.sub }}>{mLabel}</span>
+                        <button onClick={() => doExport(mo)}
+                          style={{ background:"none", border:"none", padding:"4px 8px", cursor:"pointer", color:C.label,
+                            display:"flex", alignItems:"center", borderRadius:6 }}
+                          title={t.mdExportMonth}>
+                          <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M10 3v9M6 8l4 4 4-4"/>
+                            <path d="M4 15h12"/>
+                          </svg>
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {importConfirm && (
         <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.5)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:300, padding:"20px" }}>
           <div style={{ background:C.card, borderRadius:16, padding:"24px 20px", width:"100%", maxWidth:320 }}>
@@ -216,13 +261,13 @@ export function AboutTab({ workouts, library, onImport, onReset, onClear }) {
               </div>
               <span style={{ fontSize:18 }}>↓</span>
             </button>
-            <button onClick={exportMD}
+            <button onClick={() => setShowMDSheet(true)}
               style={{ width:"100%", padding:"12px 16px", background:C.f5, border:`1px solid ${C.sep}`, borderRadius:12, color:C.text, fontSize:14, fontWeight:600, cursor:"pointer", marginBottom:10, textAlign:"left", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
               <div>
                 <div>{t.exportMD}</div>
                 <div style={{ fontSize:11, fontWeight:400, color:C.label, marginTop:2 }}>{t.exportMDSub}</div>
               </div>
-              <span style={{ fontSize:18, color:C.label }}>↓</span>
+              <span style={{ fontSize:18, color:C.label }}>›</span>
             </button>
             <input ref={fileInputRef} type="file" accept=".json" onChange={handleFileSelect} style={{ display:"none" }} />
             <button onClick={() => fileInputRef.current.click()}
