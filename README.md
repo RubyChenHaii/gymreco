@@ -128,7 +128,7 @@ Then: **Share → Add to Home Screen** for full-screen experience.
 
 GymReco 提供「**輸出為JSON**」功能（位於「關於」頁面），輸出一個輕量檔案進行存檔/讀檔。
 
-JSON/CSV export and JSON import are available in the About page. Handy for backing up or restoring your data!
+JSON export and import features are available in the About page. Handy for backing up or restoring your data!
 
 ---
 
@@ -232,7 +232,8 @@ Today, GymReco continues to evolve through daily real-world use rather than feat
 
 **v1.9.5**
 
-- Added monthly / yearly Markdown exports to About tab
+- Added monthly / yearly Markdown exports to About page
+- Added Year category in History page
 
 **v1.9.2**
 
