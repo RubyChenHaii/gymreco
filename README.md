@@ -42,9 +42,9 @@ Then: **Share → Add to Home Screen** for full-screen experience.
   
   - 月曆以顏色點標示訓練類型，快速辨識本月訓練內容。
 
-- Monthly collapsible history view.
+- Collapsible yearly and monthly history views.
   
-  - 訓練紀錄可依月份收合，瀏覽更整潔。
+  - 年度與月份皆可收合，讓長期紀錄保持整潔。
 
 - Log workouts up to 10 days in the past.
   
@@ -52,15 +52,19 @@ Then: **Share → Add to Home Screen** for full-screen experience.
 
 ### 🤖 AI-ready Workout Export｜爲 AI 分析設計的匯出功能
 
-- Export workouts as AI-ready structured Markdown/TXT.
+- Copy Daily workout (TXT) to clipboard in one tap.
   
-  - 將每次訓練，匯出為 AI 最容易理解的結構化 Markdown/TXT。
+  - 將單日運動紀錄一鍵複製到剪貼簿。
 
-- Works with ChatGPT, Gemini, or any LLM of your choice.
+- Export long-term workout logs as AI-ready Markdown.
+  
+  - 將長期運動紀錄匯出為適合 AI 分析的結構化 Markdown。
+
+- Paste your logs to ChatGPT, Gemini, or any LLM of your choice.
   
   - 貼到 ChatGPT、Gemini 或任何你喜歡的 AI 服務。
 
-- Unlock personalized analysis, recovery suggestions, and long-term training insights!
+- Get personalized analysis, recovery suggestions, and long-term training insights!
   
   - 獲得個人化訓練分析、恢復建議、以及長期訓練趨勢洞察！
 
@@ -104,7 +108,7 @@ Then: **Share → Add to Home Screen** for full-screen experience.
 
 ↓
 
-📋 Copy as AI-ready Markdown/TXT：**一鍵複製為 Markdown/TXT**
+📋  Copy today's workout in daily workout tab / Export workout logs in About page：**一鍵複製今日訓練 / 在「關於」頁面匯出訓練紀錄**
 
 > 在每日訓練卡片中，可將每日訓練內容一鍵複製到剪貼簿 / 或將所有訓練紀錄一次匯出為 Markdown 檔案（位於「關於」頁面）！
 
@@ -116,7 +120,7 @@ Then: **Share → Add to Home Screen** for full-screen experience.
 
 📈 Receive personalized analysis, recovery advice, and long-term insights：**獲得訓練分析、恢復建議與長期進度洞察**
 
-> 複製每日訓練內容，追蹤短期進度 / 匯出 Markdown 檔案，適合長期分析。
+> 複製每日訓練內容，追蹤短期進度；匯出 Markdown 檔案，適合長期分析。
 
 ↓
 
@@ -144,7 +148,7 @@ Ready to make GymReco yours? Start Fresh (available in the About Page), remove t
 
 ---
 
-### Save Safe｜安全儲存你的資料
+### Data Safety｜安全儲存你的資料
 
 自設計之初，GymReco 刻意不使用任何雲端同步、帳號和API呼叫。
 
@@ -180,14 +184,19 @@ npm run deploy
 ## 📦 Tech Stack｜技術
 
 - React 19
-- PWA + Service Worker (offline support)
-- localStorage (no backend required)
+- PWA + Service Worker - offline support
+- localStorage - no backend required
+- No third-party UI libraries
 - Deployed via GitHub Pages
 - Developed with help from Claude Sonnet 4.6
 
 ---
 
-## ⛓️ Architecture｜架構 (v1.8.0 - )
+## ⛓️ Architecture｜架構
+
+> Current architecture since v1.8.0.
+> 
+> 目前架構自 v1.8.0 起使用。
 
 <img src="public/screenshots/architecture.png" width="500">
 
@@ -205,7 +214,7 @@ Some examples:
 
 - 📴 **Local-first.** No accounts, no cloud sync, and no external APIs.
 - ⚡ **Lightweight by design.** Small bundle size, fast startup, and offline support through PWA.
-- 📅 **Simple over complex.** Monthly history is enough—no unnecessary nesting or configuration.
+- 📅 **Simple over complex.** History stays structured without unnecessary nesting or configuration.
 - ⏪ **10-day Back-log.** Enough flexibility to catch up, while encouraging timely workout logging.
 - 🎨 **Meaningful calendar.** Calendar dots represent workout categories rather than every individual exercise.
 - 📈 **Record first, analyze later.** Advanced analytics intentionally belong in a future companion app (GymStats), keeping GymReco focused and lightweight.
@@ -233,6 +242,7 @@ Today, GymReco continues to evolve through daily real-world use rather than feat
 **v1.9.5**
 
 - Added monthly / yearly Markdown exports to About page
+
 - Added Year category in History page
 
 **v1.9.2**
