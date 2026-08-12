@@ -1,5 +1,7 @@
 # 💪 GymReco 🤳
 
+<img src="public/logo512.png" width="75">
+
 **A mobile-first PWA workout tracker / journal ｜ 手機優先的健身紀錄 App （漸進式網頁應用程式）**
 
 > Log your workouts, build your exercise library, and track your progress — all stored locally on your device.
@@ -194,8 +196,8 @@ npm run deploy
 
 ## ⛓️ Architecture｜架構
 
-> Current architecture since v1.8.0.
-> 
+> Current architecture since v1.8.0. 
+>
 > 目前架構自 v1.8.0 起使用。
 
 <img src="public/screenshots/architecture.png" width="500">
