@@ -1,7 +1,7 @@
 {
   "homepage": "https://rubychenhaii.github.io/gymreco",
   "name": "Gym-Reco",
-  "version": "1.9.5",
+  "version": "2.0.0_b",
   "private": true,
   "dependencies": {
     "@testing-library/dom": "^10.4.1",

@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useLang, T, MG_EN } from "../data/i18n.js";
-import { MG_OPTIONS, COLOR_OPTS, WEEKDAYS, WEEKDAY_CN, MONTHS_EN } from "../data/constants.js";
+import { MG_OPTIONS, COLOR_OPTS, WEEKDAYS, WEEKDAY_CN, MONTHS_EN, RECORDING_MODES } from "../data/constants.js";
 import { useC } from "../theme.js";
 import { todayStr, localDate, uid } from "../utils/date.js";
 import { Div, Card } from "../components/ui.jsx";
 import { WeightSetEditor } from "../components/WeightSetEditor.jsx";
+import { LengthPaceEditor } from "../components/LengthPaceEditor.jsx";
 
 export function LogTab({ library, onSave, onAddToLibrary, showToast }) {
   const lang = useLang(); const t = T[lang]; const C = useC();
@@ -21,14 +22,25 @@ export function LogTab({ library, onSave, onAddToLibrary, showToast }) {
   const [newName,      setNewName]     = useState("");
   const [newMG,        setNewMG]       = useState(MG_OPTIONS[0]);
   const [newColor,     setNewColor]    = useState(COLOR_OPTS[0]);
+  const [newRecMode,   setNewRecMode]  = useState(RECORDING_MODES[0]);
 
   const addRow = (libId) => {
     const item = library.find(l => l.id === libId);
+    const mode  = item?.recordingMode || "weight_sets";  // 舊資料無此欄位 → 視為 weight_sets
     const lastH = item?.history.length > 0 ? item.history[item.history.length - 1] : null;
+    // equipment 是兩種 mode 共用的欄位（跟資料結構無關），永遠沿用最近一次紀錄；
+    // 只有 weightSets/lengthPace 這種「跟 mode 綁定」的資料，才需要比對 mode 是否一致才帶入
+    const modeMatches = lastH && (lastH.mode || "weight_sets") === mode;
     setRows(p => [...p, {
       libId,
+      mode,
       equipment:  lastH?.equipment || "",
-      weightSets: lastH?.weightSets ? JSON.parse(JSON.stringify(lastH.weightSets)) : [{ weight:"", reps:[10,10,10] }],
+      weightSets: mode === "weight_sets"
+        ? (modeMatches && lastH.weightSets ? JSON.parse(JSON.stringify(lastH.weightSets)) : [{ weight:"", reps:[10,10,10] }])
+        : [{ weight:"", reps:[10,10,10] }],   // 保留預設值以防之後切換模式時欄位不存在
+      lengthPace: mode === "length_pace"
+        ? (modeMatches && lastH.lengthPace ? JSON.parse(JSON.stringify(lastH.lengthPace)) : [{ distance:0, unit:"km", paceMin:0, paceSec:0 }])
+        : [{ distance:0, unit:"km", paceMin:0, paceSec:0 }],
       feeling:    "",
       noteLocal:  item?.note || "",
       noteDirty:  false,
@@ -38,18 +50,20 @@ export function LogTab({ library, onSave, onAddToLibrary, showToast }) {
 
   const handleAddNew = () => {
     if (!newName.trim()) return;
-    const newItem = { id: uid(), name: newName.trim(), muscleGroup: newMG, color: newColor, note:"", history:[] };
+    const newItem = { id: uid(), name: newName.trim(), muscleGroup: newMG, color: newColor, recordingMode: newRecMode, note:"", history:[] };
     onAddToLibrary(newItem);
     // 新增後直接加入本次訓練
     setRows(p => [...p, {
       libId: newItem.id,
+      mode: newRecMode,
       equipment: "",
       weightSets: [{ weight:"", reps:[10,10,10] }],
+      lengthPace: [{ distance:0, unit:"km", paceMin:0, paceSec:0 }],
       feeling: "",
       noteLocal: "",
       noteDirty: false,
     }]);
-    setNewName(""); setNewMG(MG_OPTIONS[0]); setNewColor(COLOR_OPTS[0]);
+    setNewName(""); setNewMG(MG_OPTIONS[0]); setNewColor(COLOR_OPTS[0]); setNewRecMode(RECORDING_MODES[0]);
     setShowAddNew(false); setShowLib(false); setLibSearch("");
   };
 
@@ -65,7 +79,13 @@ export function LogTab({ library, onSave, onAddToLibrary, showToast }) {
     const workout = {
       id: uid(), date: selectedDate, weekday: WEEKDAYS[sd.getDay()],
       muscleGroups: muscleGroups.length > 0 ? muscleGroups : [...new Set(rows.map(r => library.find(l => l.id === r.libId)?.muscleGroup).filter(Boolean))],
-      exercises: rows.map(r => ({ libId: r.libId, equipment: r.equipment, weightSets: r.weightSets, feeling: r.feeling })),
+      exercises: rows.map(r => ({
+       libId: r.libId,
+       mode: r.mode,
+       equipment: r.equipment,
+       ...(r.mode === "length_pace" ? { lengthPace: r.lengthPace } : { weightSets: r.weightSets }),
+       feeling: r.feeling,
+     })),
     };
     const noteUpdates = rows.filter(r => r.noteDirty).map(r => ({ libId: r.libId, note: r.noteLocal }));
     setRows([]); setMG([]); setSelectedDate(todayStr());
@@ -145,7 +165,7 @@ export function LogTab({ library, onSave, onAddToLibrary, showToast }) {
           if (!item) return null;
           const mgLabel = lang === "en" ? MG_EN[item.muscleGroup] || item.muscleGroup : item.muscleGroup;
           return (
-            <Card key={i} style={{ marginBottom:12 }}>
+            <Card key={i} style={{ marginBottom:12, background:`${item.color}0C` }}>
               <div style={{ display:"flex", alignItems:"center", gap:10, padding:"14px 16px 12px" }}>
                 <div style={{ width:10, height:10, borderRadius:"50%", background:item.color, flexShrink:0 }} />
                 <span style={{ flex:1, fontSize:16, fontWeight:700, color:C.text }}>{item.name}</span>
@@ -164,10 +184,16 @@ export function LogTab({ library, onSave, onAddToLibrary, showToast }) {
               <Div />
               <div style={{ padding:"12px 16px" }}>
                 <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10 }}>
-                  <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4 }}>{t.logSetsLabel}</div>
-                  {row.weightSets.some(ws => ws.weight) && <div style={{ fontSize:10, color:C.blue, background:`${C.blue}10`, borderRadius:6, padding:"2px 8px" }}>{t.logSetsHint}</div>}
+                  <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4 }}>
+                    {row.mode === "length_pace" ? t.logLengthPaceLabel : t.logSetsLabel}
+                  </div>
+                  {row.mode === "length_pace"
+                    ? (row.lengthPace || []).some(lp => lp.distance) && <div style={{ fontSize:10, color:C.blue, background:`${C.blue}10`, borderRadius:6, padding:"2px 8px" }}>{t.logSetsHint}</div>
+                    : (row.weightSets || []).some(ws => ws.weight) && <div style={{ fontSize:10, color:C.blue, background:`${C.blue}10`, borderRadius:6, padding:"2px 8px" }}>{t.logSetsHint}</div>}
                 </div>
-                <WeightSetEditor weightSets={row.weightSets} onChange={ws => upd(i, { weightSets: ws })} />
+                {row.mode === "length_pace"
+                  ? <LengthPaceEditor lengthPace={row.lengthPace} onChange={lp => upd(i, { lengthPace: lp })} />
+                  : <WeightSetEditor weightSets={row.weightSets} onChange={ws => upd(i, { weightSets: ws })} />}
               </div>
               <Div />
               <div style={{ padding:"12px 16px" }}>
@@ -268,6 +294,16 @@ export function LogTab({ library, onSave, onAddToLibrary, showToast }) {
               <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:6 }}>{t.addName}</div>
               <input value={newName} onChange={e => setNewName(e.target.value)} placeholder={t.addName}
                 style={{ width:"100%", background:C.f5, border:`1px solid ${C.sep}`, borderRadius:10, padding:"10px 12px", fontSize:15, color:C.text, boxSizing:"border-box", outline:"none", fontFamily:"inherit", marginBottom:16 }} />
+
+              <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:8 }}>{t.recModeLabel}</div>
+              <div style={{ display:"flex", gap:8, marginBottom:16 }}>
+                {RECORDING_MODES.map(m => (
+                  <button key={m} onClick={() => setNewRecMode(m)}
+                    style={{ flex:1, background:newRecMode===m?C.blue:"none", border:`1px solid ${newRecMode===m?C.blue:C.sep}`, borderRadius:10, padding:"10px 12px", fontSize:13, fontWeight:600, color:newRecMode===m?"#fff":C.sub, cursor:"pointer" }}>
+                    {m === "weight_sets" ? t.recModeWeightSets : t.recModeLengthPace}
+                  </button>
+                ))}
+              </div>
 
               <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:8 }}>{t.addMuscle}</div>
               <div style={{ display:"flex", flexWrap:"wrap", gap:6, marginBottom:16 }}>

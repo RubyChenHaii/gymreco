@@ -30,43 +30,51 @@ Then: **Share → Add to Home Screen** for full-screen experience.
 
 ### 📚 Workout Library｜訓練動作庫
 
-- Log workouts with weight, sets, reps, and session notes.
+- Log workouts with weight, sets, reps, and session journals. 
   
-  - 紀錄重量、組數、次數與當次訓練筆記。
+  - 紀錄重量、組數、次數與當次感受日記。
+
+- Save every workout as detailed history. 
+  
+  - 將每次訓練資料保存為歷史紀錄。
 
 - Personal exercise library with persistent exercise notes.
   
   - 建立自己的動作庫，並為每個動作保存永久筆記。
 
+- Record distance and pace with multi-segment support. (Designed to work alongside real-time tracking apps with GPS, e.g. Nike Run Club.) 
+  
+  - 支援距離與配速紀錄，並可記錄多段配速。（搭配具 GPS 即時追蹤功能的 App 使用，如 Nike Run Club。）
+
 ### 📅 Training Calendar｜訓練月曆
 
-- Calendar overview with coloured dots for quick visual scanning.
+- Calendar overview with coloured dots for quick visual scanning. 
   
   - 月曆以顏色點標示訓練類型，快速辨識本月訓練內容。
 
-- Collapsible yearly and monthly history views.
+- Collapsible yearly and monthly history views. 
   
   - 年度與月份皆可收合，讓長期紀錄保持整潔。
 
-- Log workouts up to 10 days in the past.
+- Log workouts up to 10 days in the past. 
   
   - 支援補登 10 天內的訓練紀錄。
 
 ### 🤖 AI-ready Workout Export｜爲 AI 分析設計的匯出功能
 
-- Copy Daily workout (TXT) to clipboard in one tap.
+- Copy Daily workout (TXT) to clipboard in one tap. 
   
   - 將單日運動紀錄一鍵複製到剪貼簿。
 
-- Export long-term workout logs as AI-ready Markdown.
+- Export long-term workout logs as AI-ready Markdown. 
   
   - 將長期運動紀錄匯出為適合 AI 分析的結構化 Markdown。
 
-- Paste your logs to ChatGPT, Gemini, or any LLM of your choice.
+- Paste your logs to ChatGPT, Gemini, or any LLM of your choice. 
   
   - 貼到 ChatGPT、Gemini 或任何你喜歡的 AI 服務。
 
-- Get personalized analysis, recovery suggestions, and long-term training insights!
+- Get personalized analysis, recovery suggestions, and long-term training insights! 
   
   - 獲得個人化訓練分析、恢復建議、以及長期訓練趨勢洞察！
 
@@ -196,50 +204,57 @@ npm run deploy
 
 ## ⛓️ Architecture｜架構
 
-> Current architecture since v1.8.0. 
->
-> 目前架構自 v1.8.0 起使用。
+> v2.0.0 Major 架構更新。
 
-<img src="public/screenshots/architecture.png" width="500">
+<img title="" src="public/screenshots/v2_architecture.png" alt="" width="600">
 
 ---
 
 ## 🎯 Product Philosophy
 
-GymReco is built around one simple goal:
+GymReco started as a simple idea: a workout tracker that fits the way I record workouts, feels like a breeze to use, and takes away the hassle. 
 
-> **Create a workout tracker that I genuinely enjoy using every day.**
+Today, it has grown into a user-driven product, shaped by real-world use — my own training, as well as feedback from people who use GymReco to track theirs. 
 
-Every feature in GymReco exists because it solves a real problem encountered during my own training.
+The philosophy is simple: 
 
-Some examples:
+> Keep the experience focused, useful, and lightweight. 
 
-- 📴 **Local-first.** No accounts, no cloud sync, and no external APIs.
+Some principles behind this philosophy:
+
+- 📴 **Local-first.** No accounts, no cloud sync, no external APIs.
+
 - ⚡ **Lightweight by design.** Small bundle size, fast startup, and offline support through PWA.
-- 📅 **Simple over complex.** History stays structured without unnecessary nesting or configuration.
+
+- 📅 **Simple over complex.** UI specifically crafted to be minimalist, straightforward, and intuitive. Less hassle, more sets.
+
 - ⏪ **10-day Back-log.** Enough flexibility to catch up, while encouraging timely workout logging.
-- 🎨 **Meaningful calendar.** Calendar dots represent workout categories rather than every individual exercise.
-- 📈 **Record first, analyze later.** Advanced analytics intentionally belong in a future companion app (GymStats), keeping GymReco focused and lightweight.
 
-As the saying goes:
-
-> **If it ain't broke, don't fix it.**
-
-GymReco evolves only when real-world use reveals a genuine need.
+- 📈 **Record first, analyze later.** Advanced analytics intentionally belong in a future companion app (GymStats).
 
 ---
 
 ### 🤖 Development
 
-GymReco was built through AI-assisted iterative development using Claude as a collaborative programming partner.
+GymReco is built through AI-assisted iterative development, with Claude as a collaborative programming partner.
 
-Instead of writing code directly, I focused on product design, workflow planning, UX refinement, testing, debugging, and iterative decision-making.
+I focus on product design, decision-making, UX refinement, testing, and debugging. 
 
-Today, GymReco continues to evolve through daily real-world use rather than feature chasing.
+Through continuously maintaining and evolving the project, I have also developed a practical understanding of JavaScript fundamentals, code structure, and component-based development. 
+
+Today, GymReco continues to evolve through daily real-world use — including my own training and feedback from other GymReco users.
 
 ---
 
 ## 📋 Changelog｜版本紀錄
+
+**v2.0.0**
+
+- Added **Length/Pace** recording mode with automatic Overall Pace calculation. Designed to work alongside real-time tracking apps with GPS such as Nike Run Club.
+
+- **UI Enhancements:** Revamped the visual design with a richer colour palette and a more elegant, energetic look. Workouts are now easier to distinguish at a glance.
+
+- **Various Fixes:** Fixed the scroll component (`RepsPicker`), refreshed the Library icon, and squashed minor bugs.
 
 **v1.9.5**
 

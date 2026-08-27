@@ -5,6 +5,8 @@ import { useC } from "../theme.js";
 import { localDate } from "../utils/date.js";
 import { Div, Card } from "../components/ui.jsx";
 import { WeightSetEditor } from "../components/WeightSetEditor.jsx";
+import { LengthPaceEditor } from "../components/LengthPaceEditor.jsx";
+import { calcOverallPace, fmtDistance, fmtPace } from "../utils/paceUtils.js";
 
 export function DetailTab(props) {
   if (!props.workout) return null;
@@ -15,13 +17,27 @@ function DetailTabInner({ workout, library, onBack, onOpenLibItem, onUpdateWorko
   const lang = useLang(); const t = T[lang]; const C = useC();
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [rows, setRows] = useState(() =>
-    workout.exercises.map(ex => ({ ...ex, weightSets: JSON.parse(JSON.stringify(ex.weightSets)) }))
+    workout.exercises.map(ex => ({
+     ...ex,
+     weightSets: ex.weightSets ? JSON.parse(JSON.stringify(ex.weightSets)) : undefined,
+     lengthPace: ex.lengthPace ? JSON.parse(JSON.stringify(ex.lengthPace)) : undefined,
+    }))
   );
 
   const d = localDate(workout.date);
   const wdLabel = lang === "zh" ? WEEKDAY_CN[d.getDay()] : WEEKDAYS[d.getDay()].slice(0, 3);
 
-  const save = () => { onUpdateWorkout({ ...workout, exercises: rows }); onBack(); };
+  const save = () => {
+   const cleaned = rows.map(r => ({
+     libId: r.libId,
+     mode: r.mode || "weight_sets",
+     equipment: r.equipment,
+     ...((r.mode || "weight_sets") === "length_pace" ? { lengthPace: r.lengthPace } : { weightSets: r.weightSets }),
+     feeling: r.feeling,
+   }));
+   onUpdateWorkout({ ...workout, exercises: cleaned });
+   onBack();
+ };
   const confirmDoDelete = () => { onDeleteWorkout(workout.id); };
   const updRow = (i, patch) => setRows(p => p.map((r, j) => j === i ? { ...r, ...patch } : r));
 
@@ -76,7 +92,7 @@ function DetailTabInner({ workout, library, onBack, onOpenLibItem, onUpdateWorko
               <div style={{ display:"flex", alignItems:"center", gap:10, padding:"14px 16px 12px" }}>
                 <div style={{ width:10, height:10, borderRadius:"50%", background:it.color, flexShrink:0 }} />
                 <span style={{ flex:1, fontSize:16, fontWeight:700, color:C.text }}>{it.name}</span>
-                <button onClick={() => onOpenLibItem(it.id)} style={{ background:`${it.color}15`, border:"none", borderRadius:8, padding:"5px 12px", fontSize:12, fontWeight:600, color:it.color, cursor:"pointer" }}>{t.detailLibBtn}</button>
+                <button onClick={() => onOpenLibItem(it.id)} style={{ background:`${it.color}25`, border:"none", borderRadius:8, padding:"5px 12px", fontSize:12, fontWeight:600, color:it.color, cursor:"pointer" }}>{t.detailLibBtn}</button>
               </div>
               <Div />
               <div style={{ padding:"12px 16px" }}>
@@ -86,8 +102,12 @@ function DetailTabInner({ workout, library, onBack, onOpenLibItem, onUpdateWorko
               </div>
               <Div />
               <div style={{ padding:"12px 16px" }}>
-                <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:10 }}>{t.detailSets}</div>
-                <WeightSetEditor weightSets={row.weightSets} onChange={ws => updRow(i, { weightSets: ws })} />
+                <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:10 }}>
+                 {(row.mode || "weight_sets") === "length_pace" ? t.logLengthPaceLabel : t.detailSets}
+                </div>
+                {(row.mode || "weight_sets") === "length_pace"
+                 ? <LengthPaceEditor lengthPace={row.lengthPace || []} onChange={lp => updRow(i, { lengthPace: lp })} />
+                 : <WeightSetEditor weightSets={row.weightSets || []} onChange={ws => updRow(i, { weightSets: ws })} />}
               </div>
               <Div />
               <div style={{ padding:"12px 16px" }}>
@@ -136,9 +156,17 @@ export function DayDetailTab({ dayWorkouts, library, onBack, onOpenLibItem, onEd
         const mg   = lib ? lib.muscleGroup : "";
         lines.push(`\n[${name}${mg ? ` / ${mg}` : ""}]`);
         if (ex.equipment) lines.push(`  ${isZh ? "器材" : "Equipment"}: ${ex.equipment}`);
-        ex.weightSets.forEach((ws, i) => {
-          lines.push(`  Set ${i+1}: ${ws.weight} × ${ws.reps.join("/")}`);
-        });
+        if ((ex.mode || "weight_sets") === "length_pace") {
+          (ex.lengthPace || []).forEach((seg, i) => {
+            lines.push(`  ${isZh ? "分段" : "Segment"} ${i+1}: ${fmtDistance(seg.distance)} ${seg.unit} @ ${fmtPace(seg.paceMin, seg.paceSec)}/${seg.unit}`);
+          });
+          const overall = ex.lengthPace && calcOverallPace(ex.lengthPace);
+          if (overall) lines.push(`  ${isZh ? "整體配速" : "Overall Pace"}: ${fmtDistance(overall.totalDistance)} ${overall.unit} · ${fmtPace(overall.paceMin, overall.paceSec)}/${overall.unit}`);
+        } else {
+          (ex.weightSets || []).forEach((ws, i) => {
+            lines.push(`  Set ${i+1}: ${ws.weight} × ${ws.reps.join("/")}`);
+          });
+        }
         if (ex.feeling) lines.push(`  ${isZh ? "感受" : "Feeling"}: ${ex.feeling}`);
       });
     });
@@ -188,25 +216,46 @@ export function DayDetailTab({ dayWorkouts, library, onBack, onOpenLibItem, onEd
                 </Card>
               );
               return (
-                <Card key={i} style={{ marginBottom:12 }}>
+                <Card key={i} style={{ background:`${it.color}0C`, borderLeft:`2px solid ${it.color}60`, borderRight:`2px solid ${it.color}60`, marginBottom:15 }}>
                   <div style={{ display:"flex", alignItems:"center", gap:10, padding:"14px 16px 12px" }}>
                     <div style={{ width:10, height:10, borderRadius:"50%", background:it.color, flexShrink:0 }} />
                     <span style={{ flex:1, fontSize:17, fontWeight:700, color:C.text }}>{it.name}</span>
-                    <button onClick={() => onOpenLibItem(it.id)} style={{ background:`${it.color}15`, border:"none", borderRadius:8, padding:"5px 12px", fontSize:12, fontWeight:600, color:it.color, cursor:"pointer" }}>{t.detailLibBtn}</button>
+                    <button onClick={() => onOpenLibItem(it.id)} style={{ background:`${it.color}25`, border:"none", borderRadius:8, padding:"5px 12px", fontSize:12, fontWeight:600, color:it.color, cursor:"pointer" }}>{t.detailLibBtn}</button>
                   </div>
                   {ex.equipment && (<><Div /><div style={{ padding:"10px 16px" }}><div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:4 }}>{t.detailEquip}</div><div style={{ fontSize:13, color:C.sub, lineHeight:1.6, whiteSpace:"pre-wrap" }}>{ex.equipment}</div></div></>)}
                   <Div />
                   <div style={{ padding:"10px 16px" }}>
-                    <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:10 }}>{t.detailSets}</div>
-                    {ex.weightSets.map((ws, wi2) => (
-                      <div key={wi2} style={{ marginBottom:10 }}>
-                        <div style={{ fontSize:13, fontWeight:700, color:C.text, marginBottom:5 }}>{ws.weight}</div>
-                        <div style={{ display:"flex", flexWrap:"wrap", gap:6, paddingLeft:4 }}>
-                          {ws.reps.map((r, ri) => (<div key={ri} style={{ background:C.f5, borderRadius:8, padding:"6px 14px", fontSize:15, fontWeight:600, color:C.text }}>{r}<span style={{ fontSize:11, color:C.label, marginLeft:1 }}>{t.repsUnit}</span></div>))}
-                          <div style={{ display:"flex", alignItems:"center", padding:"0 6px", fontSize:13, color:C.label }}>{t.totalReps} {ws.reps.reduce((a, b) => a + b, 0)} {t.repsUnit}</div>
+                    <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:10 }}>
+                      {(ex.mode || "weight_sets") === "length_pace" ? t.logLengthPaceLabel : t.detailSets}
+                    </div>
+                    {(ex.mode || "weight_sets") === "length_pace" ? (
+                      <>
+                        {(ex.lengthPace || []).map((seg, si) => (
+                          <div key={si} style={{ marginBottom:8 }}>
+                            <span style={{ fontSize:13, fontWeight:700, color:C.text }}>{fmtDistance(seg.distance)} {seg.unit}</span>
+                            <span style={{ fontSize:12, color:C.label, marginLeft:8 }}>@ {fmtPace(seg.paceMin, seg.paceSec)}/{seg.unit}</span>
+                          </div>
+                        ))}
+                        {ex.lengthPace && calcOverallPace(ex.lengthPace) && (() => {
+                          const overall = calcOverallPace(ex.lengthPace);
+                          return (
+                            <div style={{ fontSize:12, color:C.blue, marginTop:4 }}>
+                              {t.lpOverallPace}：{fmtDistance(overall.totalDistance)} {overall.unit} · {fmtPace(overall.paceMin, overall.paceSec)}/{overall.unit}
+                            </div>
+                          );
+                        })()}
+                      </>
+                    ) : (
+                      (ex.weightSets || []).map((ws, wi2) => (
+                        <div key={wi2} style={{ marginBottom:10 }}>
+                          <div style={{ fontSize:13, fontWeight:700, color:C.text, marginBottom:5 }}>{ws.weight}</div>
+                          <div style={{ display:"flex", flexWrap:"wrap", gap:6, paddingLeft:4 }}>
+                            {ws.reps.map((r, ri) => (<div key={ri} style={{ background:C.f5, borderRadius:8, padding:"6px 14px", fontSize:15, fontWeight:600, color:C.text }}>{r}<span style={{ fontSize:11, color:C.label, marginLeft:1 }}>{t.repsUnit}</span></div>))}
+                            <div style={{ display:"flex", alignItems:"center", padding:"0 6px", fontSize:13, color:C.label }}>{t.totalReps} {ws.reps.reduce((a, b) => a + b, 0)} {t.repsUnit}</div>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))
+                    )}                    
                   </div>
                   {it.note && (<><Div /><div style={{ padding:"10px 16px" }}><div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:2 }}>{t.detailKnowledge}</div><div style={{ fontSize:10, color:C.label, marginBottom:6 }}>{t.detailKnowledgeSub}</div><div style={{ fontSize:13, color:C.sub, lineHeight:1.7, whiteSpace:"pre-wrap", background:C.f3, borderRadius:10, padding:"10px 12px" }}>{it.note}</div></div></>)}
                   {ex.feeling && (<><Div /><div style={{ padding:"10px 16px 14px" }}><div style={{ fontSize:11, fontWeight:600, color:C.orange, letterSpacing:0.4, marginBottom:2 }}>{t.detailFeeling}</div><div style={{ fontSize:13, color:C.sub, lineHeight:1.7, whiteSpace:"pre-wrap", background:`${C.orange}08`, border:`1px solid ${C.orange}25`, borderRadius:10, padding:"10px 12px" }}>{ex.feeling}</div></div></>)}
@@ -214,12 +263,12 @@ export function DayDetailTab({ dayWorkouts, library, onBack, onOpenLibItem, onEd
               );
             })}
             <button onClick={() => onEditWorkout(workout.id)}
-              style={{ width:"100%", padding:"14px", background:C.blue, border:"none", borderRadius:16, color:"#fff", fontSize:15, fontWeight:600, cursor:"pointer", marginBottom:16, boxShadow:`0 4px 16px ${C.blue}40` }}>
-              {lang === "zh" ? "編輯此次訓練" : "Edit This Session"}
+              style={{ width:"100%", padding:"12px", background:`${C.f3}`, borderRadius:16, border:`1px solid ${C.blue}50`, fontSize:15, fontWeight:600, color:`${C.sub}`, cursor:"pointer", marginBottom:15, boxShadow:`0 0px 8px ${C.Bshadow}` }}>
+              {lang === "zh" ? "編輯此訓練" : "Edit This Session"}
             </button>
           </div>
         ))}
-
+        
         {/* 複製本日訓練內容 — 整頁最底部，一個按鈕 */}
         <button onClick={copyDay}
           style={{

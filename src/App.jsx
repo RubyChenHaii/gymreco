@@ -44,11 +44,12 @@ export default function App() {
       const noteUpd = noteUpdates.find(u => u.libId === item.id);
       const usedEx  = workout.exercises.find(ex => ex.libId === item.id);
       if (!usedEx && !noteUpd) return item;
+      const { libId, ...exData } = usedEx || {};
       return {
         ...item,
         note: noteUpd ? noteUpd.note : item.note,
         history: usedEx
-          ? [...item.history, { date:workout.date, workoutId:workout.id, equipment:usedEx.equipment, weightSets:usedEx.weightSets, feeling:usedEx.feeling }]
+          ? [...item.history, { date:workout.date, workoutId:workout.id, ...exData }]
           : item.history,
       };
     }));
@@ -70,7 +71,8 @@ export default function App() {
           if (h.workoutId !== updated.id) return h;
           const updatedEx = updated.exercises.find(ex => ex.libId === item.id);
           if (!updatedEx) return h;
-          return { ...h, equipment: updatedEx.equipment, weightSets: updatedEx.weightSets, feeling: updatedEx.feeling };
+          const { libId, ...exData } = updatedEx;
+          return { ...h, ...exData };
         }),
       })));
     }, 0);

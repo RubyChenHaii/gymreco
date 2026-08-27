@@ -4,6 +4,7 @@ import { WEEKDAYS, WEEKDAY_CN } from "../data/constants.js";
 import { useC } from "../theme.js";
 import { localDate } from "../utils/date.js";
 import { Card } from "../components/ui.jsx";
+import { fmtDistance, fmtPace } from "../utils/paceUtils.js";
 
 // 格式化單天所有訓練為純文字
 
@@ -183,12 +184,15 @@ export function HistoryTab({ workouts, library, onOpenDay }) {
                                   </div>
                                   {allExercises.map((ex, i) => {
                                     const it = library.find(l => l.id === ex.libId);
+                                    const summary = (ex.mode || "weight_sets") === "length_pace"
+                                     ? (ex.lengthPace || []).map(seg => `${fmtDistance(seg.distance)}${seg.unit} @${fmtPace(seg.paceMin, seg.paceSec)}`).join("  ")
+                                     : (ex.weightSets || []).map(ws => `${ws.weight} ×${ws.reps.join("/")}${t.repsUnit}`).join("  ");
                                     return (
                                       <div key={i} style={{ display:"flex", alignItems:"baseline", gap:7, marginBottom:2 }}>
                                         {it && <div style={{ width:6, height:6, borderRadius:"50%", background:it.color, flexShrink:0 }} />}
                                         <span style={{ fontSize:13, fontWeight:500, color:C.text, flexShrink:0 }}>{it ? it.name : (lang === "en" ? "(Deleted)" : "(已刪除)")}</span>
                                         <span style={{ fontSize:11, color:C.label, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
-                                          {ex.weightSets.map(ws => `${ws.weight} ×${ws.reps.join("/")}${t.repsUnit}`).join("  ")}
+                                          {summary}
                                         </span>
                                       </div>
                                     );

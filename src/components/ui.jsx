@@ -57,7 +57,7 @@ export function BottomNav({ tab, setTab }) {
     { id:"log",     label:t.navLog,
       svg:(active) => <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke={active?C.blue:C.label} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg> },
     { id:"library", label:t.navLibrary,
-      svg:(active) => <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke={active?C.blue:C.label} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19V6a2 2 0 012-2h12a2 2 0 012 2v13"/><path d="M4 19a2 2 0 002 2h12a2 2 0 002-2"/><line x1="9" y1="10" x2="15" y2="10"/><line x1="9" y1="14" x2="13" y2="14"/></svg> },
+      svg:(active) => <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke={active?C.blue:C.label} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M2 4h6a4 4 0 014 4v12a3 3 0 00-3-3H2V4z"/><path d="M22 4h-6a4 4 0 00-4 4v12a3 3 0 013-3h7V4z"/></svg> },    
     { id:"about",   label:t.navAbout,
       svg:(active) => <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke={active?C.blue:C.label} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="8.5"/><line x1="12" y1="12" x2="12" y2="16"/></svg> },
   ];

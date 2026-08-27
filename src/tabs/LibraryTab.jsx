@@ -1,18 +1,22 @@
 import { useState, useRef, useEffect } from "react";
 import { useLang, T, MG_EN } from "../data/i18n.js";
-import { MG_OPTIONS, COLOR_OPTS } from "../data/constants.js";
+import { MG_OPTIONS, COLOR_OPTS, RECORDING_MODES } from "../data/constants.js";
 import { useC } from "../theme.js";
 import { uid, fmtDate } from "../utils/date.js";
 import { Div, Card, SLabel } from "../components/ui.jsx";
+import { calcOverallPace, fmtDistance, fmtPace } from "../utils/paceUtils.js";
 
 
 function LibItemDetail({ item, onUpdate, onDelete, onBack }) {
   const lang = useLang(); const t = T[lang]; const C = useC();
   const lastH = item.history.length > 0 ? item.history[item.history.length - 1] : null;
+  const lastMode = lastH?.mode || item.recordingMode || "weight_sets";
+  // 優先順序: 上一筆紀錄自己的 mode (尊重歷史紀錄的真實記錄方式) > 沒有歷史紀錄時，改看這個動作目前設定的 recordingMode (反映使用者建立/切換時的意圖) > 兩者都沒有(最舊資料):保底視為 weight_sets
   const [editNote,    setEditNote]    = useState(item.note);
   const [editName,    setEditName]    = useState(item.name);
   const [editMG,      setEditMG]      = useState(item.muscleGroup);
   const [editColor,   setEditColor]   = useState(item.color);
+  const [editRecMode, setEditRecMode] = useState(item.recordingMode || "weight_sets");
   const [editingMeta, setEM]          = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const saveTimer = useRef(null);
@@ -28,14 +32,14 @@ function LibItemDetail({ item, onUpdate, onDelete, onBack }) {
 
 
   const noteDirty = editNote !== item.note;
-  const metaDirty = editName !== item.name || editMG !== item.muscleGroup || editColor !== item.color;
+  const metaDirty = editName !== item.name || editMG !== item.muscleGroup || editColor !== item.color || editRecMode !== (item.recordingMode || "weight_sets");
   const anyDirty  = noteDirty || metaDirty;
 
   const save = () => {
     // 延遲到下一個 tick，避免 setState 阻塞主執行緒
     clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(() => {
-      onUpdate({ ...item, note: editNote, name: editName, muscleGroup: editMG, color: editColor });
+      onUpdate({ ...item, note: editNote, name: editName, muscleGroup: editMG, color: editColor, recordingMode: editRecMode });
     }, 0);
   };
 
@@ -68,8 +72,9 @@ function LibItemDetail({ item, onUpdate, onDelete, onBack }) {
           {editingMeta ? t.libItemDone : t.libItemEdit}
         </button>
       </div>
-      <div style={{ padding:"16px", flex:1, overflowY:"auto" }}>
+      <div style={{ flex:1, overflowY:"auto" }}>
         {editingMeta && (
+          <div style={{ padding:"16px 16px 0" }}>
           <Card style={{ marginBottom:16, padding:"16px" }}>
             <div style={{ fontSize:13, fontWeight:700, color:C.text, marginBottom:10 }}>{t.libItemEditTitle}</div>
             <input value={editName} onChange={e => setEditName(e.target.value)} placeholder={t.addName}
@@ -88,13 +93,25 @@ function LibItemDetail({ item, onUpdate, onDelete, onBack }) {
                 <button key={col} onClick={() => setEditColor(col)} style={{ width:28, height:28, borderRadius:"50%", background:col, border:editColor===col?`3px solid ${C.text}`:"3px solid transparent", cursor:"pointer", padding:0, boxSizing:"border-box" }} />
               ))}
             </div>
+            <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:8 }}>{t.recModeLabel}</div>
+            <div style={{ display:"flex", gap:8, marginBottom:8 }}>
+              {RECORDING_MODES.map(m => (
+                <button key={m} onClick={() => setEditRecMode(m)}
+                  style={{ flex:1, background:editRecMode===m?C.blue:"none", border:`1px solid ${editRecMode===m?C.blue:C.sep}`, borderRadius:10, padding:"8px 10px", fontSize:13, fontWeight:600, color:editRecMode===m?"#fff":C.sub, cursor:"pointer" }}>
+                  {m === "weight_sets" ? t.recModeWeightSets : t.recModeLengthPace}
+                </button>
+              ))}
+            </div>
+            <div style={{ fontSize:11, color:C.label, lineHeight:1.6, marginBottom:14 }}>{t.recModeSwitchHint}</div>
             <div style={{ display:"flex", gap:8 }}>
               <button onClick={save} disabled={!anyDirty} style={{ flex:1, padding:"10px", background:!anyDirty?"#C7C7CC":C.blue, border:"none", borderRadius:12, color:"#fff", fontSize:14, fontWeight:600, cursor:!anyDirty?"not-allowed":"pointer" }}>{t.libItemSave}</button>
               <button onClick={() => setConfirmDelete(true)} style={{ padding:"10px 14px", background:"none", border:`1.5px solid ${C.red}`, borderRadius:12, color:C.red, fontSize:14, fontWeight:600, cursor:"pointer" }}>{t.libItemDelete}</button>
             </div>
           </Card>
+          </div>
         )}
 
+        <div style={{ background:`${editColor}0C`, borderBottom:`3px dotted ${editColor}65`, borderBottomLeftRadius:20, borderBottomRightRadius:20, padding:"16px 16px 4px" }}>
         <SLabel>{t.libLastEquip}</SLabel>
         <Card style={{ marginBottom:16 }}>
           <div style={{ padding:"14px 16px" }}>
@@ -106,20 +123,38 @@ function LibItemDetail({ item, onUpdate, onDelete, onBack }) {
           </div>
         </Card>
 
-        <SLabel>{t.libLastSets}</SLabel>
+        <SLabel>{lastMode === "length_pace" ? t.libLastLengthPace : t.libLastSets}</SLabel>
         <Card style={{ marginBottom:16 }}>
           <div style={{ padding:"14px 16px" }}>
             <div style={{ fontSize:11, color:C.blue, marginBottom:10 }}>{t.libLastSetsSub}</div>
-            {lastH?.weightSets
-              ? lastH.weightSets.map((ws, wi) => (
-                  <div key={wi} style={{ marginBottom:8 }}>
-                    <span style={{ fontSize:13, fontWeight:700, color:C.text, marginRight:10 }}>{ws.weight}</span>
-                    <span style={{ fontSize:12, color:C.label }}>{ws.reps.join(" / ")} {t.repsUnit}</span>
-                    <span style={{ fontSize:11, color:C.label, marginLeft:8 }}>{t.totalReps} {ws.reps.reduce((a,b)=>a+b,0)} {t.repsUnit}</span>
-                  </div>
-                ))
-              : <div style={{ fontSize:13, color:C.label, fontStyle:"italic" }}>{t.libHistoryEmpty}</div>
-            }
+            {!lastH ? (
+             <div style={{ fontSize:13, color:C.label, fontStyle:"italic" }}>{t.libHistoryEmpty}</div>
+           ) : lastMode === "length_pace" ? (
+             <>
+               {(lastH.lengthPace || []).map((seg, si) => (
+                 <div key={si} style={{ marginBottom:6, fontSize:13, color:C.text }}>
+                   <span style={{ fontWeight:700 }}>{fmtDistance(seg.distance)} {seg.unit}</span>
+                   <span style={{ color:C.label, marginLeft:8 }}>@ {fmtPace(seg.paceMin, seg.paceSec)}/{seg.unit}</span>
+                 </div>
+               ))}
+               {lastH.lengthPace && calcOverallPace(lastH.lengthPace) && (() => {
+                const overall = calcOverallPace(lastH.lengthPace);
+                  return (
+                   <div style={{ fontSize:11, color:C.blue, marginTop:4 }}>
+                     {t.lpOverallPace}：{fmtDistance(overall.totalDistance)} {overall.unit} · {fmtPace(overall.paceMin, overall.paceSec)}/{overall.unit}
+                   </div>
+                  );
+               })()}
+             </>
+           ) : (
+             (lastH.weightSets || []).map((ws, wi) => (
+               <div key={wi} style={{ marginBottom:8 }}>
+                 <span style={{ fontSize:13, fontWeight:700, color:C.text, marginRight:10 }}>{ws.weight}</span>
+                 <span style={{ fontSize:12, color:C.label }}>{ws.reps.join(" / ")} {t.repsUnit}</span>
+                 <span style={{ fontSize:11, color:C.label, marginLeft:8 }}>{t.totalReps} {ws.reps.reduce((a,b)=>a+b,0)} {t.repsUnit}</span>
+               </div>
+             ))
+           )}
           </div>
         </Card>
 
@@ -143,7 +178,9 @@ function LibItemDetail({ item, onUpdate, onDelete, onBack }) {
             </div>
           )}
         </Card>
+        </div>
 
+        <div style={{ padding:"16px" }}>
         <SLabel>{t.libHistoryTitle}（{item.history.length}）</SLabel>
         {item.history.length === 0 && <Card style={{ marginBottom:16 }}><div style={{ padding:"32px", textAlign:"center", color:C.label, fontSize:14 }}>{t.libHistoryEmpty}</div></Card>}
         {[...item.history].reverse().map((h, i) => (
@@ -155,17 +192,37 @@ function LibItemDetail({ item, onUpdate, onDelete, onBack }) {
             {h.equipment && (<><Div /><div style={{ padding:"8px 16px" }}><div style={{ fontSize:11, fontWeight:600, color:C.label, marginBottom:3 }}>{t.libEquip}</div><div style={{ fontSize:13, color:C.sub, whiteSpace:"pre-wrap" }}>{h.equipment}</div></div></>)}
             <Div />
             <div style={{ padding:"10px 16px" }}>
-              {h.weightSets.map((ws, wi) => (
-                <div key={wi} style={{ marginBottom:8 }}>
-                  <span style={{ fontSize:13, fontWeight:700, color:C.text, marginRight:10 }}>{ws.weight}</span>
-                  <span style={{ fontSize:12, color:C.label }}>{ws.reps.join(" / ")} {t.repsUnit}</span>
-                  <span style={{ fontSize:11, color:C.label, marginLeft:8 }}>{t.totalReps} {ws.reps.reduce((a, b) => a + b, 0)} {t.repsUnit}</span>
-                </div>
-              ))}
+              {(h.mode || "weight_sets") === "length_pace" ? (
+               <>
+                 {(h.lengthPace || []).map((seg, si) => (
+                   <div key={si} style={{ marginBottom:6 }}>
+                     <span style={{ fontSize:13, fontWeight:700, color:C.text }}>{fmtDistance(seg.distance)} {seg.unit}</span>
+                     <span style={{ fontSize:12, color:C.label, marginLeft:8 }}>@ {fmtPace(seg.paceMin, seg.paceSec)}/{seg.unit}</span>
+                   </div>
+                 ))}
+                 {h.lengthPace && calcOverallPace(h.lengthPace) && (() => {
+                   const overall = calcOverallPace(h.lengthPace);
+                   return (
+                     <div style={{ fontSize:11, color:C.blue, marginTop:2 }}>
+                       {t.lpOverallPace}：{fmtDistance(overall.totalDistance)} {overall.unit} · {fmtPace(overall.paceMin, overall.paceSec)}/{overall.unit}
+                     </div>
+                   );
+                 })()}
+               </>
+             ) : (
+               (h.weightSets || []).map((ws, wi) => (
+                 <div key={wi} style={{ marginBottom:8 }}>
+                   <span style={{ fontSize:13, fontWeight:700, color:C.text, marginRight:10 }}>{ws.weight}</span>
+                   <span style={{ fontSize:12, color:C.label }}>{ws.reps.join(" / ")} {t.repsUnit}</span>
+                   <span style={{ fontSize:11, color:C.label, marginLeft:8 }}>{t.totalReps} {ws.reps.reduce((a, b) => a + b, 0)} {t.repsUnit}</span>
+                 </div>
+               ))
+             )}
             </div>
             {h.feeling && (<><Div /><div style={{ padding:"8px 16px 12px" }}><div style={{ fontSize:11, fontWeight:600, color:C.orange, marginBottom:4 }}>{t.libHistoryFeeling}</div><div style={{ fontSize:13, color:C.sub, lineHeight:1.6, whiteSpace:"pre-wrap", background:`${C.orange}08`, borderRadius:8, padding:"8px 10px" }}>{h.feeling}</div></div></>)}
           </Card>
         ))}
+        </div>
       </div>
     </div>
   );
@@ -177,12 +234,13 @@ export function LibraryTab({ library, setLibrary, openItemId, setOpenItemId }) {
   const [newName,  setNewName]  = useState("");
   const [newMG,    setNewMG]    = useState(MG_OPTIONS[0]);
   const [newColor, setNewColor] = useState(COLOR_OPTS[0]);
+  const [newRecMode, setNewRecMode] = useState(RECORDING_MODES[0]);
   const [search,   setSearch]   = useState("");
 
   const addItem = () => {
     if (!newName.trim()) return;
-    setLibrary(p => [...p, { id: uid(), name: newName.trim(), muscleGroup: newMG, color: newColor, note:"", history:[] }]);
-    setNewName(""); setShowAdd(false);
+    setLibrary(p => [...p, { id: uid(), name: newName.trim(), muscleGroup: newMG, color: newColor, recordingMode: newRecMode, note:"", history:[] }]);
+    setNewName(""); setNewRecMode(RECORDING_MODES[0]); setShowAdd(false);
   };
 
   if (openItemId) {
@@ -213,6 +271,15 @@ export function LibraryTab({ library, setLibrary, openItemId, setOpenItemId }) {
             <div style={{ fontSize:14, fontWeight:700, color:C.text, marginBottom:12 }}>{t.addBtn}</div>
             <input value={newName} onChange={e => setNewName(e.target.value)} placeholder={t.addName}
               style={{ width:"100%", background:C.f5, border:`1px solid ${C.sep}`, borderRadius:10, padding:"10px 12px", fontSize:15, color:C.text, boxSizing:"border-box", outline:"none", fontFamily:"inherit", marginBottom:12 }} />
+            <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:6 }}>{t.recModeLabel}</div>
+            <div style={{ display:"flex", gap:8, marginBottom:12 }}>
+              {RECORDING_MODES.map(m => (
+                <button key={m} onClick={() => setNewRecMode(m)}
+                   style={{ flex:1, background:newRecMode===m?C.blue:"none", border:`1px solid ${newRecMode===m?C.blue:C.sep}`, borderRadius:10, padding:"8px 10px", fontSize:13, fontWeight:600, color:newRecMode===m?"#fff":C.sub, cursor:"pointer" }}>
+                   {m === "weight_sets" ? t.recModeWeightSets : t.recModeLengthPace}
+                </button>
+              ))}
+            </div>
             <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:6 }}>{t.addMuscle}</div>
             <div style={{ display:"flex", flexWrap:"wrap", gap:6, marginBottom:12 }}>
               {MG_OPTIONS.map(mg => (
@@ -229,7 +296,7 @@ export function LibraryTab({ library, setLibrary, openItemId, setOpenItemId }) {
             </div>
             <div style={{ display:"flex", gap:8 }}>
               <button onClick={addItem} disabled={!newName.trim()} style={{ flex:1, padding:"11px", background:newName.trim()?C.blue:"#C7C7CC", border:"none", borderRadius:12, color:"#fff", fontSize:15, fontWeight:600, cursor:newName.trim()?"pointer":"not-allowed" }}>{t.addBtn}</button>
-              <button onClick={() => { setShowAdd(false); setNewName(""); }} style={{ padding:"11px 20px", background:C.f5, border:"none", borderRadius:12, color:C.sub, fontSize:15, cursor:"pointer" }}>{t.addCancel}</button>
+              <button onClick={() => {  setShowAdd(false); setNewName(""); setNewRecMode(RECORDING_MODES[0]); }} style={{ padding:"11px 20px", background:C.f5, border:"none", borderRadius:12, color:C.sub, fontSize:15, cursor:"pointer" }}>{t.addCancel}</button>
             </div>
           </Card>
         )}

@@ -161,7 +161,8 @@ export function HomeTab({ workouts, library, setTab, lang, setLang, darkMode, se
             </div>
           ))}
         </Card>
-        <button onClick={() => setTab("log")} style={{ width:"100%", padding:"16px", background:C.blue, border:"none", borderRadius:16, color:"#fff", fontSize:16, fontWeight:600, cursor:"pointer", boxShadow:"0 4px 16px rgba(0,122,255,0.3)" }}>
+        <button onClick={() => setTab("log")} 
+          style={{ width:"100%", padding:"16px", background:`${C.f3}`, border:`2px solid ${C.blue}55`, borderRadius:16, color:`${C.blue}`, fontSize:16, fontWeight:750, cursor:"pointer", boxShadow:`0 2px 10px ${C.Bshadow}` }}>
           {t.btnStartToday}
         </button>
       </div>

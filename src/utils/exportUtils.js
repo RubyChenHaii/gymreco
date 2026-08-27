@@ -1,3 +1,5 @@
+import { fmtDistance, fmtPace, calcOverallPace } from "./paceUtils.js";
+
 // ── GymReco 共用匯出工具 ─────────────────────────────────────
 // 供 AboutTab 呼叫，無第三方依賴
 
@@ -33,9 +35,17 @@ export const buildDaySection = (date, dayWorkouts, library, isZh) => {
       const name = lib ? lib.name : (isZh ? "(已刪除)" : "(Deleted)");
       lines.push(`\n**${name}**`);
       if (ex.equipment) lines.push(`- **${isZh ? "器材" : "Equipment"}**: ${ex.equipment}`);
-      ex.weightSets.forEach((ws, si) => {
-        lines.push(`- **Set ${si+1}**: ${ws.weight} × ${ws.reps.join("/")} reps`);
-      });
+      if ((ex.mode || "weight_sets") === "length_pace") {
+        (ex.lengthPace || []).forEach((seg, si) => {
+          lines.push(`- **${isZh ? "分段" : "Segment"} ${si+1}**: ${fmtDistance(seg.distance)} ${seg.unit} @ ${fmtPace(seg.paceMin, seg.paceSec)}/${seg.unit}`);
+        });
+        const overall = ex.lengthPace && calcOverallPace(ex.lengthPace);
+        if (overall) lines.push(`- **${isZh ? "整體配速" : "Overall Pace"}**: ${fmtDistance(overall.totalDistance)} ${overall.unit} · ${fmtPace(overall.paceMin, overall.paceSec)}/${overall.unit}`);
+      } else {
+        (ex.weightSets || []).forEach((ws, si) => {
+          lines.push(`- **Set ${si+1}**: ${ws.weight} × ${ws.reps.join("/")} reps`);
+        });
+      }
       if (ex.feeling) lines.push(`- **${isZh ? "感受" : "Feeling"}**: ${ex.feeling}`);
     });
   });

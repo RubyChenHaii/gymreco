@@ -57,15 +57,26 @@ export const T = {
     libHistoryTitle:"訓練歷史", libHistoryEmpty:"尚無訓練紀錄",
     libEquip:"器材設定", libHistoryFeeling:"當次感受",
     libLastEquip:"上次器材設定", libLastSets:"上次重量組次",
+    libLastLengthPace:"上次距離配速",
     libLastEquipSub:"下次訓練時將自動代入", libLastSetsSub:"下次訓練時將自動代入",
     libLastEquipPlaceholder:"尚無器材設定紀錄",
     logEquipHint:"預設代入上次訓練資料", logSetsHint:"預設代入上次訓練資料",
     // Add item form
     addName:"動作名稱", addMuscle:"訓練部位", addColor:"顏色",
     addBtn:"新增動作", addCancel:"取消",
+     // Recording mode
+    recModeLabel:"紀錄模式",
+    recModeWeightSets:"重量 / 組數", recModeLengthPace:"距離 / 配速",
+    recModeSwitchHint:"切換後，新的訓練紀錄將以新模式記錄，過去的紀錄不會被修改。",
+    logLengthPaceLabel:"距離與配速",
     // Weight editor
     weSets:"組次：", weAddSet:"+ 新增重量組",
     weightPlaceholder:"重量（如 15kg、自重）",
+    // Pace_Segment editor 
+    lpSegments:"配速分段：", lpAddSegment:"+ 新增分段",
+    lpFieldsHint:"距離（整數.小數）單位 ＠ 配速（分＇秒＂）",
+    lpUnitPlaceholder:"單位", lpOverallPace:"整體配速",
+    lpMixedUnit:"各段單位不一致，無法計算整體配速",
     // Misc
     times:"次", pieces:"個", totalReps:"共", repsUnit:"下",
     savedAlert:"✅ 已儲存！動作知識筆記已同步至動作庫。",
@@ -129,6 +140,7 @@ export const T = {
     libAdd:"＋ Add", libSearch:"Search exercise or muscle…",
     libNoHistory:"No workout history yet", libRecords:"sessions · Last",
     libHasNote:"Has notes", libEmpty:"No matching exercises",
+    // Library item detail
     libItemEdit:"Edit", libItemDone:"Done",
     libItemEditTitle:"Edit Exercise", libItemMuscle:"Muscle Group",
     libItemColor:"Color", libItemSave:"Save", libItemDelete:"Delete",
@@ -139,13 +151,25 @@ export const T = {
     libHistoryTitle:"Training History", libHistoryEmpty:"No workout history yet",
     libEquip:"Equipment Setup", libHistoryFeeling:"Session Feeling",
     libLastEquip:"Last Equipment Setup", libLastSets:"Last Weight & Sets",
+    libLastLengthPace:"Last Length & Pace",
     libLastEquipSub:"Will be pre-filled next session", libLastSetsSub:"Will be pre-filled next session",
     libLastEquipPlaceholder:"No equipment record yet",
     logEquipHint:"Pre-filled from last session", logSetsHint:"Pre-filled from last session",
     addName:"Exercise name", addMuscle:"Muscle Group", addColor:"Color",
     addBtn:"Add Exercise", addCancel:"Cancel",
+    // Recording mode
+    recModeLabel:"Recording Mode",
+    recModeWeightSets:"Weight / Sets", recModeLengthPace:"Length / Pace",
+    recModeSwitchHint:"After switching, new workout records will use the new mode. Past records remain unchanged.",
+    logLengthPaceLabel:"Length & Pace",
+    // Weight editor
     weSets:"Sets:", weAddSet:"+ Add weight group",
     weightPlaceholder:"Weight (e.g. 15kg, bodyweight)",
+    // Pace_Segment editor
+    lpSegments:"Segments:", lpAddSegment:"+ Add Segment",
+    lpFieldsHint:"Distance (int.dec) unit @ Pace (min'sec\")",
+    lpUnitPlaceholder:"Unit", lpOverallPace:"Overall Pace",
+    lpMixedUnit:"Units differ across segments — overall pace unavailable",
     times:"", pieces:"", totalReps:"Total", repsUnit:"reps",
     savedAlert:"✅ Saved! Knowledge notes synced to library.",
     atLeastOne:"Please add at least one exercise.",
