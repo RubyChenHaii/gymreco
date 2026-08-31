@@ -165,7 +165,7 @@ export function LogTab({ library, onSave, onAddToLibrary, showToast }) {
           if (!item) return null;
           const mgLabel = lang === "en" ? MG_EN[item.muscleGroup] || item.muscleGroup : item.muscleGroup;
           return (
-            <Card key={i} style={{ background:`${item.color}0C`, borderTop:`2px dashed ${item.color}45`, borderBottom:`2px dashed ${item.color}45`, marginBottom:12 }}>
+            <Card key={i} style={{ background:`${item.color}0C`, borderTop:`2px dashed ${item.color}50`, borderBottom:`2px dashed ${item.color}50`, marginBottom:15 }}>
               <div style={{ display:"flex", alignItems:"center", gap:10, padding:"14px 16px 12px" }}>
                 <div style={{ width:10, height:10, borderRadius:"50%", background:item.color, flexShrink:0 }} />
                 <span style={{ flex:1, fontSize:16, fontWeight:700, color:C.text }}>{item.name}</span>

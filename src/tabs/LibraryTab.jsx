@@ -112,72 +112,72 @@ function LibItemDetail({ item, onUpdate, onDelete, onBack }) {
         )}
 
         <div style={{ background:`${editColor}0C`, borderBottom:`3px dotted ${editColor}65`, borderBottomLeftRadius:20, borderBottomRightRadius:20, padding:"16px 16px 4px" }}>
-        <SLabel>{t.libLastEquip}</SLabel>
-        <Card style={{ marginBottom:16 }}>
-          <div style={{ padding:"14px 16px" }}>
-            <div style={{ fontSize:11, color:C.blue, marginBottom:8 }}>{t.libLastEquipSub}</div>
-            {lastH?.equipment
-              ? <div style={{ fontSize:13, color:C.sub, lineHeight:1.6, whiteSpace:"pre-wrap" }}>{lastH.equipment}</div>
-              : <div style={{ fontSize:13, color:C.label, fontStyle:"italic" }}>{t.libLastEquipPlaceholder}</div>
-            }
-          </div>
-        </Card>
-
-        <SLabel>{lastMode === "length_pace" ? t.libLastLengthPace : t.libLastSets}</SLabel>
-        <Card style={{ marginBottom:16 }}>
-          <div style={{ padding:"14px 16px" }}>
-            <div style={{ fontSize:11, color:C.blue, marginBottom:10 }}>{t.libLastSetsSub}</div>
-            {!lastH ? (
-             <div style={{ fontSize:13, color:C.label, fontStyle:"italic" }}>{t.libHistoryEmpty}</div>
-           ) : lastMode === "length_pace" ? (
-             <>
-               {(lastH.lengthPace || []).map((seg, si) => (
-                 <div key={si} style={{ marginBottom:6, fontSize:13, color:C.text }}>
-                   <span style={{ fontWeight:700 }}>{fmtDistance(seg.distance)} {seg.unit}</span>
-                   <span style={{ color:C.label, marginLeft:8 }}>@ {fmtPace(seg.paceMin, seg.paceSec)}/{seg.unit}</span>
-                 </div>
-               ))}
-               {lastH.lengthPace && calcOverallPace(lastH.lengthPace) && (() => {
-                const overall = calcOverallPace(lastH.lengthPace);
-                  return (
-                   <div style={{ fontSize:11, color:C.blue, marginTop:4 }}>
-                     {t.lpOverallPace}：{fmtDistance(overall.totalDistance)} {overall.unit} · {fmtPace(overall.paceMin, overall.paceSec)}/{overall.unit}
-                   </div>
-                  );
-               })()}
-             </>
-           ) : (
-             (lastH.weightSets || []).map((ws, wi) => (
-               <div key={wi} style={{ marginBottom:8 }}>
-                 <span style={{ fontSize:13, fontWeight:700, color:C.text, marginRight:10 }}>{ws.weight}</span>
-                 <span style={{ fontSize:12, color:C.label }}>{ws.reps.join(" / ")} {t.repsUnit}</span>
-                 <span style={{ fontSize:11, color:C.label, marginLeft:8 }}>{t.totalReps} {ws.reps.reduce((a,b)=>a+b,0)} {t.repsUnit}</span>
-               </div>
-             ))
-           )}
-          </div>
-        </Card>
-
-        <SLabel>{t.libNoteTitle}</SLabel>
-        <Card style={{ marginBottom:16 }}>
-          <div style={{ padding:"14px 16px" }}>
-            <div style={{ fontSize:11, color:C.label, marginBottom:8 }}>{t.libNoteSub}</div>
-            <textarea
-              ref={noteRef}
-              value={editNote}
-              onChange={e => setEditNote(e.target.value)}
-              placeholder={t.libNotePlaceholder}
-              style={{ width:"100%", background:"none", border:"none", fontSize:14,
-                color:C.sub, resize:"none", boxSizing:"border-box", outline:"none",
-                fontFamily:"inherit", lineHeight:1.7, display:"block", overflow:"hidden" }}
-            />
-          </div>
-          {noteDirty && (
-            <div style={{ padding:"0 16px 14px" }}>
-              <button onClick={save} style={{ width:"100%", padding:"11px", background:C.blue, border:"none", borderRadius:12, color:"#fff", fontSize:14, fontWeight:600, cursor:"pointer" }}>{t.libNoteSave}</button>
+          <SLabel>{t.libLastEquip}</SLabel>
+          <Card style={{ marginBottom:16 }}>
+            <div style={{ padding:"14px 16px" }}>
+              <div style={{ fontSize:11, color:C.blue, marginBottom:8 }}>{t.libLastEquipSub}</div>
+              {lastH?.equipment
+                ? <div style={{ fontSize:13, color:C.sub, lineHeight:1.6, whiteSpace:"pre-wrap" }}>{lastH.equipment}</div>
+                : <div style={{ fontSize:13, color:C.label, fontStyle:"italic" }}>{t.libLastEquipPlaceholder}</div>
+              }
             </div>
-          )}
-        </Card>
+          </Card>
+
+          <SLabel>{lastMode === "length_pace" ? t.libLastLengthPace : t.libLastSets}</SLabel>
+          <Card style={{ marginBottom:16 }}>
+            <div style={{ padding:"14px 16px" }}>
+              <div style={{ fontSize:11, color:C.blue, marginBottom:10 }}>{t.libLastSetsSub}</div>
+              {!lastH ? (
+              <div style={{ fontSize:13, color:C.label, fontStyle:"italic" }}>{t.libHistoryEmpty}</div>
+            ) : lastMode === "length_pace" ? (
+               <>
+                 {(lastH.lengthPace || []).map((seg, si) => (
+                   <div key={si} style={{ marginBottom:6, fontSize:13, color:C.text }}>
+                     <span style={{ fontWeight:700 }}>{fmtDistance(seg.distance)} {seg.unit}</span>
+                    <span style={{ color:C.label, marginLeft:8 }}>@ {fmtPace(seg.paceMin, seg.paceSec)}/{seg.unit}</span>
+                   </div>
+                 ))}
+                 {lastH.lengthPace && calcOverallPace(lastH.lengthPace) && (() => {
+                  const overall = calcOverallPace(lastH.lengthPace);
+                    return (
+                     <div style={{ fontSize:11, color:C.blue, marginTop:4 }}>
+                       {t.lpOverallPace}：{fmtDistance(overall.totalDistance)} {overall.unit} · {fmtPace(overall.paceMin, overall.paceSec)}/{overall.unit}
+                     </div>
+                    );
+                 })()}
+               </>
+            ) : (
+               (lastH.weightSets || []).map((ws, wi) => (
+                 <div key={wi} style={{ marginBottom:8 }}>
+                   <span style={{ fontSize:13, fontWeight:700, color:C.text, marginRight:10 }}>{ws.weight}</span>
+                   <span style={{ fontSize:12, color:C.label }}>{ws.reps.join(" / ")} {t.repsUnit}</span>
+                   <span style={{ fontSize:11, color:C.label, marginLeft:8 }}>{t.totalReps} {ws.reps.reduce((a,b)=>a+b,0)} {t.repsUnit}</span>
+                 </div>
+               ))
+             )}
+            </div>
+         </Card>
+
+          <SLabel>{t.libNoteTitle}</SLabel>
+          <Card style={{ marginBottom:16 }}>
+            <div style={{ padding:"14px 16px" }}>
+              <div style={{ fontSize:11, color:C.label, marginBottom:8 }}>{t.libNoteSub}</div>
+              <textarea
+                ref={noteRef}
+                value={editNote}
+                onChange={e => setEditNote(e.target.value)}
+                placeholder={t.libNotePlaceholder}
+                style={{ width:"100%", background:"none", border:"none", fontSize:14,
+                  color:C.sub, resize:"none", boxSizing:"border-box", outline:"none",
+                  fontFamily:"inherit", lineHeight:1.7, display:"block", overflow:"hidden" }}
+             />
+            </div>
+            {noteDirty && (
+              <div style={{ padding:"0 16px 14px" }}>
+                <button onClick={save} style={{ width:"100%", padding:"11px", background:C.blue, border:"none", borderRadius:12, color:"#fff", fontSize:14, fontWeight:600, cursor:"pointer" }}>{t.libNoteSave}</button>
+              </div>
+            )}
+          </Card>
         </div>
 
         <div style={{ padding:"16px" }}>
