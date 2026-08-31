@@ -34,77 +34,77 @@ Then: **Share → Add to Home Screen** for full-screen experience.
 
 ### 📚 Workout Library｜訓練動作庫
 
-- Log workouts with weight, sets, reps, and session journals. 
+  - Log workouts with weight, sets, reps, and session journals. 
   
-  - 紀錄重量、組數、次數與當次感受日記。
+    - 紀錄重量、組數、次數與當次感受日記。
 
-- Save every workout as detailed history. 
+  - Save every workout as detailed history. 
   
-  - 將每次訓練資料保存為歷史紀錄。
+    - 將每次訓練資料保存為歷史紀錄。
 
-- Personal exercise library with persistent exercise notes.
+  - Personal exercise library with persistent exercise notes.
   
-  - 建立自己的動作庫，並為每個動作保存永久筆記。
+    - 建立自己的動作庫，並為每個動作保存永久筆記。
 
-- Record distance and pace with multi-segment support. (Designed to work alongside real-time tracking apps with GPS, e.g. Nike Run Club.) 
+  - Record distance and pace with multi-segment support. (Designed to work alongside real-time tracking apps with GPS, e.g. Nike Run Club.) 
   
-  - 支援距離與配速紀錄，並可記錄多段配速。（搭配具 GPS 即時追蹤功能的 App 使用，如 Nike Run Club。）
+    - 支援距離與配速紀錄，並可記錄多段配速。（搭配具 GPS 即時追蹤功能的 App 使用，如 Nike Run Club。）
 
 ### 📅 Training Calendar｜訓練月曆
 
-- Calendar overview with coloured dots for quick visual scanning. 
+  - Calendar overview with coloured dots for quick visual scanning. 
   
-  - 月曆以顏色點標示訓練類型，快速辨識本月訓練內容。
+    - 月曆以顏色點標示訓練類型，快速辨識本月訓練內容。
 
-- Collapsible yearly and monthly history views. 
+  - Collapsible yearly and monthly history views. 
   
-  - 年度與月份皆可收合，讓長期紀錄保持整潔。
+    - 年度與月份皆可收合，讓長期紀錄保持整潔。
 
-- Log workouts up to 10 days in the past. 
+  - Log workouts up to 10 days in the past. 
   
-  - 支援補登 10 天內的訓練紀錄。
+    - 支援補登 10 天內的訓練紀錄。
 
 ### 🤖 AI-ready Workout Export｜爲 AI 分析設計的匯出功能
 
-- Copy Daily workout (TXT) to clipboard in one tap. 
+  - Copy Daily workout (TXT) to clipboard in one tap. 
   
-  - 將單日運動紀錄一鍵複製到剪貼簿。
+    - 將單日運動紀錄一鍵複製到剪貼簿。
 
-- Export long-term workout logs as AI-ready Markdown. 
+  - Export long-term workout logs as AI-ready Markdown. 
   
-  - 將長期運動紀錄匯出為適合 AI 分析的結構化 Markdown。
+    - 將長期運動紀錄匯出為適合 AI 分析的結構化 Markdown。
 
-- Paste your logs to ChatGPT, Gemini, or any LLM of your choice. 
+  - Paste your logs to ChatGPT, Gemini, or any LLM of your choice. 
   
-  - 貼到 ChatGPT、Gemini 或任何你喜歡的 AI 服務。
+    - 貼到 ChatGPT、Gemini 或任何你喜歡的 AI 服務。
 
-- Get personalized analysis, recovery suggestions, and long-term training insights! 
+  - Get personalized analysis, recovery suggestions, and long-term training insights! 
   
-  - 獲得個人化訓練分析、恢復建議、以及長期訓練趨勢洞察！
+    - 獲得個人化訓練分析、恢復建議、以及長期訓練趨勢洞察！
 
 ### 🍉 Hassle-Free Experience｜輕鬆使用
 
-- Bilingual interface (中文 / English) + Night Mode.
+  - Bilingual interface (中文 / English) + Night Mode.
   
-  - 內建中英文介面與深色模式。
+    - 內建中英文介面與深色模式。
 
-- Install as a PWA, works offline, and updates automatically.
+  - Install as a PWA, works offline, and updates automatically.
   
-  - 可安裝至桌面，支援離線使用並自動更新。
+    - 可安裝至桌面，支援離線使用並自動更新。
 
 ### 🔒 Data & Privacy｜資料與隱私
 
-- All data stays in your browser via localStorage — no account required.
+  - All data stays in your browser via localStorage — no account required.
   
-  - 所有資料皆儲存在瀏覽器 localStorage，不需登入帳號。
+    - 所有資料皆儲存在瀏覽器 localStorage，不需登入帳號。
 
-- Export / Import JSON for seamless, offline data backup.
+  - Export / Import JSON for seamless, offline data backup.
   
-  - 存檔 / 讀檔：支援 JSON 匯出及匯入功能。
+    - 存檔 / 讀檔：支援 JSON 匯出及匯入功能。
 
-- Restore sample data or start with a clean library anytime.
+  - Restore sample data or start with a clean library anytime.
   
-  - 可隨時恢復範例資料，或一鍵清空，從自己的訓練開始。
+    - 可隨時恢復範例資料，或一鍵清空，從自己的訓練開始。
 
 ---
 
