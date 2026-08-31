@@ -12,6 +12,12 @@
   輕量、以本地儲存為核心的健身紀錄 App，讓長期訓練變得簡單、專注。
 </h5>
 
+<p align="center">
+<img src="https://img.shields.io/badge/version-2.0.0-violet.svg?style=for-the-badge"/>
+<a href="https://linktr.ee/rubytheduckouo"><img src="https://img.shields.io/badge/author-ruby_chen-brightgreen?style=for-the-badge"></a>
+<a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge"/></a>
+</p>
+
 ---
 
 ## 🚀 Live Demo｜立即使用
@@ -307,16 +313,3 @@ Today, GymReco continues to evolve through daily real-world use — including my
 **v1.0–1.5**
 
 - Initial build, feature expansion, PWA deployment, security hardening
-
----
-
-## 👤 Author｜作者
-
-**Ruby Chen**
-GitHub: [@rubychenhaii](https://github.com/rubychenhaii)
-
----
-
-## 📄 License
-
-MIT © 2026 Ruby Chen
