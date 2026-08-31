@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/gymreco/static/css/main.e6c13ad2.css",
-    "main.js": "/gymreco/static/js/main.5e4b60c4.js",
+    "main.js": "/gymreco/static/js/main.cdbde125.js",
     "static/js/453.13efe3ae.chunk.js": "/gymreco/static/js/453.13efe3ae.chunk.js",
     "index.html": "/gymreco/index.html",
     "main.e6c13ad2.css.map": "/gymreco/static/css/main.e6c13ad2.css.map",
-    "main.5e4b60c4.js.map": "/gymreco/static/js/main.5e4b60c4.js.map",
+    "main.cdbde125.js.map": "/gymreco/static/js/main.cdbde125.js.map",
     "453.13efe3ae.chunk.js.map": "/gymreco/static/js/453.13efe3ae.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.e6c13ad2.css",
-    "static/js/main.5e4b60c4.js"
+    "static/js/main.cdbde125.js"
   ]
 }
