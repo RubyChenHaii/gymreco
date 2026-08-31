@@ -1,12 +1,16 @@
-# 💪 GymReco 🤳
+<p align="center">
+  <img src="public/logo512.png" width="100">
+</p>
 
-<img src="public/logo512.png" width="75">
+<h1 align="center"> GymReco </h1>
 
-**A mobile-first PWA workout tracker / journal ｜ 手機優先的健身紀錄 App （漸進式網頁應用程式）**
+<h5 align="center">
+  A lightweight, local-first workout tracker, designed to make long-term training focused and effortless.
+</h5>
 
-> Log your workouts, build your exercise library, and track your progress — all stored locally on your device.
-> 
-> 輕鬆紀錄訓練、管理動作庫、追蹤進度。資料全部存在你的手機本地端。
+<h5 align="center">
+  輕量、以本地儲存為核心的健身紀錄 App，讓長期訓練變得簡單、專注。
+</h5>
 
 ---
 
