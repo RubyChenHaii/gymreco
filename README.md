@@ -258,6 +258,10 @@ Today, GymReco continues to evolve through daily real-world use — including my
 
 ## 📋 Changelog｜版本紀錄
 
+**Upcoming** : v2.1.0
+
+- Add **Routines** feature: Create simple workout Routine rules, track weekly / monthly training goals.
+
 **v2.0.0**
 
 - Added **Length/Pace** recording mode with automatic Overall Pace calculation. Designed to work alongside real-time tracking apps with GPS such as Nike Run Club.
