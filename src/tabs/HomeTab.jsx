@@ -4,6 +4,7 @@ import { MONTHS_EN, WEEKDAYS, WEEKDAY_CN } from "../data/constants.js";
 import { useC } from "../theme.js";
 import { todayStr, localDate, fmtDate } from "../utils/date.js";
 import { Div, Card, SLabel } from "../components/ui.jsx";
+import { isRoutineComplete } from "../utils/routineUtils.js";
 
 function Calendar({ workouts, library, onDayClick }) {
   const lang = useLang(); const t = T[lang]; const C = useC();
@@ -78,7 +79,7 @@ function Calendar({ workouts, library, onDayClick }) {
   );
 }
 
-export function HomeTab({ workouts, library, setTab, lang, setLang, darkMode, setDarkMode, openDayDetail }) {
+export function HomeTab({ workouts, library, routines, homeStatPeriod, setTab, lang, setLang, darkMode, setDarkMode, openDayDetail }) {
   const t = T[lang]; const C = useC();
   const now = new Date();
   const thisMonthDays = new Set(
@@ -89,6 +90,12 @@ export function HomeTab({ workouts, library, setTab, lang, setLang, darkMode, se
       })
       .map(w => w.date)
   ).size;
+
+  // 已完成目標數：依 homeStatPeriod（在 RoutineTab 設定、App 層級持久化）篩選對應週期的規則
+  const goalsMet = routines
+    .filter(r => r.period === homeStatPeriod)
+    .filter(r => isRoutineComplete(r, workouts, library).complete)
+    .length;
 
   // 最近紀錄：以日為單位，去除同日重複，取最近 3 天
   const recentDates = [...new Set(
@@ -122,13 +129,13 @@ export function HomeTab({ workouts, library, setTab, lang, setLang, darkMode, se
       </div>
       <div style={{ padding:"16px" }}>
         <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, marginBottom:16 }}>
-          <Card style={{ padding:"14px 16px" }}>
+          <Card onClick={() => setTab("history")} style={{ padding:"14px 16px", cursor:"pointer" }}>
             <div style={{ fontSize:26, fontWeight:700, color:C.text }}>{thisMonthDays}<span style={{ fontSize:13, fontWeight:500, color:C.label }}> {t.days}</span></div>
             <div style={{ fontSize:12, color:C.label, marginTop:2 }}>{t.statMonthDays}</div>
           </Card>
-          <Card style={{ padding:"14px 16px" }}>
-            <div style={{ fontSize:26, fontWeight:700, color:C.text }}>{library.length}<span style={{ fontSize:13, fontWeight:500, color:C.label }}> {t.pieces}</span></div>
-            <div style={{ fontSize:12, color:C.label, marginTop:2 }}>{t.statLibCount}</div>
+          <Card onClick={() => setTab("routine")} style={{ padding:"14px 16px", cursor:"pointer" }}>
+            <div style={{ fontSize:26, fontWeight:700, color:C.text }}>{goalsMet}<span style={{ fontSize:13, fontWeight:500, color:C.label }}> {t.pieces}</span></div>
+            <div style={{ fontSize:12, color:C.label, marginTop:2 }}>{homeStatPeriod==="week" ? t.statWeeklyGoals : t.statMonthlyGoals}</div>
           </Card>
         </div>
         <SLabel>{t.sectionCalendar}</SLabel>

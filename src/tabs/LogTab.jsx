@@ -6,8 +6,77 @@ import { todayStr, localDate, uid } from "../utils/date.js";
 import { Div, Card } from "../components/ui.jsx";
 import { WeightSetEditor } from "../components/WeightSetEditor.jsx";
 import { LengthPaceEditor } from "../components/LengthPaceEditor.jsx";
+import { isRoutineComplete } from "../utils/routineUtils.js";
 
-export function LogTab({ library, onSave, onAddToLibrary, showToast }) {
+// LogTab 內嵌的規則總覽區塊：週/月分組顯示已建立規則的達標進度，並提供「+ 新增規則」入口
+// 點擊任一規則列或「+ 新增規則」都會導向 RoutineTab 全螢幕畫面進行實際管理（新增/編輯/刪除）
+function RoutineOverview({ routines, library, workouts, onOpenRoutines, t, C, lang }) {
+  const groupLabel = (g) => lang === "zh" ? g : (MG_EN[g] || g);
+
+  const weekRoutines  = routines.filter(r => r.period === "week");
+  const monthRoutines = routines.filter(r => r.period === "month");
+
+  const Row = ({ routine }) => {
+    const result = isRoutineComplete(routine, workouts, library);
+    const item = routine.matchType === "exercise" ? library.find(l => l.id === routine.matchValue) : null;
+    const dotColor = routine.matchType === "color" ? routine.matchValue : (item ? item.color : null);
+    const label = routine.matchType === "exercise"
+      ? (item ? item.name : t.routineDeletedTag)
+      : routine.matchType === "muscleGroup"
+        ? groupLabel(routine.matchValue)
+        : null;
+    return (
+      <div style={{ display:"flex", alignItems:"center", gap:10, padding:"11px 16px" }}>
+        {dotColor && <div style={{ width:10, height:10, borderRadius:"50%", background:dotColor, flexShrink:0 }} />}
+        <div style={{ flex:1, minWidth:0, fontSize:13, fontWeight:600, color:C.text, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>
+          {(routine.matchType === "exercise" ? t.routineMatchExercise : routine.matchType === "color" ? t.routineMatchColor : t.routineMatchGroup)}
+          {label ? `：${label}` : ""}
+        </div>
+        {result.deleted ? (
+          <span style={{ fontSize:11, fontWeight:600, color:C.label, fontStyle:"italic", flexShrink:0 }}>{t.routineDeletedTag}</span>
+        ) : (
+          <span style={{ fontSize:12, fontWeight:700, color: result.complete ? C.green : C.label, flexShrink:0 }}>
+            {result.count}/{routine.targetCount} {result.complete ? "✓" : ""}
+          </span>
+        )}
+      </div>
+    );
+  };
+
+  if (routines.length === 0) {
+    return (
+      <Card onClick={onOpenRoutines} style={{ marginBottom:16 }}>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"14px 16px" }}>
+          <span style={{ fontSize:14, fontWeight:700, color:C.text }}>{t.routineTitle}</span>
+          <span style={{ color:C.label, fontSize:12, fontWeight:300 }}>{t.routineAddEntry}</span>
+        </div>
+      </Card>
+    );
+  }
+
+  return (
+    <div onClick={onOpenRoutines} style={{ marginBottom:16, cursor:"pointer" }}>
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:8, paddingLeft:2 }}>
+        <span style={{ fontSize:12, fontWeight:500, color:C.label, letterSpacing:0.4, textTransform:"uppercase" }}>{t.routineTitle}</span>
+        <span style={{ color:C.label, fontSize:12, fontWeight:300 }}>{t.routineAddEntry}</span>
+      </div>
+      {weekRoutines.length > 0 && (
+        <Card style={{ marginBottom:10, cursor:"pointer" }}>
+          <div style={{ padding:"8px 16px 2px", fontSize:11, fontWeight:600, color:C.label }}>{t.routineWeekGroup}</div>
+          {weekRoutines.map((r, i) => (<div key={r.id}>{i > 0 && <Div left={16} />}<Row routine={r} /></div>))}
+        </Card>
+      )}
+      {monthRoutines.length > 0 && (
+        <Card style={{ cursor:"pointer" }}>
+          <div style={{ padding:"8px 16px 2px", fontSize:11, fontWeight:600, color:C.label }}>{t.routineMonthGroup}</div>
+          {monthRoutines.map((r, i) => (<div key={r.id}>{i > 0 && <Div left={16} />}<Row routine={r} /></div>))}
+        </Card>
+      )}
+    </div>
+  );
+}
+
+export function LogTab({ library, routines, workouts, onSave, onAddToLibrary, showToast, onOpenRoutines }) {
   const lang = useLang(); const t = T[lang]; const C = useC();
   const [muscleGroups,    setMG]            = useState([]);
   const [showMGPicker,    setShowMG]        = useState(false);
@@ -160,6 +229,7 @@ export function LogTab({ library, onSave, onAddToLibrary, showToast }) {
       </div>
 
       <div style={{ padding:"16px" }}>
+        <RoutineOverview routines={routines} library={library} workouts={workouts} onOpenRoutines={onOpenRoutines} t={t} C={C} lang={lang} />
         {rows.map((row, i) => {
           const item = library.find(l => l.id === row.libId);
           if (!item) return null;

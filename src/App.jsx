@@ -9,6 +9,7 @@ import { LogTab }     from "./tabs/LogTab.jsx";
 import { HistoryTab } from "./tabs/HistoryTab.jsx";
 import { DetailTab, DayDetailTab } from "./tabs/DetailTab.jsx";
 import { LibraryTab } from "./tabs/LibraryTab.jsx";
+import { RoutineTab } from "./tabs/RoutineTab.jsx";
 import { AboutTab }   from "./tabs/AboutTab.jsx";
 
 export default function App() {
@@ -18,11 +19,13 @@ export default function App() {
 
   const [workouts,  setWorkouts]  = useState(() => lsGet("wt_workouts", INIT_WORKOUTS));
   const [library,   setLibrary]   = useState(() => lsGet("wt_library",  INIT_LIBRARY));
+  const [routines,  setRoutines]  = useState(() => lsGet("wt_routines", []));
   const [detailId,  setDetailId]  = useState(null);
   const [detailDate,setDetailDate]= useState(null);
   const [libItemId, setLibItemId] = useState(null);
   const [lang,      setLang]      = useState(() => lsGet("wt_lang", "zh"));
   const [darkMode,  setDarkMode]  = useState(() => lsGet("wt_dark", false));
+  const [homeStatPeriod, setHomeStatPeriod] = useState(() => lsGet("wt_homeStatPeriod", "week")); // 首頁右上角統計卡片要顯示週規則還是月規則的達標數
   const [toast,     setToast]     = useState(null);
 
   const theme = darkMode ? DARK : LIGHT;
@@ -30,8 +33,10 @@ export default function App() {
 
   useEffect(() => { lsSet("wt_workouts", workouts); }, [workouts]);
   useEffect(() => { lsSet("wt_library",  library);  }, [library]);
+  useEffect(() => { lsSet("wt_routines", routines); }, [routines]);
   useEffect(() => { lsSet("wt_lang",     lang);     }, [lang]);
   useEffect(() => { lsSet("wt_dark",     darkMode); }, [darkMode]);
+  useEffect(() => { lsSet("wt_homeStatPeriod", homeStatPeriod); }, [homeStatPeriod]);
 
   const showToast = (msg) => {
     setToast(msg);
@@ -87,20 +92,24 @@ export default function App() {
     }, 0);
   };
   const openDayDetail       = (date) => { setDetailDate(date); navigate("daydetail"); };
+  const openRoutines        = () => navigate("routine");
   const handleEditWorkout   = (id) => { setDetailId(id); navigate("detail"); };
-  const handleImport        = (newWorkouts, newLibrary) => {
+  const handleImport        = (newWorkouts, newLibrary, newRoutines) => {
     setWorkouts(newWorkouts);
     setLibrary(newLibrary);
+    setRoutines(newRoutines || []);
     showToast(lang === "zh" ? "✅ 資料已成功匯入！" : "✅ Data imported successfully!");
   };
 const handleReset = () => {
     setWorkouts(INIT_WORKOUTS);
     setLibrary(INIT_LIBRARY);
+    setRoutines([]);
     showToast(lang === "zh" ? "✅ 已還原為預設範例資料" : "✅ Restored to default sample data");
   };
   const handleClear = () => {
     setWorkouts([]);
     setLibrary([]);
+    setRoutines([]);
     showToast(lang === "zh" ? "✅ 所有資料已清除" : "✅ All data cleared");
   };
 
@@ -150,16 +159,18 @@ const handleReset = () => {
                     onOpenLibItem={openLibItem}
                     onEditWorkout={handleEditWorkout} />
               : tab === "log"
-                ? <LogTab library={library} onSave={handleSave} onAddToLibrary={handleAddToLibrary} showToast={showToast} />
+                ? <LogTab library={library} routines={routines} workouts={workouts} onSave={handleSave} onAddToLibrary={handleAddToLibrary} showToast={showToast} onOpenRoutines={openRoutines} />
               : tab === "history"
                 ? <HistoryTab workouts={workouts} library={library} onOpenDay={openDayDetail} />
               : tab === "library"
                 ? <LibraryTab library={library} setLibrary={setLibrary} openItemId={libItemId} setOpenItemId={setLibItemId} />
+              : tab === "routine"
+                ? <RoutineTab routines={routines} setRoutines={setRoutines} library={library} workouts={workouts} homeStatPeriod={homeStatPeriod} setHomeStatPeriod={setHomeStatPeriod} onBack={() => setTab(prevTab)} />
               : tab === "about"
-                ? <AboutTab workouts={workouts} library={library} onImport={handleImport} onReset={handleReset} onClear={handleClear}/>
-              : <HomeTab workouts={workouts} library={library} setTab={navigate} lang={lang} setLang={setLang} darkMode={darkMode} setDarkMode={setDarkMode} openDayDetail={openDayDetail} />}
+                ? <AboutTab workouts={workouts} library={library} routines={routines} onImport={handleImport} onReset={handleReset} onClear={handleClear}/>
+              : <HomeTab workouts={workouts} library={library} routines={routines} homeStatPeriod={homeStatPeriod} setTab={navigate} lang={lang} setLang={setLang} darkMode={darkMode} setDarkMode={setDarkMode} openDayDetail={openDayDetail} />}
             </div>
-            {tab !== "detail" && tab !== "daydetail" && <BottomNav tab={tab} setTab={setTab} />}
+            {tab !== "detail" && tab !== "daydetail" && tab !== "routine" && <BottomNav tab={tab} setTab={setTab} />}
           </div>
         </div>
       </LangCtx.Provider>

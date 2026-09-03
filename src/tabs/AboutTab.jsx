@@ -6,9 +6,9 @@ import { todayStr } from "../utils/date.js";
 import { exportMDByScope } from "../utils/exportUtils.js";
 
 // ── 版本號：每次發布只需改這一行 ──────────────────────────────
-const APP_VERSION = "2.0.0";
+const APP_VERSION = "2.1.0_b";
 
-export function AboutTab({ workouts, library, onImport, onReset, onClear }) {
+export function AboutTab({ workouts, library, routines, onImport, onReset, onClear }) {
   const lang = useLang(); const t = T[lang]; const C = useC();
   const isZh = lang === "zh";
   const [importConfirm,  setImportConfirm]  = useState(null);
@@ -48,7 +48,7 @@ export function AboutTab({ workouts, library, onImport, onReset, onClear }) {
   };
 
   const exportJSON = () => {
-    const data = { version: APP_VERSION, exportedAt: new Date().toISOString(), workouts, library };
+    const data = { version: APP_VERSION, exportedAt: new Date().toISOString(), workouts, library, routines };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type:"application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a"); a.href = url;
@@ -86,7 +86,21 @@ export function AboutTab({ workouts, library, onImport, onReset, onClear }) {
           if (!Array.isArray(l.history)) throw new Error("invalid");
         }
 
-        setImportConfirm(parsed);
+        // 第四層：routines 為選填欄位（舊版備份沒有這個欄位時，向下相容，預設空陣列，不可讓匯入失敗）
+        // 但若欄位存在，仍需檢查基本結構是否合法，避免匯入壞資料
+        let routines = [];
+        if (parsed.routines !== undefined) {
+          if (!Array.isArray(parsed.routines)) throw new Error("invalid");
+          for (const r of parsed.routines) {
+            if (typeof r.id !== "string" && typeof r.id !== "number") throw new Error("invalid");
+            if (r.period !== "week" && r.period !== "month") throw new Error("invalid");
+            if (!["exercise", "color", "muscleGroup"].includes(r.matchType)) throw new Error("invalid");
+            if (typeof r.targetCount !== "number") throw new Error("invalid");
+          }
+          routines = parsed.routines;
+        }
+
+        setImportConfirm({ ...parsed, routines });
       } catch(err) {
         setImportError(isZh ? "檔案格式不正確，請選擇 GymReco 匯出的 JSON 檔案。" : "Invalid file format. Please select a JSON file exported from GymReco.");
       }
@@ -95,7 +109,7 @@ export function AboutTab({ workouts, library, onImport, onReset, onClear }) {
     e.target.value = "";
   };
 
-  const confirmImport = () => { onImport(importConfirm.workouts, importConfirm.library); setImportConfirm(null); };
+  const confirmImport = () => { onImport(importConfirm.workouts, importConfirm.library, importConfirm.routines); setImportConfirm(null); };
 
   return (
     <div style={{ flex:1, overflowY:"auto", background:C.bg }}>
@@ -180,7 +194,9 @@ export function AboutTab({ workouts, library, onImport, onReset, onClear }) {
           <div style={{ background:C.card, borderRadius:16, padding:"24px 20px", width:"100%", maxWidth:320 }}>
             <div style={{ fontSize:17, fontWeight:700, color:C.text, marginBottom:10, textAlign:"center" }}>{isZh ? "確認匯入" : "Confirm Import"}</div>
             <div style={{ fontSize:14, color:C.sub, marginBottom:8, textAlign:"center", lineHeight:1.6 }}>
-              {isZh ? `找到 ${importConfirm.workouts.length} 筆訓練紀錄、${importConfirm.library.length} 個動作。` : `Found ${importConfirm.workouts.length} workouts and ${importConfirm.library.length} exercises.`}
+              {isZh
+                ? `找到 ${importConfirm.workouts.length} 筆訓練紀錄、${importConfirm.library.length} 個動作、${importConfirm.routines.length} 條規則。`
+                : `Found ${importConfirm.workouts.length} workouts, ${importConfirm.library.length} exercises, and ${importConfirm.routines.length} routines.`}
             </div>
             <div style={{ fontSize:13, color:C.red, marginBottom:20, textAlign:"center", lineHeight:1.6, background:`${C.red}10`, borderRadius:10, padding:"8px 12px" }}>
               {isZh ? "⚠️ 這將覆蓋你目前所有的資料，此動作無法復原。" : "⚠️ This will overwrite all your current data. This cannot be undone."}

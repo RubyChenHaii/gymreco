@@ -8,3 +8,6 @@ export const WEEKDAYS    = ["Sunday","Monday","Tuesday","Wednesday","Thursday","
 export const WEEKDAY_CN  = ["週日","週一","週二","週三","週四","週五","週六"];
 export const MONTHS_EN   = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 export const RECORDING_MODES = ["weight_sets", "length_pace"]; // 動作紀錄模式：weight_sets（重量/組數，適合重訓負重動作）、length_pace（距離/配速，適合跑步游泳等有氧運動）
+
+export const ROUTINE_PERIODS     = ["week", "month"]; // 規則週期：每週 / 每月
+export const ROUTINE_MATCH_TYPES = ["exercise", "color", "muscleGroup"]; // 規則比對條件：指定動作 / 指定顏色 / 指定訓練部位

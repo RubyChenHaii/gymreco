@@ -263,7 +263,7 @@ export function DayDetailTab({ dayWorkouts, library, onBack, onOpenLibItem, onEd
               );
             })}
             <button onClick={() => onEditWorkout(workout.id)}
-              style={{ width:"100%", padding:"12px", background:`${C.f3}`, borderRadius:16, border:`1px solid ${C.blue}50`, fontSize:15, fontWeight:600, color:`${C.sub}`, cursor:"pointer", marginBottom:15, boxShadow:`0 0px 8px ${C.Bshadow}` }}>
+              style={{ width:"100%", padding:"12px", background:`${C.f3}`, borderRadius:16, border:`1px solid ${C.blue}50`, fontSize:15, fontWeight:600, color:`${C.sub}`, cursor:"pointer", marginBottom:15, boxShadow:`0 0px 3px ${C.Bshadow}` }}>
               {lang === "zh" ? "編輯此訓練" : "Edit This Session"}
             </button>
           </div>

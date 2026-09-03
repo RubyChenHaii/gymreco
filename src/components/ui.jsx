@@ -7,10 +7,10 @@ export function Div({ left=0 }) {
   return <div style={{ height:1, background:C.sep, marginLeft:left }} />;
 }
 
-export function Card({ children, style={} }) {
+export function Card({ children, style={}, onClick }) {
   const C = useC();
   return (
-    <div style={{ background:C.card, borderRadius:16, overflow:"hidden", boxShadow:"0 1px 4px rgba(0,0,0,0.12)", ...style }}>
+    <div onClick={onClick} style={{ background:C.card, borderRadius:16, overflow:"hidden", boxShadow:"0 1px 4px rgba(0,0,0,0.12)", cursor:onClick?"pointer":"default", ...style }}>
       {children}
     </div>
   );

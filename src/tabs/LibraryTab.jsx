@@ -236,6 +236,7 @@ export function LibraryTab({ library, setLibrary, openItemId, setOpenItemId }) {
   const [newColor, setNewColor] = useState(COLOR_OPTS[0]);
   const [newRecMode, setNewRecMode] = useState(RECORDING_MODES[0]);
   const [search,   setSearch]   = useState("");
+  const [showDateColorHint, setShowDateColorHint] = useState(false);
 
   const addItem = () => {
     if (!newName.trim()) return;
@@ -261,7 +262,16 @@ export function LibraryTab({ library, setLibrary, openItemId, setOpenItemId }) {
       <div style={{ padding:"8px 20px 14px", background:C.card, borderBottom:`1px solid ${C.sep}`, display:"flex", justifyContent:"space-between", alignItems:"flex-end" }}>
         <div>
           <div style={{ fontSize:13, color:C.label, marginBottom:2 }}>{t.libSubtitle}</div>
-          <div style={{ fontSize:28, fontWeight:700, color:C.text, letterSpacing:-0.5 }}>{t.libTitle}</div>
+          <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+            <div style={{ fontSize:28, fontWeight:700, color:C.text, letterSpacing:-0.5 }}>{t.libTitle}</div>
+            <button onClick={() => setShowDateColorHint(v => !v)}
+              style={{ width:20, height:20, borderRadius:"50%", background:`${C.blue}25`, border:"none", cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", padding:0, flexShrink:0 }}>
+              <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke={C.blue} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="12" y1="13" x2="12" y2="18"/>
+                <circle cx="12" cy="7.5" r="1.5" fill={C.blue} stroke="none"/>
+              </svg>
+            </button>
+          </div>
         </div>
         <button onClick={() => setShowAdd(v => !v)} style={{ background:C.blue, border:"none", borderRadius:12, padding:"8px 16px", color:"#fff", fontSize:14, fontWeight:600, cursor:"pointer", marginBottom:4 }}>{t.libAdd}</button>
       </div>
@@ -300,9 +310,11 @@ export function LibraryTab({ library, setLibrary, openItemId, setOpenItemId }) {
             </div>
           </Card>
         )}
-        <div style={{ fontSize:12, color:C.label, lineHeight:1.6, marginBottom:12, padding:"10px 12px", background:C.f3, borderRadius:10, border:`1px solid ${C.sep}` }}>
-          💡 {t.libCalendarHint}
-        </div>
+        {showDateColorHint && (
+          <div style={{ fontSize:12, color:`${C.blue}95`, lineHeight:1.6, marginBottom:12, padding:"10px 12px", background:C.f3, borderRadius:10, border:`1px solid ${C.blue}60` }}>
+            💡 {t.libCalendarHint}
+          </div>
+        )}
         <div style={{ position:"relative", marginBottom:16 }}>
           <span style={{ position:"absolute", left:12, top:"50%", transform:"translateY(-50%)", color:C.label, fontSize:15 }}>🔍</span>
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder={t.libSearch}

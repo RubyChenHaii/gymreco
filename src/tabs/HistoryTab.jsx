@@ -12,6 +12,7 @@ export function HistoryTab({ workouts, library, onOpenDay }) {
   const lang = useLang(); const t = T[lang]; const C = useC();
   const isZh = lang === "zh";
   const [search, setSearch] = useState("");
+  const [showSearch, setShowSearch] = useState(false);
 
   // ── 搜尋過濾 ──────────────────────────────────────────────
   const filtered = workouts.filter(w => {
@@ -73,25 +74,45 @@ export function HistoryTab({ workouts, library, onOpenDay }) {
 
   return (
     <div style={{ flex:1, overflowY:"auto", background:C.bg }}>
-      <div style={{ padding:"8px 20px 14px", background:C.card, borderBottom:`1px solid ${C.sep}` }}>
-        <div style={{ fontSize:28, fontWeight:700, color:C.text, letterSpacing:-0.5, marginBottom:10 }}>{t.historyTitle}</div>
-        <div style={{ position:"relative" }}>
-          <span style={{ position:"absolute", left:12, top:"50%", transform:"translateY(-50%)", color:C.label, fontSize:15 }}>🔍</span>
-          <input value={search} onChange={e => {
-            setSearch(e.target.value);
-            if (e.target.value) {
-              setOpenYears(new Set(years));
-              setOpenMonths(new Set(months));
-            } else {
+      <div style={{ padding:"8px 20px 14px", background:C.card, borderBottom:`1px solid ${C.sep}`, display:"flex", justifyContent:"space-between", alignItems:"flex-end" }}>
+        <div>
+          <div style={{ fontSize:13, color:C.label, marginBottom:2 }}>{t.historySubtitle}</div>
+          <div style={{ fontSize:28, fontWeight:700, color:C.text, letterSpacing:-0.5 }}>{t.historyTitle}</div>
+        </div>
+        <button onClick={() => {
+          setShowSearch(v => {
+            const next = !v;
+            if (!next) {
+              setSearch("");
               setOpenYears(new Set(years.slice(0, 1)));
               setOpenMonths(new Set(months.slice(0, 1)));
             }
-          }} placeholder={t.historySearch}
-            style={{ width:"100%", background:C.bg, border:`1px solid ${C.sep}`, borderRadius:10, padding:"9px 12px 9px 36px", fontSize:15, color:C.text, boxSizing:"border-box", outline:"none", fontFamily:"inherit" }} />
-        </div>
+            return next;
+          });
+        }}
+          style={{ background:showSearch?`${C.blue}70`:C.f5, border:`1px solid ${showSearch?`${C.blue}70`:C.sep}`, borderRadius:20, width:36, height:36, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", fontSize:15, flexShrink:0, marginBottom:4 }}>
+          🔍
+        </button>
       </div>
 
       <div style={{ padding:"16px" }}>
+        {showSearch && (
+          <div style={{ position:"relative", marginBottom:16 }}>
+            <span style={{ position:"absolute", left:12, top:"50%", transform:"translateY(-50%)", color:C.label, fontSize:15 }}>🔍</span>
+            <input autoFocus value={search} onChange={e => {
+              setSearch(e.target.value);
+              if (e.target.value) {
+                setOpenYears(new Set(years));
+                setOpenMonths(new Set(months));
+              } else {
+                setOpenYears(new Set(years.slice(0, 1)));
+                setOpenMonths(new Set(months.slice(0, 1)));
+              }
+            }} placeholder={t.historySearch}
+              style={{ width:"100%", background:C.card, border:`1px solid ${C.sep}`, borderRadius:12, padding:"10px 12px 10px 36px", fontSize:15, color:C.text, boxSizing:"border-box", outline:"none", fontFamily:"inherit", boxShadow:"0 1px 4px rgba(0,0,0,0.07)" }} />
+          </div>
+        )}
+
         {years.length === 0 && (
           <div style={{ textAlign:"center", padding:"60px 0", color:C.label }}>
             <div style={{ fontSize:36, marginBottom:10 }}>📭</div>
