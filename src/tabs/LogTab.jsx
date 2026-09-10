@@ -55,7 +55,7 @@ function RoutineOverview({ routines, library, workouts, onOpenRoutines, t, C, la
   }
 
   return (
-    <div onClick={onOpenRoutines} style={{ borderBottom:`1px solid ${C.sub}20`, paddingBottom:20, marginBottom:20, cursor:"pointer" }}>
+    <div onClick={onOpenRoutines} style={{ borderBottom:`1px solid ${C.sub}20`, paddingBottom:10, marginBottom:20, cursor:"pointer" }}>
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:8, paddingLeft:2 }}>
         <span style={{ fontSize:12, fontWeight:500, color:C.label, letterSpacing:0.4, textTransform:"uppercase" }}>{t.routineTitle}</span>
         <span style={{ color:C.label, fontSize:12, fontWeight:300 }}>{t.routineAddEntry}</span>
@@ -67,7 +67,7 @@ function RoutineOverview({ routines, library, workouts, onOpenRoutines, t, C, la
         </Card>
       )}
       {monthRoutines.length > 0 && (
-        <Card style={{ cursor:"pointer" }}>
+        <Card style={{ marginBottom:10, cursor:"pointer" }}>
           <div style={{ padding:"8px 16px 2px", fontSize:11, fontWeight:600, color:C.label }}>{t.routineMonthGroup}</div>
           {monthRoutines.map((r, i) => (<div key={r.id}>{i > 0 && <Div left={16} />}<Row routine={r} /></div>))}
         </Card>
