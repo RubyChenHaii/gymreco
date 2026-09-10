@@ -55,7 +55,7 @@ function RoutineOverview({ routines, library, workouts, onOpenRoutines, t, C, la
   }
 
   return (
-    <div onClick={onOpenRoutines} style={{ borderBottom:`1px solid ${C.sub}20`, paddingBottom:5, marginBottom:16, cursor:"pointer" }}>
+    <div onClick={onOpenRoutines} style={{ borderBottom:`1px solid ${C.sub}20`, paddingBottom:20, marginBottom:20, cursor:"pointer" }}>
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:8, paddingLeft:2 }}>
         <span style={{ fontSize:12, fontWeight:500, color:C.label, letterSpacing:0.4, textTransform:"uppercase" }}>{t.routineTitle}</span>
         <span style={{ color:C.label, fontSize:12, fontWeight:300 }}>{t.routineAddEntry}</span>
