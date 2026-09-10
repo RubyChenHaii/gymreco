@@ -37,6 +37,12 @@ export default function App() {
   useEffect(() => { lsSet("wt_lang",     lang);     }, [lang]);
   useEffect(() => { lsSet("wt_dark",     darkMode); }, [darkMode]);
   useEffect(() => { lsSet("wt_homeStatPeriod", homeStatPeriod); }, [homeStatPeriod]);
+  const [swUpdateAvailable, setSwUpdateAvailable] = useState(false);
+  useEffect(() => {
+    const handleSwUpdate = () => setSwUpdateAvailable(true);
+    window.addEventListener("sw-update-available", handleSwUpdate);
+    return () => window.removeEventListener("sw-update-available", handleSwUpdate);
+  }, []);
 
   const showToast = (msg) => {
     setToast(msg);
@@ -130,6 +136,16 @@ const handleReset = () => {
             boxShadow:"0 0 0 1px rgba(255,255,255,0.1),0 0 0 10px #2C2C2E,0 0 0 11px rgba(255,255,255,0.07),0 40px 100px rgba(0,0,0,0.7)",
           }}>
             {!isMobile && <StatusBar />}
+            {swUpdateAvailable && (
+              <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:10,
+                padding:"10px 16px", background:theme.blue, color:"#fff", fontSize:13, fontWeight:600, flexShrink:0 }}>
+                <span>{T[lang].swUpdateMsg}</span>
+                <button onClick={() => window.location.reload()}
+                  style={{ background:"rgba(255,255,255,0.25)", border:"none", borderRadius:8, padding:"5px 12px", color:"#fff", fontSize:12, fontWeight:700, cursor:"pointer", flexShrink:0 }}>
+                  {T[lang].swUpdateBtn}
+                </button>
+              </div>
+            )}
             {toast && (
               <div style={{ position:"absolute", top:60, left:"50%", transform:"translateX(-50%)",
                 background:"rgba(0,0,0,0.82)", color:"#fff", borderRadius:20, padding:"10px 20px",

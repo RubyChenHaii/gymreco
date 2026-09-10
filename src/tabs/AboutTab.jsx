@@ -6,7 +6,7 @@ import { todayStr } from "../utils/date.js";
 import { exportMDByScope } from "../utils/exportUtils.js";
 
 // ── 版本號：每次發布只需改這一行 ──────────────────────────────
-const APP_VERSION = "2.1.0_b";
+const APP_VERSION = "2.1.0_b2";
 
 export function AboutTab({ workouts, library, routines, onImport, onReset, onClear }) {
   const lang = useLang(); const t = T[lang]; const C = useC();

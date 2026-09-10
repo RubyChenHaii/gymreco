@@ -128,6 +128,8 @@ export const T = {
     clearConfirmMsg:"所有訓練紀錄、動作庫與範例資料將被永久清除。此動作無法復原。",
     confirmCancel:"取消",
     confirmProceed:"確認",
+    swUpdateMsg:"有新版本可用",
+    swUpdateBtn:"立即更新",
   },
   en: {
     navHome:"Home", navHistory:"History", navLog:"Train", navLibrary:"Library", navAbout:"About",
@@ -244,6 +246,8 @@ export const T = {
     clearConfirmMsg:"All workout records, exercise library, and sample data will be permanently removed. This cannot be undone.",
     confirmCancel:"Cancel",
     confirmProceed:"Confirm",
+    swUpdateMsg:"A new version is available",
+    swUpdateBtn:"Update Now",
   },
 };
 

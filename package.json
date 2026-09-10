@@ -1,7 +1,7 @@
 {
   "homepage": "https://rubychenhaii.github.io/gymreco",
   "name": "Gym-Reco",
-  "version": "2.0.0",
+  "version": "2.1.0_b",
   "private": true,
   "dependencies": {
     "@testing-library/dom": "^10.4.1",
@@ -17,7 +17,7 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && node scripts/sync-sw-version.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
