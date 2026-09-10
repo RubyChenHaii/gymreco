@@ -264,7 +264,7 @@ Today, GymReco continues to evolve through daily real-world use — including my
 
 - Added **Routines** feature: Create simple workout Routine rules, track weekly / monthly training goals.
 
-- Various UI refinements.
+- Various UI/UX refinements.
 
 **v2.0.0**
 
