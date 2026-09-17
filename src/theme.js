@@ -61,9 +61,9 @@ export const FONT = {
 // 用於浮動於內容之上的元素（Bottom Sheet 面板、對話框），讓底下內容若隱若現地透出
 // 純 CSS backdrop-filter 實現，無第三方依賴；
 // iOS Safari 需要同時加上 WebkitBackdropFilter 前綴才會生效，兩者缺一不可
-export const GLASS_BLUR = "blur(20px) saturate(180%)"; // saturate 是刻意加的：模糊會讓顏色變灰濁，拉高飽和度可以讓透出來的顏色維持鮮豔
+export const GLASS_BLUR = "blur(15px) saturate(180%)"; // saturate 是刻意加的：模糊會讓顏色變灰濁，拉高飽和度可以讓透出來的顏色維持鮮豔
 
-const GLASS_LIGHT = { background:"rgba(255,255,255,0.72)", borderTop:"1px solid rgba(255,255,255,0.5)" };
+const GLASS_LIGHT = { background:"rgba(242,242,247,0.78)", borderTop:"1px solid rgba(255,255,255,0.6)" };
 const GLASS_DARK  = { background:"rgba(44,44,46,0.72)",    borderTop:"1px solid rgba(255,255,255,0.1)" };
 
 export const useGlass = () => useDark() ? GLASS_DARK : GLASS_LIGHT;
