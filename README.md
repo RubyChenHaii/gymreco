@@ -204,17 +204,11 @@ npm run deploy
 - localStorage - no backend required
 - No third-party UI libraries
 - Deployed via GitHub Pages
-- Developed with help from Claude Sonnet 4.6
+- Developed with Claude
 
 ---
 
-## ⛓️ Architecture｜架構
 
-> v2.0.0 Major 架構更新。
-
-<img title="" src="public/screenshots/v2_architecture.png" alt="" width="600">
-
----
 
 ## 🎯 Product Philosophy
 
