@@ -88,7 +88,8 @@ function DetailTabInner({ workout, library, onBack, onOpenLibItem, onUpdateWorko
             </Card>
           );
           return (
-            <Card key={i} style={{ marginBottom:12 }}>
+            //下方Card樣式為HistoryTab中，點進view單日紀錄後，再點按「編輯此訓練」時，進入可編輯該次訓練的UI（第3層）。
+            <Card key={i} tint={{ color: it.color }} style={{ marginBottom:12 }}>
               <div style={{ display:"flex", alignItems:"center", gap:10, padding:"14px 16px 12px" }}>
                 <div style={{ width:10, height:10, borderRadius:"50%", background:it.color, flexShrink:0 }} />
                 <span style={{ flex:1, fontSize:16, fontWeight:700, color:C.text }}>{it.name}</span>
@@ -216,7 +217,8 @@ export function DayDetailTab({ dayWorkouts, library, onBack, onOpenLibItem, onEd
                 </Card>
               );
               return (
-                <Card key={i} style={{ background:`${it.color}0C`, borderLeft:`2px solid ${it.color}60`, borderRight:`2px solid ${it.color}60`, marginBottom:15 }}>
+                //下方Card樣式為HistoryTab中，點進view單日紀錄的樣式（第2層）。點按「編輯此訓練」後，會進入可編輯該次訓練的UI（第3層）。
+                <Card key={i} tint={{ color: it.color, border:"left-right" }} style={{ marginBottom:15 }}>
                   <div style={{ display:"flex", alignItems:"center", gap:10, padding:"14px 16px 12px" }}>
                     <div style={{ width:10, height:10, borderRadius:"50%", background:it.color, flexShrink:0 }} />
                     <span style={{ flex:1, fontSize:17, fontWeight:700, color:C.text }}>{it.name}</span>

@@ -3,7 +3,8 @@ const STATIC_ASSETS = [
   './logo192.png',
   './logo512.png',
   './favicon.ico',
-  './manifest.json'
+  './manifest.json',
+  './apple-touch-icon.png'
 ];
 
 const NETWORK_TIMEOUT_MS = 3000; // 弱網路容忍時間：超過此時間網路還沒回應，就先用快取墊著；如需調整靈敏度，改這個數字即可

@@ -7,6 +7,7 @@ import { Div, Card } from "../components/ui.jsx";
 import { WeightSetEditor } from "../components/WeightSetEditor.jsx";
 import { LengthPaceEditor } from "../components/LengthPaceEditor.jsx";
 import { isRoutineComplete } from "../utils/routineUtils.js";
+import { BottomSheet } from "../components/BottomSheet.jsx";
 
 // LogTab 內嵌的規則總覽區塊：週/月分組顯示已建立規則的達標進度，並提供「+ 新增規則」入口
 // 點擊任一規則列或「+ 新增規則」都會導向 RoutineTab 全螢幕畫面進行實際管理（新增/編輯/刪除）
@@ -176,42 +177,33 @@ export function LogTab({ library, routines, workouts, onSave, onAddToLibrary, sh
           const d = new Date(today); d.setDate(today.getDate() - (i + 1)); return d;
         });
         return (
-          <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.45)", display:"flex", flexDirection:"column", zIndex:200 }}
-            onClick={e => { if (e.target === e.currentTarget) setShowDatePicker(false); }}>
-            <div style={{ marginTop:"auto", background:C.card, borderRadius:"20px 20px 0 0", maxHeight:"70vh", display:"flex", flexDirection:"column" }}>
-              <div style={{ display:"flex", justifyContent:"center", padding:"12px 0 4px" }}>
-                <div style={{ width:36, height:4, borderRadius:2, background:C.sep }} />
-              </div>
-              <div style={{ padding:"8px 20px 12px", display:"flex", justifyContent:"space-between", alignItems:"center", borderBottom:`1px solid ${C.sep}` }}>
-                <span style={{ fontSize:17, fontWeight:700, color:C.text }}>{lang === "zh" ? "選擇日期" : "Select Date"}</span>
-                <button onClick={() => setShowDatePicker(false)} style={{ background:C.f5, border:"none", borderRadius:"50%", width:28, height:28, color:C.label, fontSize:16, cursor:"pointer" }}>×</button>
-              </div>
-              <div style={{ overflowY:"auto", padding:"8px 16px 32px" }}>
-                <div style={{ fontSize:12, color:C.label, textAlign:"center", padding:"8px 0 12px", lineHeight:1.6 }}>
-                  {lang === "zh" ? "補登日期僅限前 10 日之內" : "Back-logging is limited to the past 10 days"}
-                </div>
-                {days.map(d => {
-                  const ds = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-                  const isSelected = ds === selectedDate;
-                  const isT = ds === todayStr();
-                  const dow = d.getDay();
-                  const label = lang === "zh"
-                    ? `${d.getMonth() + 1}月${d.getDate()}日　${WEEKDAY_CN[dow]}`
-                    : `${MONTHS_EN[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}　${WEEKDAYS[dow].slice(0, 3)}`;
-                  return (
-                    <button key={ds} onClick={() => { setSelectedDate(ds); setShowDatePicker(false); }}
-                      style={{ width:"100%", padding:"13px 16px", marginBottom:4, background:isSelected?C.blue:C.f5, border:isSelected?"none":`1px solid ${C.sep}`, borderRadius:12, cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center", boxSizing:"border-box" }}>
-                      <span style={{ fontSize:15, fontWeight:isSelected?700:400, color:isSelected?"#fff":C.text }}>{label}</span>
-                      {isT && <span style={{ fontSize:11, fontWeight:600, color:isSelected?"rgba(255,255,255,0.8)":C.blue, background:isSelected?"rgba(255,255,255,0.2)":`${C.blue}15`, borderRadius:6, padding:"2px 8px" }}>
-                        {lang === "zh" ? "今天" : "Today"}
-                      </span>}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        );
+          <BottomSheet open={showDatePicker} onClose={() => setShowDatePicker(false)}
+            title={lang === "zh" ? "選擇日期" : "Select Date"}>
+           <div style={{ overflowY:"auto", padding:"8px 16px 32px" }}>
+             <div style={{ fontSize:12, color:C.label, textAlign:"center", padding:"8px 0 12px", lineHeight:1.6 }}>
+               {lang === "zh" ? "補登日期僅限前 10 日之內" : "Back-logging is limited to the past 10 days"}
+             </div>
+             {days.map(d => {
+               const ds = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+                const isSelected = ds === selectedDate;
+                const isT = ds === todayStr();
+                const dow = d.getDay();
+                const label = lang === "zh"
+                 ? `${d.getMonth() + 1}月${d.getDate()}日　${WEEKDAY_CN[dow]}`
+                 : `${MONTHS_EN[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}　${WEEKDAYS[dow].slice(0, 3)}`;
+                return (
+                 <button key={ds} onClick={() => { setSelectedDate(ds); setShowDatePicker(false); }}
+                   style={{ width:"100%", padding:"13px 16px", marginBottom:4, background:isSelected?C.blue:C.f5, border:isSelected?"none":`1px solid ${C.sep}`, borderRadius:12, cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center", boxSizing:"border-box" }}>
+                   <span style={{ fontSize:15, fontWeight:isSelected?700:400, color:isSelected?"#fff":C.text }}>{label}</span>
+                   {isT && <span style={{ fontSize:11, fontWeight:600, color:isSelected?"rgba(255,255,255,0.8)":C.blue, background:isSelected?"rgba(255,255,255,0.2)":`${C.blue}15`, borderRadius:6, padding:"2px 8px" }}>
+                     {lang === "zh" ? "今天" : "Today"}
+                    </span>}
+                 </button>
+               );
+             })}
+           </div>
+         </BottomSheet>
+       );
       })()}
 
       <div style={{ padding:"8px 20px 14px", background:C.card, borderBottom:`1px solid ${C.sep}`, display:"flex", justifyContent:"space-between", alignItems:"flex-end" }}>
@@ -235,7 +227,8 @@ export function LogTab({ library, routines, workouts, onSave, onAddToLibrary, sh
           if (!item) return null;
           const mgLabel = lang === "en" ? MG_EN[item.muscleGroup] || item.muscleGroup : item.muscleGroup;
           return (
-            <Card key={i} style={{ background:`${item.color}0C`, borderTop:`2px dashed ${item.color}50`, borderBottom:`2px dashed ${item.color}50`, marginBottom:15 }}>
+            //下方樣式為LogTab中，點按「+ 新增動作」後，會在LogTab內嵌的可編輯UI。
+            <Card key={i} tint={{ color: item.color, border:"top-bottom", borderStyle:"dashed" }} style={{ marginBottom:15 }}>
               <div style={{ display:"flex", alignItems:"center", gap:10, padding:"14px 16px 12px" }}>
                 <div style={{ width:10, height:10, borderRadius:"50%", background:item.color, flexShrink:0 }} />
                 <span style={{ flex:1, fontSize:16, fontWeight:700, color:C.text }}>{item.name}</span>
@@ -299,108 +292,84 @@ export function LogTab({ library, routines, workouts, onSave, onAddToLibrary, sh
       </div>
 
       {/* Library picker sheet */}
-      {showLibPicker && (
-        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.45)", display:"flex", flexDirection:"column", zIndex:200 }}
-          onClick={e => { if (e.target === e.currentTarget) { setShowLib(false); setLibSearch(""); } }}>
-          <div style={{ marginTop:"auto", background:C.card, borderRadius:"20px 20px 0 0", maxHeight:"75vh", display:"flex", flexDirection:"column" }}>
-            <div style={{ display:"flex", justifyContent:"center", padding:"10px 0 4px" }}>
-              <div style={{ width:36, height:4, borderRadius:2, background:"#C7C7CC" }} />
-            </div>
-            <div style={{ padding:"8px 20px 14px", display:"flex", justifyContent:"space-between", alignItems:"center", borderBottom:`1px solid ${C.sep}` }}>
-              <span style={{ fontSize:17, fontWeight:600, color:C.text }}>{t.logPickerTitle}</span>
-              <button onClick={() => { setShowLib(false); setLibSearch(""); }} style={{ background:C.f5, border:"none", borderRadius:"50%", width:28, height:28, color:C.label, fontSize:16, cursor:"pointer" }}>×</button>
-            </div>
-            <div style={{ padding:"12px 16px", borderBottom:`1px solid ${C.sep}` }}>
-              <input value={libSearch} onChange={e => setLibSearch(e.target.value)} placeholder={t.logPickerSearch}
-                style={{ width:"100%", background:C.bg, border:`1px solid ${C.sep}`, borderRadius:10, padding:"10px 14px", fontSize:15, color:C.text, boxSizing:"border-box", outline:"none", fontFamily:"inherit" }} />
-            </div>
-            <div style={{ overflowY:"auto", paddingBottom:20 }}>
-              {/* 新增動作按鈕 */}
-              <button onClick={() => setShowAddNew(true)}
-                style={{ display:"flex", alignItems:"center", gap:12, width:"100%", padding:"14px 20px", background:"none", border:"none", borderBottom:`1px solid ${C.sep}`, cursor:"pointer", textAlign:"left" }}>
-                <div style={{ width:28, height:28, borderRadius:"50%", background:`${C.blue}15`, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
-                  <span style={{ color:C.blue, fontSize:18, lineHeight:1 }}>+</span>
-                </div>
-                <span style={{ fontSize:15, fontWeight:600, color:C.blue }}>{t.logAddNew}</span>
-              </button>
-
-              {Object.entries(grouped).map(([mg, items]) => (
-                <div key={mg}>
-                  <div style={{ padding:"12px 20px 6px", fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.5 }}>
-                    {lang === "en" ? MG_EN[mg] || mg : mg}
-                  </div>
-                  {items.map((it, i) => (
-                    <div key={it.id}>
-                      {i > 0 && <Div left={20} />}
-                      <button onClick={() => addRow(it.id)}
-                        style={{ display:"flex", alignItems:"center", gap:12, width:"100%", padding:"13px 20px", background:"none", border:"none", cursor:"pointer", textAlign:"left" }}>
-                        <div style={{ width:10, height:10, borderRadius:"50%", background:it.color, flexShrink:0 }} />
-                        <span style={{ flex:1, fontSize:16, color:C.text }}>{it.name}</span>
-                        {it.history.length > 0 && <span style={{ fontSize:11, color:C.label }}>{t.logLastSeen} {it.history[it.history.length - 1].date}</span>}
-                        <span style={{ color:C.blue, fontSize:20, lineHeight:1 }}>+</span>
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </div>
-          </div>
+      <BottomSheet open={showLibPicker} onClose={() => { setShowLib(false); setLibSearch(""); }} title={t.logPickerTitle}>
+        <div style={{ padding:"12px 16px", borderBottom:`1px solid ${C.sep}` }}>
+          <input value={libSearch} onChange={e => setLibSearch(e.target.value)} placeholder={t.logPickerSearch}
+          style={{ width:"100%", background:C.bg, border:`1px solid ${C.sep}`, borderRadius:10, padding:"10px 14px", fontSize:15, color:C.text, boxSizing:"border-box", outline:"none", fontFamily:"inherit" }} />
         </div>
-      )}
+          <div style={{ overflowY:"auto", paddingBottom:20 }}>
+             {/* 新增動作按鈕 */}
+            <button onClick={() => setShowAddNew(true)}
+              style={{ display:"flex", alignItems:"center", gap:12, width:"100%", padding:"14px 20px", background:"none", border:"none", borderBottom:`1px solid ${C.sep}`, cursor:"pointer", textAlign:"left" }}>
+              <div style={{ width:28, height:28, borderRadius:"50%", background:`${C.blue}15`, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+                 <span style={{ color:C.blue, fontSize:18, lineHeight:1 }}>+</span>
+              </div>
+              <span style={{ fontSize:15, fontWeight:600, color:C.blue }}>{t.logAddNew}</span>
+            </button>
+
+            {Object.entries(grouped).map(([mg, items]) => (
+              <div key={mg}>
+                <div style={{ padding:"12px 20px 6px", fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.5 }}>
+                  {lang === "en" ? MG_EN[mg] || mg : mg}
+                 </div>
+                {items.map((it, i) => (
+                  <div key={it.id}>
+                    {i > 0 && <Div left={20} />}
+                    <button onClick={() => addRow(it.id)}
+                      style={{ display:"flex", alignItems:"center", gap:12, width:"100%", padding:"13px 20px", background:"none", border:"none", cursor:"pointer", textAlign:"left" }}>
+                       <div style={{ width:10, height:10, borderRadius:"50%", background:it.color, flexShrink:0 }} />
+                      <span style={{ flex:1, fontSize:16, color:C.text }}>{it.name}</span>
+                      {it.history.length > 0 && <span style={{ fontSize:11, color:C.label }}>{t.logLastSeen} {it.history[it.history.length - 1].date}</span>}
+                      <span style={{ color:C.blue, fontSize:20, lineHeight:1 }}>+</span>
+                    </button>
+                   </div>
+                ))}
+              </div>
+            ))}
+          </div>
+      </BottomSheet>
 
       {/* 新增動作 sheet */}
-      {showAddNew && (
-        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.45)", display:"flex", flexDirection:"column", zIndex:300 }}
-          onClick={e => { if (e.target === e.currentTarget) setShowAddNew(false); }}>
-          <div style={{ marginTop:"auto", background:C.card, borderRadius:"20px 20px 0 0", maxHeight:"80vh", display:"flex", flexDirection:"column" }}>
-            <div style={{ display:"flex", justifyContent:"center", padding:"12px 0 4px" }}>
-              <div style={{ width:36, height:4, borderRadius:2, background:C.sep }} />
-            </div>
-            <div style={{ padding:"8px 20px 14px", display:"flex", justifyContent:"space-between", alignItems:"center", borderBottom:`1px solid ${C.sep}` }}>
-              <span style={{ fontSize:17, fontWeight:700, color:C.text }}>{t.logAddNewTitle}</span>
-              <button onClick={() => setShowAddNew(false)} style={{ background:C.f5, border:"none", borderRadius:"50%", width:28, height:28, color:C.label, fontSize:16, cursor:"pointer" }}>×</button>
-            </div>
-            <div style={{ overflowY:"auto", padding:"16px 20px 32px" }}>
-              <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:6 }}>{t.addName}</div>
-              <input value={newName} onChange={e => setNewName(e.target.value)} placeholder={t.addName}
-                style={{ width:"100%", background:C.f5, border:`1px solid ${C.sep}`, borderRadius:10, padding:"10px 12px", fontSize:15, color:C.text, boxSizing:"border-box", outline:"none", fontFamily:"inherit", marginBottom:16 }} />
+      <BottomSheet open={showAddNew} onClose={() => setShowAddNew(false)} title={t.logAddNewTitle} maxHeight="80vh" zIndex={300}>
+        <div style={{ overflowY:"auto", padding:"16px 20px 32px" }}>
+          <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:6 }}>{t.addName}</div>
+          <input value={newName} onChange={e => setNewName(e.target.value)} placeholder={t.addName}
+            style={{ width:"100%", background:C.f5, border:`1px solid ${C.sep}`, borderRadius:10, padding:"10px 12px", fontSize:15, color:C.text, boxSizing:"border-box", outline:"none", fontFamily:"inherit", marginBottom:16 }} />
 
-              <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:8 }}>{t.recModeLabel}</div>
-              <div style={{ display:"flex", gap:8, marginBottom:16 }}>
-                {RECORDING_MODES.map(m => (
-                  <button key={m} onClick={() => setNewRecMode(m)}
-                    style={{ flex:1, background:newRecMode===m?C.blue:"none", border:`1px solid ${newRecMode===m?C.blue:C.sep}`, borderRadius:10, padding:"10px 12px", fontSize:13, fontWeight:600, color:newRecMode===m?"#fff":C.sub, cursor:"pointer" }}>
-                    {m === "weight_sets" ? t.recModeWeightSets : t.recModeLengthPace}
-                  </button>
-                ))}
-              </div>
-
-              <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:8 }}>{t.addMuscle}</div>
-              <div style={{ display:"flex", flexWrap:"wrap", gap:6, marginBottom:16 }}>
-                {MG_OPTIONS.map(mg => (
-                  <button key={mg} onClick={() => setNewMG(mg)}
-                    style={{ background:newMG===mg?C.blue:"none", border:`1px solid ${newMG===mg?C.blue:C.sep}`, borderRadius:20, padding:"5px 12px", fontSize:13, color:newMG===mg?"#fff":C.sub, cursor:"pointer" }}>
-                    {lang === "en" ? MG_EN[mg] || mg : mg}
-                  </button>
-                ))}
-              </div>
-
-              <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:8 }}>{t.addColor}</div>
-              <div style={{ display:"flex", gap:8, flexWrap:"wrap", marginBottom:24 }}>
-                {COLOR_OPTS.map(col => (
-                  <button key={col} onClick={() => setNewColor(col)}
-                    style={{ width:28, height:28, borderRadius:"50%", background:col, border:newColor===col?`3px solid ${C.text}`:"3px solid transparent", cursor:"pointer", padding:0, boxSizing:"border-box" }} />
-                ))}
-              </div>
-
-              <button onClick={handleAddNew} disabled={!newName.trim()}
-                style={{ width:"100%", padding:"14px", background:newName.trim()?C.blue:"#C7C7CC", border:"none", borderRadius:14, color:"#fff", fontSize:15, fontWeight:600, cursor:newName.trim()?"pointer":"not-allowed" }}>
-                {t.addBtn}
+          <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:8 }}>{t.recModeLabel}</div>
+          <div style={{ display:"flex", gap:8, marginBottom:16 }}>
+            {RECORDING_MODES.map(m => (
+              <button key={m} onClick={() => setNewRecMode(m)}
+                style={{ flex:1, background:newRecMode===m?C.blue:"none", border:`1px solid ${newRecMode===m?C.blue:C.sep}`, borderRadius:10, padding:"10px 12px", fontSize:13, fontWeight:600, color:newRecMode===m?"#fff":C.sub, cursor:"pointer" }}>
+                {m === "weight_sets" ? t.recModeWeightSets : t.recModeLengthPace}
               </button>
-            </div>
+            ))}
           </div>
+
+          <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:8 }}>{t.addMuscle}</div>
+          <div style={{ display:"flex", flexWrap:"wrap", gap:6, marginBottom:16 }}>
+            {MG_OPTIONS.map(mg => (
+              <button key={mg} onClick={() => setNewMG(mg)}
+                style={{ background:newMG===mg?C.blue:"none", border:`1px solid ${newMG===mg?C.blue:C.sep}`, borderRadius:20, padding:"5px 12px", fontSize:13, color:newMG===mg?"#fff":C.sub, cursor:"pointer" }}>
+                {lang === "en" ? MG_EN[mg] || mg : mg}
+              </button>
+            ))}
+          </div>
+
+          <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:8 }}>{t.addColor}</div>
+          <div style={{ display:"flex", gap:8, flexWrap:"wrap", marginBottom:24 }}>
+            {COLOR_OPTS.map(col => (
+              <button key={col} onClick={() => setNewColor(col)}
+                style={{ width:28, height:28, borderRadius:"50%", background:col, border:newColor===col?`3px solid ${C.text}`:"3px solid transparent", cursor:"pointer", padding:0, boxSizing:"border-box" }} />
+            ))}
+          </div>
+
+          <button onClick={handleAddNew} disabled={!newName.trim()}
+            style={{ width:"100%", padding:"14px", background:newName.trim()?C.blue:"#C7C7CC", border:"none", borderRadius:14, color:"#fff", fontSize:15, fontWeight:600, cursor:newName.trim()?"pointer":"not-allowed" }}>
+            {t.addBtn}
+          </button>
         </div>
-      )}
+      </BottomSheet>
     </div>
   );
 }

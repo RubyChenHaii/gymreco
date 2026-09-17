@@ -6,6 +6,7 @@ import { Div, Card, SLabel } from "../components/ui.jsx";
 import { NumberPicker } from "../components/NumberPicker.jsx";
 import { uid } from "../utils/date.js";
 import { isRoutineComplete, MAX_ROUTINES } from "../utils/routineUtils.js";
+import { BottomSheet } from "../components/BottomSheet.jsx";
 
 const emptyForm = () => ({ period: "week", matchType: "exercise", matchValue: "", targetCount: 3 });
 
@@ -120,22 +121,12 @@ export function RoutineTab({ routines, setRoutines, library, workouts, homeStatP
       )}
 
       {/* 動作選擇 Bottom Sheet */}
-      {showExPicker && (
-        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.45)", display:"flex", flexDirection:"column", zIndex:200 }}
-          onClick={e => { if (e.target === e.currentTarget) { setShowExPicker(false); setExSearch(""); } }}>
-          <div style={{ marginTop:"auto", background:C.card, borderRadius:"20px 20px 0 0", maxHeight:"75vh", display:"flex", flexDirection:"column" }}>
-            <div style={{ display:"flex", justifyContent:"center", padding:"10px 0 4px" }}>
-              <div style={{ width:36, height:4, borderRadius:2, background:C.sep }} />
-            </div>
-            <div style={{ padding:"8px 20px 14px", display:"flex", justifyContent:"space-between", alignItems:"center", borderBottom:`1px solid ${C.sep}` }}>
-              <span style={{ fontSize:17, fontWeight:600, color:C.text }}>{t.routineMatchExercise}</span>
-              <button onClick={() => { setShowExPicker(false); setExSearch(""); }} style={{ background:C.f5, border:"none", borderRadius:"50%", width:28, height:28, color:C.label, fontSize:16, cursor:"pointer" }}>×</button>
-            </div>
-            <div style={{ padding:"12px 16px", borderBottom:`1px solid ${C.sep}` }}>
-              <input value={exSearch} onChange={e => setExSearch(e.target.value)} placeholder={t.routineSearchExercise}
-                style={{ width:"100%", background:C.bg, border:`1px solid ${C.sep}`, borderRadius:10, padding:"10px 14px", fontSize:15, color:C.text, boxSizing:"border-box", outline:"none", fontFamily:"inherit" }} />
-            </div>
-            <div style={{ overflowY:"auto", paddingBottom:20 }}>
+      <BottomSheet open={showExPicker} onClose={() => { setShowExPicker(false); setExSearch(""); }} title={t.routineMatchExercise}>
+        <div style={{ padding:"12px 16px", borderBottom:`1px solid ${C.sep}` }}>
+          <input value={exSearch} onChange={e => setExSearch(e.target.value)} placeholder={t.routineSearchExercise}
+            style={{ width:"100%", background:C.bg, border:`1px solid ${C.sep}`, borderRadius:10, padding:"10px 14px", fontSize:15, color:C.text, boxSizing:"border-box", outline:"none", fontFamily:"inherit" }} />
+        </div>
+        <div style={{ overflowY:"auto", paddingBottom:20 }}>
               {Object.entries(groupedLib).map(([mg, items]) => (
                 <div key={mg}>
                   <div style={{ padding:"12px 20px 6px", fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.5 }}>{groupLabel(mg)}</div>
@@ -152,9 +143,7 @@ export function RoutineTab({ routines, setRoutines, library, workouts, homeStatP
                 </div>
               ))}
             </div>
-          </div>
-        </div>
-      )}
+      </BottomSheet>
 
       <div style={{ padding:"8px 16px 14px", background:C.card, borderBottom:`1px solid ${C.sep}`, display:"flex", alignItems:"center", gap:8 }}>
         <button onClick={onBack} style={{ background:"none", border:"none", cursor:"pointer", padding:"4px 0", color:C.blue, fontSize:16, fontWeight:500, flexShrink:0 }}>{t.detailBack}</button>

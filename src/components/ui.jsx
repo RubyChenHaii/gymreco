@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useC } from "../theme.js";
+import { useC, withAlpha, TINT_BG_ALPHA, TINT_BORDER_ALPHA } from "../theme.js";
 import { useLang, T } from "../data/i18n.js";
 
 export function Div({ left=0 }) {
@@ -7,10 +7,24 @@ export function Div({ left=0 }) {
   return <div style={{ height:1, background:C.sep, marginLeft:left }} />;
 }
 
-export function Card({ children, style={}, onClick }) {
+// tint 為選填參數，用於「色彩主題卡片」（依動作顏色呈現半透明底色 + 可選邊框）：
+// tint.color：動作顏色（必填）
+// tint.border："none"（預設，無邊框）｜"left-right"｜"top-bottom"
+// tint.borderStyle："solid"（預設）｜"dashed"
+export function Card({ children, style={}, onClick, tint }) {
   const C = useC();
+  const tintStyle = tint ? (() => {
+    const borderColor = withAlpha(tint.color, TINT_BORDER_ALPHA);
+    const borderLine = `2px ${tint.borderStyle || "solid"} ${borderColor}`;
+    return {
+      background: withAlpha(tint.color, TINT_BG_ALPHA),
+      ...(tint.border === "left-right" && { borderLeft:borderLine, borderRight:borderLine }),
+      ...(tint.border === "top-bottom" && { borderTop:borderLine, borderBottom:borderLine }),
+    };
+  })() : {};
+
   return (
-    <div onClick={onClick} style={{ background:C.card, borderRadius:16, overflow:"hidden", boxShadow:"0 1px 4px rgba(0,0,0,0.12)", cursor:onClick?"pointer":"default", ...style }}>
+    <div onClick={onClick} style={{ background:C.card, borderRadius:16, overflow:"hidden", boxShadow:"0 1px 4px rgba(0,0,0,0.12)", cursor:onClick?"pointer":"default", ...tintStyle, ...style }}>
       {children}
     </div>
   );

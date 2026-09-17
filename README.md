@@ -69,7 +69,9 @@ Then: **Share → Add to Home Screen** for full-screen experience.
 - Log workouts up to 10 days in the past. 
   
   - 支援補登 10 天內的訓練紀錄。
+
 - **Routines**: Create simple workout Routine rules, track weekly / monthly training goals!
+  
   - **規律**：製作簡單的運動目標，讓運動成為習慣！
 
 ### 🤖 AI-ready Workout Export｜爲 AI 分析設計的匯出功能
@@ -81,14 +83,6 @@ Then: **Share → Add to Home Screen** for full-screen experience.
 - Export long-term workout logs as AI-ready Markdown. 
   
   - 將長期運動紀錄匯出為適合 AI 分析的結構化 Markdown。
-
-- Paste your logs to ChatGPT, Gemini, or any LLM of your choice. 
-  
-  - 貼到 ChatGPT、Gemini 或任何你喜歡的 AI 服務。
-
-- Get personalized analysis, recovery suggestions, and long-term training insights! 
-  
-  - 獲得個人化訓練分析、恢復建議、以及長期訓練趨勢洞察！
 
 ### 🍉 Hassle-Free Experience｜輕鬆使用
 
@@ -260,11 +254,13 @@ Today, GymReco continues to evolve through daily real-world use — including my
 
 ## 📋 Changelog｜版本紀錄
 
-**v2.1.0**
+**v2.1.0_b (In Development)**
 
 - Added **Routines** feature: Create simple workout Routine rules, track weekly / monthly training goals.
 
-- Various UI/UX refinements.
+- Various UI/UX refinements and bug fixes.
+
+- 
 
 **v2.0.0**
 

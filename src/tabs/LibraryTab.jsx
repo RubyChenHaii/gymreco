@@ -5,6 +5,7 @@ import { useC } from "../theme.js";
 import { uid, fmtDate } from "../utils/date.js";
 import { Div, Card, SLabel } from "../components/ui.jsx";
 import { calcOverallPace, fmtDistance, fmtPace } from "../utils/paceUtils.js";
+import { withAlpha, TINT_BG_ALPHA, TINT_BORDER_ALPHA } from "../theme.js";
 
 
 function LibItemDetail({ item, onUpdate, onDelete, onBack }) {
@@ -111,7 +112,8 @@ function LibItemDetail({ item, onUpdate, onDelete, onBack }) {
           </div>
         )}
 
-        <div style={{ background:`${editColor}0C`, borderBottom:`3px dotted ${editColor}65`, borderBottomLeftRadius:20, borderBottomRightRadius:20, padding:"16px 16px 4px" }}>
+        {/* 下方樣式為LibraryTab中，點選個別動作後，將該動作「上次器材設定、上次重量組次、動作知識筆記」包在一起的UI。 */}
+        <div style={{ background:withAlpha(editColor, TINT_BG_ALPHA), borderBottom:`3px dotted ${withAlpha(editColor, TINT_BORDER_ALPHA)}`, borderBottomLeftRadius:20, borderBottomRightRadius:20, padding:"16px 16px 4px" }}>
           <SLabel>{t.libLastEquip}</SLabel>
           <Card style={{ marginBottom:16 }}>
             <div style={{ padding:"14px 16px" }}>

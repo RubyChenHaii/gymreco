@@ -1,3 +1,4 @@
+import { Button } from "../components/Button.jsx";
 import { useState } from "react";
 import { useLang, T, MG_EN } from "../data/i18n.js";
 import { MONTHS_EN, WEEKDAYS, WEEKDAY_CN } from "../data/constants.js";
@@ -168,10 +169,9 @@ export function HomeTab({ workouts, library, routines, homeStatPeriod, setTab, l
             </div>
           ))}
         </Card>
-        <button onClick={() => setTab("log")} 
-          style={{ width:"100%", padding:"16px", background:`${C.f3}`, border:`2px solid ${C.blue}55`, borderRadius:16, color:`${C.blue}`, fontSize:16, fontWeight:750, cursor:"pointer", boxShadow:`0 2px 10px ${C.Bshadow}` }}>
+        <Button variant="tinted" onClick={() => setTab("log")} style={{ fontWeight:750, boxShadow:`0 2px 10px ${C.Bshadow}` }}>
           {t.btnStartToday}
-        </button>
+        </Button>
       </div>
     </div>
   );

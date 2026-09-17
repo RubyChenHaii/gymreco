@@ -27,7 +27,7 @@ export const T = {
     logFeelingLabel:"當次感受", logFeelingSub:"今天做這個動作的狀態（僅記錄在本次訓練）",
     logFeelingPlaceholder:"今天的狀態、感受…",
     logRemove:"移除", logAddExercise:"+ 新增動作 / 從動作庫選擇...", logSave:"完成訓練",
-    logAddNew:"＋ 新增動作", logAddNewTitle:"新增動作到庫",
+    logAddNew:"＋ 新增動作", logAddNewTitle:"新增動作至動作庫",
     logPickerTitle:"選擇動作", logPickerSearch:"搜尋動作名稱或部位…",
     logLastSeen:"上次",
     // History

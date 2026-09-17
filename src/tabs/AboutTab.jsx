@@ -4,9 +4,10 @@ import { useC } from "../theme.js";
 import { Card, SLabel } from "../components/ui.jsx";
 import { todayStr } from "../utils/date.js";
 import { exportMDByScope } from "../utils/exportUtils.js";
+import { BottomSheet } from "../components/BottomSheet.jsx";
 
 // ── 版本號：每次發布只需改這一行 ──────────────────────────────
-const APP_VERSION = "2.1.0_b2";
+const APP_VERSION = "2.1.0_b3";
 
 export function AboutTab({ workouts, library, routines, onImport, onReset, onClear }) {
   const lang = useLang(); const t = T[lang]; const C = useC();
@@ -115,25 +116,12 @@ export function AboutTab({ workouts, library, routines, onImport, onReset, onCle
     <div style={{ flex:1, overflowY:"auto", background:C.bg }}>
 
       {/* ── MD 匯出 Bottom Sheet ─────────────────────────────── */}
-      {showMDSheet && (
-        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.45)", display:"flex", flexDirection:"column", zIndex:200 }}
-          onClick={e => { if(e.target===e.currentTarget) setShowMDSheet(false); }}>
-          <div style={{ marginTop:"auto", background:C.card, borderRadius:"20px 20px 0 0", maxHeight:"75vh", display:"flex", flexDirection:"column" }}>
-            {/* Handle */}
-            <div style={{ display:"flex", justifyContent:"center", padding:"12px 0 4px" }}>
-              <div style={{ width:36, height:4, borderRadius:2, background:C.sep }}/>
-            </div>
-            {/* Header */}
-            <div style={{ padding:"8px 20px 14px", display:"flex", justifyContent:"space-between", alignItems:"center", borderBottom:`1px solid ${C.sep}` }}>
-              <div>
-                <div style={{ fontSize:17, fontWeight:700, color:C.text }}>{t.mdSheetTitle}</div>
-                <div style={{ fontSize:12, color:C.label, marginTop:2 }}>{t.mdSheetSub}</div>
-              </div>
-              <button onClick={() => setShowMDSheet(false)}
-                style={{ background:C.f5, border:"none", borderRadius:"50%", width:30, height:30, fontSize:18, color:C.label, cursor:"pointer" }}>×</button>
-            </div>
+      <BottomSheet open={showMDSheet} onClose={() => setShowMDSheet(false)} title={t.mdSheetTitle}>
+        <div style={{ padding:"0px 20px 10px" }}>
+         <div style={{ fontSize:12, color:C.label, marginTop:-23 }}>{t.mdSheetSub}</div>
+        </div>
             {/* 選項列表 */}
-            <div style={{ overflowY:"auto", padding:"12px 16px 32px" }}>
+            <div style={{ overflowY:"auto", padding:"10px 16px 32px" }}>
               {/* 全部 */}
               <button onClick={() => doExport("all")}
                 style={{ width:"100%", padding:"14px 16px", background:`${C.blue}10`, border:`1px solid ${C.blue}30`, borderRadius:12, cursor:"pointer",
@@ -185,9 +173,7 @@ export function AboutTab({ workouts, library, routines, onImport, onReset, onCle
                 </div>
               ))}
             </div>
-          </div>
-        </div>
-      )}
+      </BottomSheet>
 
       {importConfirm && (
         <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.5)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:300, padding:"20px" }}>
