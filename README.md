@@ -113,11 +113,11 @@ Then: **Share → Add to Home Screen** for full-screen experience.
 ## 📸 Screenshots
 
 <div style="display: flex; overflow-x: auto; gap: 12px; padding: 8px 0; max-width: 100%;">
-  <img src="public/screenshots/1_Homepage.PNG" alt="畫面 1" height="400" style="border-radius: 8px;" />
-  <img src="public/screenshots/2_History.PNG" alt="畫面 2" height="400" style="border-radius: 8px;" />
-  <img src="public/screenshots/3_Detail.PNG" alt="畫面 3" height="400" style="border-radius: 8px;" />
-  <img src="public/screenshots/4_Log.PNG" alt="畫面 4" height="400" style="border-radius: 8px;" />
-  <img src="public/screenshots/5_Library.PNG" alt="畫面 5" height="400" style="border-radius: 8px;" />
+  <img src="public/screenshots/1_Homepage.PNG" alt="畫面 1" height="320" style="border-radius: 8px;" />
+  <img src="public/screenshots/2_History.PNG" alt="畫面 2" height="320" style="border-radius: 8px;" />
+  <img src="public/screenshots/3_Detail.PNG" alt="畫面 3" height="320" style="border-radius: 8px;" />
+  <img src="public/screenshots/4_Log.PNG" alt="畫面 4" height="320" style="border-radius: 8px;" />
+  <img src="public/screenshots/5_Library.PNG" alt="畫面 5" height="320" style="border-radius: 8px;" />
 </div>
 
 ---
