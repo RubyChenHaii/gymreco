@@ -7,7 +7,7 @@ import { exportMDByScope } from "../utils/exportUtils.js";
 import { BottomSheet } from "../components/BottomSheet.jsx";
 
 // ── 版本號：每次發布只需改這一行 ──────────────────────────────
-const APP_VERSION = "2.1.0_b3";
+const APP_VERSION = "2.1.1_b";
 
 export function AboutTab({ workouts, library, routines, onImport, onReset, onClear }) {
   const lang = useLang(); const t = T[lang]; const C = useC();
