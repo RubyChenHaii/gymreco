@@ -100,7 +100,7 @@ export function LengthPaceEditor({ lengthPace, onChange }) {
         const tt = totalTimes[i] || { min: 0, sec: 0 };
         return (
           <div key={i} style={{ marginBottom:14 }}>
-            <div style={{ display:"flex", alignItems:"center", gap:6, flexWrap:"wrap", rowGap:8, width: "100%" }}>
+            <div style={{ display:"flex", alignItems:"center", gap:6, flexWrap:"wrap", rowGap:8 }}>
               {/* 群組一：距離＋單位＋@ */}
               <div style={{ display:"flex", alignItems:"center", gap:5, flexShrink:0 }}>
                 <div style={{ display:"flex", alignItems:"center", gap:4 }}>
