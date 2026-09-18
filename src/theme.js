@@ -63,6 +63,11 @@ export const FONT = {
 // iOS Safari 需要同時加上 WebkitBackdropFilter 前綴才會生效，兩者缺一不可
 export const GLASS_BLUR = "blur(15px) saturate(180%)"; // saturate 是刻意加的：模糊會讓顏色變灰濁，拉高飽和度可以讓透出來的顏色維持鮮豔
 
+// 用於玻璃面板（BottomSheet）內的按鈕/清單項目，
+// 讓它們跟半透明的玻璃底色之間，靠陰影製造出立體區隔，而非依賴顏色本身的對比
+// 刻意做得很淺（8% 不透明度、1px 位移），只是提供「有沒有浮起來」的感覺，不會搶走視覺焦點
+export const GLASS_SURFACE_SHADOW = "0 1px 3px rgba(0,0,0,0.08)";
+
 const GLASS_LIGHT = { background:"rgba(242,242,247,0.78)", borderTop:"1px solid rgba(255,255,255,0.6)" };
 const GLASS_DARK  = { background:"rgba(44,44,46,0.72)",    borderTop:"1px solid rgba(255,255,255,0.1)" };
 

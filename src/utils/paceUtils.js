@@ -21,6 +21,28 @@ export const fmtDistance = (n) => {
 
 // 格式化配速顯示，例如 (6, 5) → 6'05"
 export const fmtPace = (min, sec) => `${min}'${String(sec).padStart(2, "0")}"`;
+// 將「配速 + 距離」換算為總時間（供切換到「總時間」模式時，用目前配速預填草稿）
+export const paceToTime = (paceMin, paceSec, distance) => {
+  if (!distance || distance <= 0) return { min: 0, sec: 0 };
+  const totalSeconds = distance * ((paceMin || 0) * 60 + (paceSec || 0));
+  let min = Math.floor(totalSeconds / 60);
+  let sec = Math.round(totalSeconds % 60);
+  if (sec === 60) { min += 1; sec = 0; }
+  return { min, sec };
+};
+
+// 將「總時間 + 距離」換算為每單位距離的配速
+// 用於單段（或跑步機這種只給總距離/總時間的來源）：使用者輸入總時間，換算回配速存入 paceMin/paceSec
+// distance <= 0 時無法換算，回傳 null
+export const timeToPace = (totalMin, totalSec, distance) => {
+  if (!distance || distance <= 0) return null;
+  const totalSeconds = (totalMin || 0) * 60 + (totalSec || 0);
+  const secPerUnit = totalSeconds / distance;
+  let paceMin = Math.floor(secPerUnit / 60);
+  let paceSec = Math.round(secPerUnit % 60);
+  if (paceSec === 60) { paceMin += 1; paceSec = 0; }
+  return { paceMin, paceSec };
+};
 
 // 計算整體配速
 // 輸入：lengthPace = [{ distance, unit, paceMin, paceSec }, ...]

@@ -8,6 +8,7 @@ import { WeightSetEditor } from "../components/WeightSetEditor.jsx";
 import { LengthPaceEditor } from "../components/LengthPaceEditor.jsx";
 import { isRoutineComplete } from "../utils/routineUtils.js";
 import { BottomSheet } from "../components/BottomSheet.jsx";
+import { GLASS_SURFACE_SHADOW } from "../theme.js";
 
 // LogTab 內嵌的規則總覽區塊：週/月分組顯示已建立規則的達標進度，並提供「+ 新增規則」入口
 // 點擊任一規則列或「+ 新增規則」都會導向 RoutineTab 全螢幕畫面進行實際管理（新增/編輯/刪除）
@@ -193,7 +194,7 @@ export function LogTab({ library, routines, workouts, onSave, onAddToLibrary, sh
                  : `${MONTHS_EN[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}　${WEEKDAYS[dow].slice(0, 3)}`;
                 return (
                  <button key={ds} onClick={() => { setSelectedDate(ds); setShowDatePicker(false); }}
-                   style={{ width:"100%", padding:"13px 16px", marginBottom:4, background:isSelected?C.blue:C.f5, border:isSelected?"none":`1px solid ${C.sep}`, borderRadius:12, cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center", boxSizing:"border-box" }}>
+                   style={{ width:"100%", padding:"13px 16px", marginBottom:4, background:isSelected?C.blue:C.f5, border:isSelected?"none":`1px solid ${C.sep}`, borderRadius:12, cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center", boxSizing:"border-box", boxShadow: isSelected ? "none" : GLASS_SURFACE_SHADOW }}>
                    <span style={{ fontSize:15, fontWeight:isSelected?700:400, color:isSelected?"#fff":C.text }}>{label}</span>
                    {isT && <span style={{ fontSize:11, fontWeight:600, color:isSelected?"rgba(255,255,255,0.8)":C.blue, background:isSelected?"rgba(255,255,255,0.2)":`${C.blue}15`, borderRadius:6, padding:"2px 8px" }}>
                      {lang === "zh" ? "今天" : "Today"}

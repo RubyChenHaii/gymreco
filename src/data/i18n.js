@@ -98,9 +98,11 @@ export const T = {
     weightPlaceholder:"重量（如 15kg、自重）",
     // Pace_Segment editor 
     lpSegments:"配速分段：", lpAddSegment:"+ 新增分段",
-    lpFieldsHint:"距離（整數.小數）單位 ＠ 配速（分＇秒＂）",
+    lpFieldsHint:"距離 (整數.小數) 單位 ＠ 分＇秒＂(配速 or 總時間)",
     lpUnitPlaceholder:"單位", lpOverallPace:"整體配速",
     lpMixedUnit:"各段單位不一致，無法計算整體配速",
+    lpModePace:"配速", lpModeTime:"總時間", lpTotalTimeSuffix:"",
+    lpDerivedPace:"換算配速",
     // Misc
     times:"次", pieces:"個", totalReps:"共", repsUnit:"下",
     savedAlert:"✅ 已儲存！動作知識筆記已同步至動作庫。",
@@ -217,9 +219,12 @@ export const T = {
     weightPlaceholder:"Weight (e.g. 15kg, bodyweight)",
     // Pace_Segment editor
     lpSegments:"Segments:", lpAddSegment:"+ Add Segment",
-    lpFieldsHint:"Distance (int.dec) unit @ Pace (min'sec\")",
+    lpFieldsHint:"Distance (int.dec) unit @ min'sec\" (Pace or Total Time)",
     lpUnitPlaceholder:"Unit", lpOverallPace:"Overall Pace",
     lpMixedUnit:"Units differ across segments — overall pace unavailable",
+    lpModePace:"Pace", lpModeTime:"Total Time", lpTotalTimeSuffix:"",
+    lpDerivedPace:"Calculated Pace",
+    // Misc
     times:"", pieces:"", totalReps:"Total", repsUnit:"reps",
     savedAlert:"✅ Saved! Knowledge notes synced to library.",
     atLeastOne:"Please add at least one exercise.",
