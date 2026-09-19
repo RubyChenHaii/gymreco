@@ -8,6 +8,8 @@ import { WeightSetEditor } from "../components/WeightSetEditor.jsx";
 import { LengthPaceEditor } from "../components/LengthPaceEditor.jsx";
 import { calcOverallPace, fmtDistance, fmtPace } from "../utils/paceUtils.js";
 
+//下方為DetailTab，呼叫DetailTabInner，主要負責顯示「單次」訓練紀錄。
+//DayDetailTab則是呼叫DetailTab，負責逐條列出當日的每條訓練紀錄。
 export function DetailTab(props) {
   if (!props.workout) return null;
   return <DetailTabInner {...props} />;
@@ -133,6 +135,16 @@ export function DayDetailTab({ dayWorkouts, library, onBack, onOpenLibItem, onEd
   const lang = useLang(); const t = T[lang]; const C = useC();
   const isZh = lang === "zh";
   const [copyDone, setCopyDone] = useState(false);
+
+  // 動作知識筆記的展開狀態：預設全部收合。key 為「訓練 id + 動作索引」，
+  // 同一天內即使同一動作出現在不同次訓練，也能各自獨立展開/收合
+  const [openNotes, setOpenNotes] = useState(() => new Set());
+  const toggleNote = (key) => setOpenNotes(prev => {
+    const next = new Set(prev);
+    next.has(key) ? next.delete(key) : next.add(key);
+    return next;
+  });
+
   if (!dayWorkouts || dayWorkouts.length === 0) return null;
 
   // dayWorkouts 從 App.jsx 傳入時已是舊→新順序（已 reverse），直接使用
@@ -217,7 +229,7 @@ export function DayDetailTab({ dayWorkouts, library, onBack, onOpenLibItem, onEd
                 </Card>
               );
               return (
-                //下方Card樣式為HistoryTab中，點進view單日紀錄的樣式（第2層）。點按「編輯此訓練」後，會進入可編輯該次訓練的UI（第3層）。
+                //下方Card樣式為DayDetailTab：HistoryTab中，點進view當日逐條運動紀錄的樣式（第2層）。點按「編輯此訓練」後，會進入可編輯該次訓練的UI（第3層）。
                 <Card key={i} tint={{ color: it.color, border:"left-right" }} style={{ marginBottom:15 }}>
                   <div style={{ display:"flex", alignItems:"center", gap:10, padding:"14px 16px 12px" }}>
                     <div style={{ width:10, height:10, borderRadius:"50%", background:it.color, flexShrink:0 }} />
@@ -259,7 +271,37 @@ export function DayDetailTab({ dayWorkouts, library, onBack, onOpenLibItem, onEd
                       ))
                     )}                    
                   </div>
-                  {it.note && (<><Div /><div style={{ padding:"10px 16px" }}><div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:2 }}>{t.detailKnowledge}</div><div style={{ fontSize:10, color:C.label, marginBottom:6 }}>{t.detailKnowledgeSub}</div><div style={{ fontSize:13, color:C.sub, lineHeight:1.7, whiteSpace:"pre-wrap", background:C.f3, borderRadius:10, padding:"10px 12px" }}>{it.note}</div></div></>)}
+                  {it.note && (() => {
+                    const noteKey = `${workout.id}-${i}`;
+                    const noteOpen = openNotes.has(noteKey);
+                    // 取第一個非空白行作為收合時的預覽（單行截斷）
+                    const notePreview = it.note.split("\n").find(l => l.trim()) || "";
+                    return (
+                      <>
+                        <Div />
+                        <div style={{ padding:"10px 16px" }}>
+                          <button onClick={() => toggleNote(noteKey)} aria-expanded={noteOpen}
+                            style={{ width:"100%", display:"flex", alignItems:"center", justifyContent:"space-between", gap:10, background:"none", border:"none", padding:0, cursor:"pointer", textAlign:"left" }}>
+                            <div style={{ flex:1, minWidth:0 }}>
+                              <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4 }}>{t.detailKnowledge}</div>
+                              {noteOpen
+                                ? <div style={{ fontSize:10, color:C.label, marginTop:2 }}>{t.detailKnowledgeSub}</div>
+                                : <div style={{ fontSize:12, color:C.label, marginTop:3, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{notePreview}</div>}
+                            </div>
+                            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke={C.label} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                              style={{ transform: noteOpen ? "rotate(180deg)" : "rotate(0deg)", transition:"transform 0.2s", flexShrink:0 }}>
+                              <path d="M6 9l6 6 6-6"/>
+                            </svg>
+                          </button>
+                          {noteOpen && (
+                            <div style={{ fontSize:13, color:C.sub, lineHeight:1.7, whiteSpace:"pre-wrap", background:C.f3, borderRadius:10, padding:"10px 12px", marginTop:8 }}>
+                              {it.note}
+                            </div>
+                          )}
+                        </div>
+                      </>
+                    );
+                  })()}
                   {ex.feeling && (<><Div /><div style={{ padding:"10px 16px 14px" }}><div style={{ fontSize:11, fontWeight:600, color:C.orange, letterSpacing:0.4, marginBottom:2 }}>{t.detailFeeling}</div><div style={{ fontSize:13, color:C.sub, lineHeight:1.7, whiteSpace:"pre-wrap", background:`${C.orange}08`, border:`1px solid ${C.orange}25`, borderRadius:10, padding:"10px 12px" }}>{ex.feeling}</div></div></>)}
                 </Card>
               );

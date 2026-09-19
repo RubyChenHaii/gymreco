@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="public/logo512.png" width="100">
+  <img src="public/logo512.png" width="100" style="border-radius: 8px;">
 </p>
 
 <h1 align="center"> GymReco </h1>
@@ -252,13 +252,13 @@ Today, GymReco continues to evolve through daily real-world use — including my
 
 ## 📋 Changelog｜版本紀錄
 
-**v2.1.0_b (In Development)**
+**v2.1.x (In Development)**
 
 - Added **Routines** feature: Create simple workout Routine rules, track weekly / monthly training goals.
 
-- Various UI/UX refinements and bug fixes.
+- **Componentization & Style Unification:** Extracted reusable UI components (e.g. BottomTab) and unified their visual styling.
 
-- 
+- Various UI/UX refinements and bug fixes.
 
 **v2.0.0**
 

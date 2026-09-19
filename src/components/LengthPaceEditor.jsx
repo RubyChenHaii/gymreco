@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { useC } from "../theme.js";
+import { useC, fluidSize } from "../theme.js";
 import { useLang, T } from "../data/i18n.js";
 import { NumberPicker } from "./NumberPicker.jsx";
 import { calcOverallPace, fmtDistance, fmtPace, splitDistance, joinDistance, timeToPace, paceToTime } from "../utils/paceUtils.js";
 
 const DISTANCE_MIN = 0;     // 每段（整數位）距離下限
 const DISTANCE_MAX = 10;    // 每段（整數位）距離上限；總距離已在下方「整體配速」加總顯示
-const DIGIT_W = 36;         // 統一所有數字滾輪的寬度（距離整數位/小數位、配速分/秒、總時間分/秒）
+const DIGIT_W = fluidSize(32, 45);   // 375px（iPhone SE）→32px；440px（iPhone 16 Pro Max）→45px
 const TOTAL_MIN_MAX = 60;   // 「總時間」模式下分鐘滾輪上限（超過 1 小時建議改用多分段紀錄）
 
 export function LengthPaceEditor({ lengthPace, onChange }) {
@@ -109,7 +109,7 @@ export function LengthPaceEditor({ lengthPace, onChange }) {
                   <NumberPicker value={decPart} onChange={v => updDistance(i, intPart, v)} min={0} max={9} width={DIGIT_W} />
                 </div>
                 <input value={seg.unit} onChange={e => updSeg(i, { unit: e.target.value })} placeholder={t.lpUnitPlaceholder}
-                  style={{ width:32, background:C.f5, border:"none", borderRadius:10, padding:"8px 4px", fontSize:12, fontWeight:600, color:C.text, outline:"none", fontFamily:"inherit", textAlign:"center" }} />
+                  style={{ width: fluidSize(30, 40), background:C.f5, border:"none", borderRadius:10, padding:"8px 4px", fontSize:12, fontWeight:600, color:C.text, outline:"none", fontFamily:"inherit", textAlign:"center" }} />
                 <span style={{ fontSize:13, color:C.label }}>@</span>
               </div>
 

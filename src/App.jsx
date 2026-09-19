@@ -130,10 +130,12 @@ const handleReset = () => {
           <div style={isMobile ? {
             width:"100%", height:"100dvh", background:theme.card,
             display:"flex", flexDirection:"column", overflow:"hidden",
+            containerType:"inline-size",   // ← 新增：讓內部子元件可用 cqw 抓到「這個外殼」的實際寬度
           } : {
             width:393, height:852, background:theme.card, borderRadius:52,
             overflow:"hidden", display:"flex", flexDirection:"column", position:"relative",
             boxShadow:"0 0 0 1px rgba(255,255,255,0.1),0 0 0 10px #2C2C2E,0 0 0 11px rgba(255,255,255,0.07),0 40px 100px rgba(0,0,0,0.7)",
+            containerType:"inline-size",   // ← 新增：同上，讓 Mac 預覽的固定外殼也套用同一套邏輯
           }}>
             {!isMobile && <StatusBar />}
             {swUpdateAvailable && (

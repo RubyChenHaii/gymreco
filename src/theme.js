@@ -57,6 +57,19 @@ export const FONT = {
   largeTitle: 28, // 頁面大標題
 };
 
+// ── 響應式尺寸工具（Container Query 版）──────────────────────
+// 依「兩個參考寬度／對應數值」線性內插，轉換成 CSS clamp() 字串。
+// 用 cqw（container query width）取代 vw：cqw 抓的是「最近的、設定了 container-type 的祖先容器」寬度，
+// 不是整個瀏覽器視窗——不管是 Mac 預覽固定 393px 的手機外殼，iPhone SE 的 375px，iPhone Pro Max 的 440px，
+// 還是真機上貼齊裝置寬度的外殼，都能拿到正確的參考寬度。
+// 使用前必須確保外層有祖先元素設定了 containerType:"inline-size"（見 App.jsx 手機外殼 div）。
+export const fluidSize = (minPx, maxPx, minCq = 375, maxCq = 440) => {
+  const slope = (maxPx - minPx) / (maxCq - minCq);
+  const base = minPx - slope * minCq;
+  const cqCoeff = slope * 100;
+  return `clamp(${minPx}px, calc(${base.toFixed(2)}px + ${cqCoeff.toFixed(2)}cqw), ${maxPx}px)`;
+};
+
 // ── 玻璃感（Glassmorphism）Token ──────────────────────────
 // 用於浮動於內容之上的元素（Bottom Sheet 面板、對話框），讓底下內容若隱若現地透出
 // 純 CSS backdrop-filter 實現，無第三方依賴；
