@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gymreco-v2.1.1_b'; // 這裡的值只在本機開發時有意義，正式 build 時會被 scripts/sync-sw-version.js 自動覆寫成跟 APP_VERSION 一致
+const CACHE_NAME = 'gymreco-v2.1.2_b'; // 這裡的值只在本機開發時有意義，正式 build 時會被 scripts/sync-sw-version.js 自動覆寫成跟 APP_VERSION 一致
 const STATIC_ASSETS = [
   './logo192.png',
   './logo512.png',
