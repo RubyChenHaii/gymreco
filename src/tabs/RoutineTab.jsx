@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLang, T, MG_EN } from "../data/i18n.js";
 import { MG_OPTIONS, COLOR_OPTS, ROUTINE_PERIODS, ROUTINE_MATCH_TYPES } from "../data/constants.js";
-import { useC } from "../theme.js";
+import { useC, SUBHEADER_MIN_HEIGHT } from "../theme.js";
 import { Div, Card, SLabel } from "../components/ui.jsx";
 import { NumberPicker } from "../components/NumberPicker.jsx";
 import { uid } from "../utils/date.js";
@@ -145,7 +145,7 @@ export function RoutineTab({ routines, setRoutines, library, workouts, homeStatP
             </div>
       </BottomSheet>
 
-      <div style={{ padding:"8px 16px 14px", background:C.card, borderBottom:`1px solid ${C.sep}`, display:"flex", alignItems:"center", gap:8 }}>
+      <div style={{ padding:"8px 20px 14px", minHeight:SUBHEADER_MIN_HEIGHT, boxSizing:"border-box", background:C.card, borderBottom:`1px solid ${C.sep}`, display:"flex", alignItems:"center", gap:8 }}>
         <button onClick={onBack} style={{ background:"none", border:"none", cursor:"pointer", padding:"4px 0", color:C.blue, fontSize:16, fontWeight:500, flexShrink:0 }}>{t.detailBack}</button>
         <div style={{ flex:1, display:"flex", alignItems:"center", justifyContent:"center", gap:6 }}>
           <span style={{ fontSize:20, fontWeight:700, color:C.text }}>{t.routineTitle}</span>

@@ -28,7 +28,7 @@ export const getMonthRange = (baseDate = new Date()) => {
   return { start, end };
 };
 
-const inRange = (dateStr, start, end) => {
+export const inRange = (dateStr, start, end) => {
   const d = localDate(dateStr);
   return d >= start && d <= end;
 };
@@ -45,9 +45,8 @@ const exerciseMatches = (ex, routine, library) => {
   return false;
 };
 
-// 計算規則在指定期間內，符合條件的「天數」
-// 同一天內即使有多筆符合條件的訓練紀錄，最多只算 1 天（比照 HomeTab.jsx 現有 thisMonthDays 的 Set 去重複寫法）
-export const countMatchingDays = (routine, workouts, library, baseDate = new Date()) => {
+// 取得規則在指定期間內，符合條件的「日期集合」（供 countMatchingDays 及 pending 預覽共用）
+export const getMatchedDates = (routine, workouts, library, baseDate = new Date()) => {
   const { start, end } = routine.period === "month" ? getMonthRange(baseDate) : getWeekRange(baseDate);
   const matchedDates = new Set();
   workouts.forEach(w => {
@@ -55,8 +54,13 @@ export const countMatchingDays = (routine, workouts, library, baseDate = new Dat
     const hasMatch = w.exercises.some(ex => exerciseMatches(ex, routine, library));
     if (hasMatch) matchedDates.add(w.date);
   });
-  return matchedDates.size;
+  return matchedDates;
 };
+
+// 計算規則在指定期間內，符合條件的「天數」
+// 同一天內即使有多筆符合條件的訓練紀錄，最多只算 1 天
+export const countMatchingDays = (routine, workouts, library, baseDate = new Date()) =>
+  getMatchedDates(routine, workouts, library, baseDate).size;
 
 // 判斷規則是否達標
 // 回傳 { count, complete, deleted }
@@ -67,4 +71,19 @@ export const isRoutineComplete = (routine, workouts, library, baseDate = new Dat
   }
   const count = countMatchingDays(routine, workouts, library, baseDate);
   return { count, complete: count >= routine.targetCount, deleted: false };
+};
+
+// ── LogTab 專用：預覽「本次尚未儲存的訓練」是否會讓規則多算 1 天 ──────
+// 使用情境：使用者在 LogTab 選了動作、還沒按下「完成訓練」時，
+// 若這個動作符合某條規則的條件，且所選日期在該規則的目前週期內、
+// 又還沒被算進去過，就代表存檔後這條規則的計數會 +1。
+// - 動作已被刪除、或所選日期不在規則的目前週期範圍內 → 不預覽（回傳 false）
+// - 所選日期已經被算進去過（同一天不重複計算）→ 回傳 false
+export const wouldPendingRowsAddDay = (routine, pendingRows, library, selectedDate, workouts, baseDate = new Date()) => {
+  if (routine.matchType === "exercise" && !library.find(l => l.id === routine.matchValue)) return false;
+  const { start, end } = routine.period === "month" ? getMonthRange(baseDate) : getWeekRange(baseDate);
+  if (!inRange(selectedDate, start, end)) return false;
+  const matchedDates = getMatchedDates(routine, workouts, library, baseDate);
+  if (matchedDates.has(selectedDate)) return false;
+  return pendingRows.some(r => exerciseMatches({ libId: r.libId }, routine, library));
 };

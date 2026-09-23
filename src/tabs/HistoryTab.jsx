@@ -74,7 +74,7 @@ export function HistoryTab({ workouts, library, onOpenDay }) {
 
   return (
     <div style={{ flex:1, overflowY:"auto", background:C.bg }}>
-      <div style={{ padding:"8px 20px 14px", background:C.card, borderBottom:`1px solid ${C.sep}`, display:"flex", justifyContent:"space-between", alignItems:"flex-end" }}>
+      <div style={{ padding:"8px 20px 16px", background:C.card, borderBottom:`1px solid ${C.sep}`, display:"flex", justifyContent:"space-between", alignItems:"flex-end" }}>
         <div>
           <div style={{ fontSize:13, color:C.label, marginBottom:2 }}>{t.historySubtitle}</div>
           <div style={{ fontSize:28, fontWeight:700, color:C.text, letterSpacing:-0.5 }}>{t.historyTitle}</div>

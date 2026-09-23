@@ -261,7 +261,7 @@ export function LibraryTab({ library, setLibrary, openItemId, setOpenItemId }) {
 
   return (
     <div style={{ flex:1, overflowY:"auto", background:C.bg }}>
-      <div style={{ padding:"8px 20px 14px", background:C.card, borderBottom:`1px solid ${C.sep}`, display:"flex", justifyContent:"space-between", alignItems:"flex-end" }}>
+      <div style={{ padding:"8px 20px 16px", background:C.card, borderBottom:`1px solid ${C.sep}`, display:"flex", justifyContent:"space-between", alignItems:"flex-end" }}>
         <div>
           <div style={{ fontSize:13, color:C.label, marginBottom:2 }}>{t.libSubtitle}</div>
           <div style={{ display:"flex", alignItems:"center", gap:6 }}>

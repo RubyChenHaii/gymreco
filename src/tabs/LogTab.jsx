@@ -6,13 +6,13 @@ import { todayStr, localDate, uid } from "../utils/date.js";
 import { Div, Card } from "../components/ui.jsx";
 import { WeightSetEditor } from "../components/WeightSetEditor.jsx";
 import { LengthPaceEditor } from "../components/LengthPaceEditor.jsx";
-import { isRoutineComplete } from "../utils/routineUtils.js";
+import { isRoutineComplete, wouldPendingRowsAddDay } from "../utils/routineUtils.js";
 import { BottomSheet } from "../components/BottomSheet.jsx";
-import { GLASS_SURFACE_SHADOW } from "../theme.js";
+import { GLASS_SURFACE_SHADOW, SUBHEADER_MIN_HEIGHT } from "../theme.js";
 
 // LogTab 內嵌的規則總覽區塊：週/月分組顯示已建立規則的達標進度，並提供「+ 新增規則」入口
 // 點擊任一規則列或「+ 新增規則」都會導向 RoutineTab 全螢幕畫面進行實際管理（新增/編輯/刪除）
-function RoutineOverview({ routines, library, workouts, onOpenRoutines, t, C, lang }) {
+function RoutineOverview({ routines, library, workouts, onOpenRoutines, t, C, lang, pendingRows, selectedDate }) {
   const groupLabel = (g) => lang === "zh" ? g : (MG_EN[g] || g);
 
   const weekRoutines  = routines.filter(r => r.period === "week");
@@ -20,6 +20,9 @@ function RoutineOverview({ routines, library, workouts, onOpenRoutines, t, C, la
 
   const Row = ({ routine }) => {
     const result = isRoutineComplete(routine, workouts, library);
+    // 若規則尚未達標，檢查「本次尚未儲存的訓練」是否會讓它多算 1 天
+    const pendingGain = !result.deleted && !result.complete &&
+      wouldPendingRowsAddDay(routine, pendingRows, library, selectedDate, workouts);
     const item = routine.matchType === "exercise" ? library.find(l => l.id === routine.matchValue) : null;
     const dotColor = routine.matchType === "color" ? routine.matchValue : (item ? item.color : null);
     const label = routine.matchType === "exercise"
@@ -27,6 +30,8 @@ function RoutineOverview({ routines, library, workouts, onOpenRoutines, t, C, la
       : routine.matchType === "muscleGroup"
         ? groupLabel(routine.matchValue)
         : null;
+    const displayCount = pendingGain ? result.count + 1 : result.count;
+    const statusColor  = pendingGain ? C.yellow : (result.complete ? C.green : C.label);
     return (
       <div style={{ display:"flex", alignItems:"center", gap:10, padding:"11px 16px" }}>
         {dotColor && <div style={{ width:10, height:10, borderRadius:"50%", background:dotColor, flexShrink:0 }} />}
@@ -37,8 +42,8 @@ function RoutineOverview({ routines, library, workouts, onOpenRoutines, t, C, la
         {result.deleted ? (
           <span style={{ fontSize:11, fontWeight:600, color:C.label, fontStyle:"italic", flexShrink:0 }}>{t.routineDeletedTag}</span>
         ) : (
-          <span style={{ fontSize:12, fontWeight:700, color: result.complete ? C.green : C.label, flexShrink:0 }}>
-            {result.count}/{routine.targetCount} {result.complete ? "✓" : ""}
+          <span style={{ fontSize:12, fontWeight:700, color:statusColor, flexShrink:0 }}>
+            {displayCount}/{routine.targetCount} {result.complete ? "✓" : ""}
           </span>
         )}
       </div>
@@ -207,7 +212,7 @@ export function LogTab({ library, routines, workouts, onSave, onAddToLibrary, sh
        );
       })()}
 
-      <div style={{ padding:"8px 20px 14px", background:C.card, borderBottom:`1px solid ${C.sep}`, display:"flex", justifyContent:"space-between", alignItems:"flex-end" }}>
+      <div style={{ padding:"8px 20px 14px", minHeight:SUBHEADER_MIN_HEIGHT, boxSizing:"border-box", background:C.card, borderBottom:`1px solid ${C.sep}`, display:"flex", justifyContent:"space-between", alignItems:"flex-end" }}>
         <div>
           <div style={{ fontSize:13, color:C.label, marginBottom:1 }}>{t.logSubtitle}</div>
           <div style={{ display:"flex", alignItems:"center", gap:8 }}>
@@ -222,7 +227,7 @@ export function LogTab({ library, routines, workouts, onSave, onAddToLibrary, sh
       </div>
 
       <div style={{ padding:"16px" }}>
-        <RoutineOverview routines={routines} library={library} workouts={workouts} onOpenRoutines={onOpenRoutines} t={t} C={C} lang={lang} />
+        <RoutineOverview routines={routines} library={library} workouts={workouts} onOpenRoutines={onOpenRoutines} t={t} C={C} lang={lang} pendingRows={rows} selectedDate={selectedDate} />
         {rows.map((row, i) => {
           const item = library.find(l => l.id === row.libId);
           if (!item) return null;
