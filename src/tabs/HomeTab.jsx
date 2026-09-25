@@ -1,16 +1,16 @@
 import { Button } from "../components/Button.jsx";
-import { useState } from "react";
+import { useCalendarGradient } from "../theme.js";
 import { useLang, T, MG_EN } from "../data/i18n.js";
 import { MONTHS_EN, WEEKDAYS, WEEKDAY_CN } from "../data/constants.js";
-import { useC } from "../theme.js";
+import { useC, withAlpha, CALENDAR_GRADIENT_ALPHA } from "../theme.js";
 import { todayStr, localDate, fmtDate } from "../utils/date.js";
 import { Div, Card, SLabel } from "../components/ui.jsx";
 import { isRoutineComplete } from "../utils/routineUtils.js";
 
-function Calendar({ workouts, library, onDayClick }) {
+function Calendar({ workouts, library, onDayClick, gradientMode, gradientStyle }) {
   const lang = useLang(); const t = T[lang]; const C = useC();
-  const [vd, setVd] = useState(new Date());
-  const yr = vd.getFullYear(), mo = vd.getMonth();
+  const { topColors, colorTotal, viewDate, setViewDate } = useCalendarGradient();
+  const yr = viewDate.getFullYear(), mo = viewDate.getMonth();
   const firstDay = new Date(yr, mo, 1).getDay();
   const dim = new Date(yr, mo + 1, 0).getDate();
   const todStr = todayStr();
@@ -21,66 +21,109 @@ function Calendar({ workouts, library, onDayClick }) {
     byDate[w.date].exercises.push(...w.exercises);
   });
 
+  let gradientImage = null;
+  if (gradientMode !== "off" && colorTotal > 0) {
+    let cum = 0;
+    if (gradientStyle === "conic") {
+      const stops = topColors.map(([color, count]) => {
+        const frac = count / colorTotal;
+        const posDeg = ((cum + frac / 2) * 360).toFixed(1);
+        cum += frac;
+        return `${withAlpha(color, CALENDAR_GRADIENT_ALPHA)} ${posDeg}deg`;
+      });
+      stops.push(`${withAlpha(topColors[0][0], CALENDAR_GRADIENT_ALPHA)} 360deg`);
+      gradientImage = `conic-gradient(from var(--gymreco-cal-angle, 0deg), ${stops.join(", ")})`;
+    } else {
+      const stops = topColors.map(([color, count]) => {
+        const frac = count / colorTotal;
+        const pos = ((cum + frac / 2) * 100).toFixed(1);
+        cum += frac;
+        return `${withAlpha(color, CALENDAR_GRADIENT_ALPHA)} ${pos}%`;
+      });
+      gradientImage = `linear-gradient(135deg, ${stops.join(", ")})`;
+    }
+  }
+
   const cells = [];
   for (let i = 0; i < firstDay; i++) cells.push(null);
   for (let d = 1; d <= dim; d++) cells.push(d);
 
   return (
-    <Card style={{ marginBottom: 16 }}>
-      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"14px 16px 10px" }}>
-        <button onClick={() => setVd(new Date(yr, mo - 1, 1))} style={{ background:"none", border:"none", cursor:"pointer", fontSize:20, color:C.blue, padding:"0 4px", lineHeight:1 }}>‹</button>
-        <span style={{ fontSize:15, fontWeight:700, color:C.text }}>
-          {lang === "zh" ? `${yr} 年 ${mo + 1} 月` : `${MONTHS_EN[mo]} ${yr}`}
-        </span>
-        <button onClick={() => setVd(new Date(yr, mo + 1, 1))} style={{ background:"none", border:"none", cursor:"pointer", fontSize:20, color:C.blue, padding:"0 4px", lineHeight:1 }}>›</button>
-      </div>
-      <div style={{ display:"grid", gridTemplateColumns:"repeat(7,1fr)", padding:"0 10px 6px" }}>
-        {t.weekdays.map((d, i) => (
-          <div key={d} style={{ textAlign:"center", fontSize:11, fontWeight:600, color:i===0?C.red:i===6?`${C.blue}99`:C.label, padding:"2px 0" }}>{d}</div>
-        ))}
-      </div>
-      <div style={{ display:"grid", gridTemplateColumns:"repeat(7,1fr)", padding:"0 10px 14px", gap:"2px 0" }}>
-        {cells.map((day, idx) => {
-          if (!day) return <div key={`_${idx}`} />;
-          const ds = `${yr}-${String(mo + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-          const w = byDate[ds];
-          const isToday = ds === todStr;
-          const dow = (firstDay + day - 1) % 7;
-          return (
-            <div key={day} onClick={() => w && onDayClick(ds)}
-              style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:3, padding:"4px 2px", cursor:w?"pointer":"default", borderRadius:10 }}>
-              <span style={{ fontSize:13, fontWeight:isToday?700:400, width:26, height:26, display:"flex", alignItems:"center", justifyContent:"center", borderRadius:"50%",
-                background:isToday?C.blue:"transparent",
-                color:isToday?"#fff":dow===0?C.red:dow===6?`${C.blue}99`:C.text }}>
-                {day}
-              </span>
-              {w && (
-                <div style={{ display:"flex", gap:2, justifyContent:"center", flexWrap:"wrap", maxWidth:28 }}>
-                  {(() => {
-                    const seen = new Set();
-                    const dots = [];
-                    for (const ex of w.exercises) {
-                      const it = library.find(l => l.id === ex.libId);
-                      if (!it || seen.has(it.color)) continue;
-                      seen.add(it.color);
-                      dots.push(it);
-                      if (dots.length === 3) break;
-                    }
-                    return dots.map((it, i) => (
-                      <div key={i} style={{ width:5, height:5, borderRadius:"50%", background:it.color }} />
-                    ));
-                  })()}
-                </div>
-              )}
-            </div>
-          );
-        })}
+    <Card style={{ marginBottom:16, position:"relative" }}>
+      {gradientImage && (
+        <div
+          key={`${yr}-${mo}-${gradientStyle}`}
+          style={{
+            position:"absolute", inset:0, zIndex:0,
+            pointerEvents:"none",
+            backgroundImage: gradientImage,
+            backgroundSize: gradientStyle === "linear" ? (gradientMode === "animated" ? "200% 200%" : "100% 100%") : "100% 100%",
+            animation: gradientMode === "animated"
+              ? (gradientStyle === "linear"
+                  ? "gymreco-cal-flow 12s ease infinite, gymreco-cal-fadein 0.6s ease"
+                  : "gymreco-cal-conic-spin 18s linear infinite, gymreco-cal-fadein 0.6s ease")
+              : "gymreco-cal-fadein 0.6s ease",
+          }}
+        />
+      )}
+        <div style={{ position:"relative", zIndex:1 }}></div>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"14px 16px 10px" }}>
+          {/* 月份切換列 */}
+          <button onClick={() => setViewDate(new Date(yr, mo - 1, 1))} style={{ background:"none", border:"none", cursor:"pointer", fontSize:20, color:C.blue, padding:"0 4px", lineHeight:1 }}>‹</button>
+          <span style={{ fontSize:15, fontWeight:700, color:C.text }}>
+            {lang === "zh" ? `${yr} 年 ${mo + 1} 月` : `${MONTHS_EN[mo]} ${yr}`}
+          </span>
+          <button onClick={() => setViewDate(new Date(yr, mo + 1, 1))} style={{ background:"none", border:"none", cursor:"pointer", fontSize:20, color:C.blue, padding:"0 4px", lineHeight:1 }}>›</button>
+        </div>
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(7,1fr)", padding:"0 10px 6px" }}>
+          {/* 星期列 */}
+          {t.weekdays.map((d, i) => (
+            <div key={d} style={{ textAlign:"center", fontSize:11, fontWeight:600, color:i===0?C.red:i===6?`${C.blue}99`:C.label, padding:"2px 0" }}>{d}</div>
+          ))}
+        </div>
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(7,1fr)", padding:"0 10px 14px", gap:"2px 0" }}>
+          {/* 日期格 */}
+          {cells.map((day, idx) => {
+            if (!day) return <div key={`_${idx}`} />;
+            const ds = `${yr}-${String(mo + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+            const w = byDate[ds];
+            const isToday = ds === todStr;
+            const dow = (firstDay + day - 1) % 7;
+            return (
+              <div key={day} onClick={() => w && onDayClick(ds)}
+                style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:3, padding:"4px 2px", cursor:w?"pointer":"default", borderRadius:10 }}>
+                <span style={{ fontSize:13, fontWeight:isToday?700:400, width:26, height:26, display:"flex", alignItems:"center", justifyContent:"center", borderRadius:"50%",
+                  background:isToday?C.blue:"transparent",
+                  color:isToday?"#fff":dow===0?C.red:dow===6?`${C.blue}99`:C.text }}>
+                  {day}
+                </span>
+                {w && (
+                  <div style={{ display:"flex", gap:2, justifyContent:"center", flexWrap:"wrap", maxWidth:28 }}>
+                    {(() => {
+                      const seen = new Set();
+                      const dots = [];
+                      for (const ex of w.exercises) {
+                        const it = library.find(l => l.id === ex.libId);
+                        if (!it || seen.has(it.color)) continue;
+                        seen.add(it.color);
+                        dots.push(it);
+                        if (dots.length === 3) break;
+                      }
+                      return dots.map((it, i) => (
+                        <div key={i} style={{ width:5, height:5, borderRadius:"50%", background:it.color }} />
+                      ));
+                    })()}
+                  </div>
+                )}
+              </div>
+            );
+          })}
       </div>
     </Card>
   );
 }
 
-export function HomeTab({ workouts, library, routines, homeStatPeriod, setTab, lang, setLang, darkMode, setDarkMode, openDayDetail }) {
+export function HomeTab({ workouts, library, routines, homeStatPeriod, setTab, lang, setLang, darkMode, setDarkMode, openDayDetail, calendarGradientMode, calendarGradientStyle }) {
   const t = T[lang]; const C = useC();
   const now = new Date();
   const thisMonthDays = new Set(
@@ -140,7 +183,7 @@ export function HomeTab({ workouts, library, routines, homeStatPeriod, setTab, l
           </Card>
         </div>
         <SLabel>{t.sectionCalendar}</SLabel>
-        <Calendar workouts={workouts} library={library} onDayClick={date => openDayDetail(date)} />
+        <Calendar workouts={workouts} library={library} onDayClick={date => openDayDetail(date)} gradientMode={calendarGradientMode} gradientStyle={calendarGradientStyle} />
         <SLabel>{t.sectionRecent}</SLabel>
         <Card style={{ marginBottom:16 }}>
           {recentByDate.length === 0 && <div style={{ padding:"32px", textAlign:"center", color:C.label, fontSize:14 }}>{t.emptyRecent}</div>}
@@ -169,7 +212,7 @@ export function HomeTab({ workouts, library, routines, homeStatPeriod, setTab, l
             </div>
           ))}
         </Card>
-        <Button variant="tinted" onClick={() => setTab("log")} style={{ fontWeight:750, boxShadow:`0 2px 10px ${C.Bshadow}` }}>
+        <Button variant="tinted" onClick={() => setTab("log")} style={{ marginTop:2, fontWeight:750, boxShadow:`0 2px 10px ${C.Bshadow}` }}>
           {t.btnStartToday}
         </Button>
       </div>

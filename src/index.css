@@ -18,3 +18,26 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+@keyframes gymreco-cal-flow {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes gymreco-cal-fadein {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* 讓瀏覽器把這個自訂屬性當成「角度」型別看待，才能對它做 keyframes 動畫 */
+@property --gymreco-cal-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes gymreco-cal-conic-spin {
+  from { --gymreco-cal-angle: 0deg; }
+  to   { --gymreco-cal-angle: 360deg; }
+}

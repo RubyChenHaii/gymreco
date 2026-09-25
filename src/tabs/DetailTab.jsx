@@ -7,6 +7,7 @@ import { Div, Card } from "../components/ui.jsx";
 import { WeightSetEditor } from "../components/WeightSetEditor.jsx";
 import { LengthPaceEditor } from "../components/LengthPaceEditor.jsx";
 import { calcOverallPace, fmtDistance, fmtPace } from "../utils/paceUtils.js";
+import { ConfirmDialog } from "../components/ConfirmDialog.jsx";
 
 //下方為DetailTab，呼叫DetailTabInner，主要負責顯示「單次」訓練紀錄。
 //DayDetailTab則是呼叫DetailTab，負責逐條列出當日的每條訓練紀錄。
@@ -45,18 +46,16 @@ function DetailTabInner({ workout, library, onBack, onOpenLibItem, onUpdateWorko
 
   return (
     <div style={{ flex:1, overflowY:"auto", background:C.bg }}>
-      {confirmDelete && (
-        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.5)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:300, padding:"20px" }}>
-          <div style={{ background:C.card, borderRadius:16, padding:"24px 20px", width:"100%", maxWidth:320 }}>
-            <div style={{ fontSize:17, fontWeight:700, color:C.text, marginBottom:10, textAlign:"center" }}>{lang === "zh" ? "刪除紀錄" : "Delete Workout"}</div>
-            <div style={{ fontSize:14, color:C.sub, marginBottom:20, textAlign:"center", lineHeight:1.6 }}>{t.detailDeleteConfirm}</div>
-            <div style={{ display:"flex", gap:10 }}>
-              <button onClick={() => setConfirmDelete(false)} style={{ flex:1, padding:"12px", background:C.f5, border:"none", borderRadius:12, fontSize:15, fontWeight:600, color:C.sub, cursor:"pointer" }}>{lang === "zh" ? "取消" : "Cancel"}</button>
-              <button onClick={confirmDoDelete} style={{ flex:1, padding:"12px", background:C.red, border:"none", borderRadius:12, fontSize:15, fontWeight:600, color:"#fff", cursor:"pointer" }}>{lang === "zh" ? "刪除" : "Delete"}</button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmDialog
+        open={confirmDelete}
+        onClose={() => setConfirmDelete(false)}
+        onConfirm={confirmDoDelete}
+        title={lang === "zh" ? "刪除紀錄" : "Delete Workout"}
+        message={t.detailDeleteConfirm}
+        cancelLabel={lang === "zh" ? "取消" : "Cancel"}
+        confirmLabel={lang === "zh" ? "刪除" : "Delete"}
+        confirmVariant="danger"
+      />
 
       <div style={{ padding:"8px 16px 14px", background:C.card, borderBottom:`1px solid ${C.sep}`, display:"flex", alignItems:"center", gap:8 }}>
         <button onClick={onBack} style={{ background:"none", border:"none", cursor:"pointer", padding:"4px 0", color:C.blue, fontSize:16, fontWeight:500, flexShrink:0 }}>
@@ -264,7 +263,7 @@ export function DayDetailTab({ dayWorkouts, library, onBack, onOpenLibItem, onEd
                         <div key={wi2} style={{ marginBottom:10 }}>
                           <div style={{ fontSize:13, fontWeight:700, color:C.text, marginBottom:5 }}>{ws.weight}</div>
                           <div style={{ display:"flex", flexWrap:"wrap", gap:6, paddingLeft:4 }}>
-                            {ws.reps.map((r, ri) => (<div key={ri} style={{ background:C.f5, borderRadius:8, padding:"6px 14px", fontSize:15, fontWeight:600, color:C.text }}>{r}<span style={{ fontSize:11, color:C.label, marginLeft:1 }}>{t.repsUnit}</span></div>))}
+                            {ws.reps.map((r, ri) => (<div key={ri} style={{ background:C.f5, borderRadius:8, padding:"6px 14px", fontSize:15, fontWeight:600, color:C.text }}>{r}<span style={{ fontSize:10, color:C.label, marginLeft:4 }}>{t.repsUnit}</span></div>))}
                             <div style={{ display:"flex", alignItems:"center", padding:"0 6px", fontSize:13, color:C.label }}>{t.totalReps} {ws.reps.reduce((a, b) => a + b, 0)} {t.repsUnit}</div>
                           </div>
                         </div>

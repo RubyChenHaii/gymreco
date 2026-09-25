@@ -6,6 +6,8 @@ import { uid, fmtDate } from "../utils/date.js";
 import { Div, Card, SLabel } from "../components/ui.jsx";
 import { calcOverallPace, fmtDistance, fmtPace } from "../utils/paceUtils.js";
 import { withAlpha, TINT_BG_ALPHA, TINT_BORDER_ALPHA } from "../theme.js";
+import { ConfirmDialog } from "../components/ConfirmDialog.jsx";
+import { InfoButton } from "../components/Button.jsx";
 
 
 function LibItemDetail({ item, onUpdate, onDelete, onBack }) {
@@ -48,20 +50,16 @@ function LibItemDetail({ item, onUpdate, onDelete, onBack }) {
 
   return (
     <div style={{ flex:1, overflowY:"auto", background:C.bg, display:"flex", flexDirection:"column" }}>
-      {confirmDelete && (
-        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.5)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:300, padding:"20px" }}>
-          <div style={{ background:C.card, borderRadius:16, padding:"24px 20px", width:"100%", maxWidth:320 }}>
-            <div style={{ fontSize:17, fontWeight:700, color:C.text, marginBottom:10, textAlign:"center" }}>{lang === "zh" ? "刪除動作" : "Delete Exercise"}</div>
-            <div style={{ fontSize:14, color:C.sub, marginBottom:20, textAlign:"center", lineHeight:1.6 }}>
-              {lang === "zh" ? `確定要刪除「${item.name}」嗎？相關的訓練歷史紀錄不受影響，但此動作無法復原。` : `Delete "${item.name}"? Training history won't be affected, but this cannot be undone.`}
-            </div>
-            <div style={{ display:"flex", gap:10 }}>
-              <button onClick={() => setConfirmDelete(false)} style={{ flex:1, padding:"12px", background:C.f5, border:"none", borderRadius:12, fontSize:15, fontWeight:600, color:C.sub, cursor:"pointer" }}>{lang === "zh" ? "取消" : "Cancel"}</button>
-              <button onClick={onDelete} style={{ flex:1, padding:"12px", background:C.red, border:"none", borderRadius:12, fontSize:15, fontWeight:600, color:"#fff", cursor:"pointer" }}>{lang === "zh" ? "刪除" : "Delete"}</button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmDialog
+        open={confirmDelete}
+        onClose={() => setConfirmDelete(false)}
+        onConfirm={onDelete}
+        title={lang === "zh" ? "刪除動作" : "Delete Exercise"}
+        message={lang === "zh" ? `確定要刪除「${item.name}」嗎？相關的訓練歷史紀錄不受影響，但此動作無法復原。` : `Delete "${item.name}"? Training history won't be affected, but this cannot be undone.`}
+        cancelLabel={lang === "zh" ? "取消" : "Cancel"}
+        confirmLabel={lang === "zh" ? "刪除" : "Delete"}
+        confirmVariant="danger"
+      />
       <div style={{ padding:"8px 20px 14px", background:C.card, borderBottom:`1px solid ${C.sep}`, display:"flex", alignItems:"center", gap:10 }}>
         <button onClick={onBack} style={{ background:"none", border:"none", cursor:"pointer", padding:"4px 0", color:C.blue, fontSize:16, fontWeight:500 }}>‹</button>
         <div style={{ flex:1, display:"flex", alignItems:"center", gap:8 }}>
@@ -162,17 +160,17 @@ function LibItemDetail({ item, onUpdate, onDelete, onBack }) {
 
           <SLabel>{t.libNoteTitle}</SLabel>
           <Card style={{ marginBottom:16 }}>
-            <div style={{ padding:"14px 16px" }}>
-              <div style={{ fontSize:11, color:C.label, marginBottom:8 }}>{t.libNoteSub}</div>
+            <div style={{ padding:"8px 16px" }}>
+              <div style={{ fontSize:10, lineHeight:1.5, color:C.label, marginBottom:8, whiteSpace:"pre-line" }}>{t.libNoteSub}</div>
               <textarea
                 ref={noteRef}
                 value={editNote}
                 onChange={e => setEditNote(e.target.value)}
                 placeholder={t.libNotePlaceholder}
-                style={{ width:"100%", background:"none", border:"none", fontSize:14,
+                style={{ width:"100%", background:"none", border:"none", marginBottom:5, fontSize:14,
                   color:C.sub, resize:"none", boxSizing:"border-box", outline:"none",
                   fontFamily:"inherit", lineHeight:1.7, display:"block", overflow:"hidden" }}
-             />
+              />
             </div>
             {noteDirty && (
               <div style={{ padding:"0 16px 14px" }}>
@@ -266,13 +264,7 @@ export function LibraryTab({ library, setLibrary, openItemId, setOpenItemId }) {
           <div style={{ fontSize:13, color:C.label, marginBottom:2 }}>{t.libSubtitle}</div>
           <div style={{ display:"flex", alignItems:"center", gap:6 }}>
             <div style={{ fontSize:28, fontWeight:700, color:C.text, letterSpacing:-0.5 }}>{t.libTitle}</div>
-            <button onClick={() => setShowDateColorHint(v => !v)}
-              style={{ width:20, height:20, borderRadius:"50%", background:`${C.blue}25`, border:"none", cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", padding:0, flexShrink:0 }}>
-              <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke={C.blue} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="12" y1="13" x2="12" y2="18"/>
-                <circle cx="12" cy="7.5" r="1.5" fill={C.blue} stroke="none"/>
-              </svg>
-            </button>
+            <InfoButton onClick={() => setShowDateColorHint(v => !v)} />
           </div>
         </div>
         <button onClick={() => setShowAdd(v => !v)} style={{ background:C.blue, border:"none", borderRadius:12, padding:"8px 16px", color:"#fff", fontSize:14, fontWeight:600, cursor:"pointer", marginBottom:4 }}>{t.libAdd}</button>

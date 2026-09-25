@@ -19,6 +19,14 @@ export const useDark = () => useContext(DarkCtx);
 // 所有元件透過 useC() 取得當前主題色
 export const useC = () => useContext(DarkCtx) ? DARK : LIGHT;
 
+// ── 月曆漸層資料 Context ──────────────────────────────────────────
+// 「本月各顏色出現天數」統計與目前瀏覽月份，統一在 App.jsx 算一次、往下提供，
+// 避免多處元件（首頁月曆、未來可能的裝飾性 Button/Card）各自重複計算
+export const CalendarGradientCtx = createContext({
+  topColors: [], colorTotal: 0, viewDate: new Date(), setViewDate: () => {},
+});
+export const useCalendarGradient = () => useContext(CalendarGradientCtx);
+
 // ── 共用 Design Token：spacing / radius / 字級 ──────────────────
 // 這些數值是依據目前各檔案實際使用頻率整理出來的常見值，
 // 並非全新設計；目的是讓之後新增/重構的元件有統一依據可循，
@@ -86,6 +94,13 @@ export const GLASS_BLUR = "blur(15px) saturate(180%)"; // saturate 是刻意加�
 // 刻意做得很淺（8% 不透明度、1px 位移），只是提供「有沒有浮起來」的感覺，不會搶走視覺焦點
 export const GLASS_SURFACE_SHADOW = "0 1px 3px rgba(0,0,0,0.08)";
 
+// ── Card 立體感 Token ──────────────────────────────────────────
+// 雙層陰影（近距離小模糊 + 遠距離大模糊）+ 頂部細緻高光，取代原本單層平面陰影
+// 深色模式陰影加深、高光透明度降低，避免深色卡片上過曝
+const CARD_SHADOW_LIGHT = "inset 0 1px 0 rgba(255,255,255,0.8), 0 1px 2px rgba(0,0,0,0.07), 0 6px 16px rgba(0,0,0,0.14)"; // 頂部高光, 近距離小陰影, 遠距離大陰影
+const CARD_SHADOW_DARK  = "inset 0 1px 0 rgba(255,255,255,0.08), 0 1px 2px rgba(0,0,0,0.3), 0 6px 20px rgba(0,0,0,0.25)"; // 頂部高光, 近距離小陰影, 遠距離大陰影
+export const useCardShadow = () => useDark() ? CARD_SHADOW_DARK : CARD_SHADOW_LIGHT;
+
 const GLASS_LIGHT = { background:"rgba(242,242,247,0.78)", borderTop:"1px solid rgba(255,255,255,0.6)" };
 const GLASS_DARK  = { background:"rgba(44,44,46,0.72)",    borderTop:"1px solid rgba(255,255,255,0.1)" };
 
@@ -97,5 +112,10 @@ export const useGlass = () => useDark() ? GLASS_DARK : GLASS_LIGHT;
 // alpha 使用十六進位色碼透明度後綴（00~FF），跟現有 COLOR_OPTS 的純色字串直接拼接。
 export const TINT_BG_ALPHA     = "0C"; // 底色透明度，約 4.7%
 export const TINT_BORDER_ALPHA = "60"; // 邊框透明度，約 37.6%（原本 50/60/65 不等，這次統一）
+
+// ── 首頁月曆背景漸層 Token ──────────────────────────────────────
+// 依「本月各顏色出現天數」比例混合出的動態底色
+// 這個透明度是起始值，深色/淺色模式下實際效果可能不同，可依需要再拆成 LIGHT/DARK 兩組獨立微調
+export const CALENDAR_GRADIENT_ALPHA = "40"; // 約 25% 不透明度
 
 export const withAlpha = (hexColor, alphaHex) => `${hexColor}${alphaHex}`;

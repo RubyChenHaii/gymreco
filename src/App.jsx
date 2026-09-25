@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { LangCtx, T } from "./data/i18n.js";
 import { INIT_LIBRARY, INIT_WORKOUTS } from "./data/initialData.js";
-import { LIGHT, DARK, DarkCtx } from "./theme.js";
+import { LIGHT, DARK, DarkCtx, CalendarGradientCtx } from "./theme.js";
 import { lsGet, lsSet } from "./hooks/useStorage.js";
 import { StatusBar, BottomNav } from "./components/ui.jsx";
 import { HomeTab }    from "./tabs/HomeTab.jsx";
@@ -26,6 +26,9 @@ export default function App() {
   const [lang,      setLang]      = useState(() => lsGet("wt_lang", "zh"));
   const [darkMode,  setDarkMode]  = useState(() => lsGet("wt_dark", false));
   const [homeStatPeriod, setHomeStatPeriod] = useState(() => lsGet("wt_homeStatPeriod", "week")); // 首頁右上角統計卡片要顯示週規則還是月規則的達標數
+  const [calendarGradientMode, setCalendarGradientMode] = useState(() => lsGet("wt_calGradientMode", "animated")); // "animated" | "static" | "off"
+  const [calendarGradientStyle, setCalendarGradientStyle] = useState(() => lsGet("wt_calGradientStyle", "linear")); // "linear" | "conic"
+  const [calendarViewDate, setCalendarViewDate] = useState(new Date());
   const [toast,     setToast]     = useState(null);
 
   const theme = darkMode ? DARK : LIGHT;
@@ -37,6 +40,8 @@ export default function App() {
   useEffect(() => { lsSet("wt_lang",     lang);     }, [lang]);
   useEffect(() => { lsSet("wt_dark",     darkMode); }, [darkMode]);
   useEffect(() => { lsSet("wt_homeStatPeriod", homeStatPeriod); }, [homeStatPeriod]);
+  useEffect(() => { lsSet("wt_calGradientMode", calendarGradientMode); }, [calendarGradientMode]);
+  useEffect(() => { lsSet("wt_calGradientStyle", calendarGradientStyle); }, [calendarGradientStyle]);
   const [swUpdateAvailable, setSwUpdateAvailable] = useState(false);
   useEffect(() => {
     const handleSwUpdate = () => setSwUpdateAvailable(true);
@@ -121,76 +126,107 @@ const handleReset = () => {
 
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
+  const calYr = calendarViewDate.getFullYear();
+  const calMo = calendarViewDate.getMonth();
+  const calDim = new Date(calYr, calMo + 1, 0).getDate();
+
+  // 本月「顏色→出現天數」統計，供月曆背景漸層使用；同一天內同色只算一次
+  const monthColorStats = useMemo(() => {
+    const byDate = {};
+    [...workouts].reverse().forEach(w => {
+      if (!byDate[w.date]) byDate[w.date] = { exercises: [] };
+      byDate[w.date].exercises.push(...w.exercises);
+    });
+    const dayCount = {};
+    for (let d = 1; d <= calDim; d++) {
+      const ds = `${calYr}-${String(calMo + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+      const w = byDate[ds];
+      if (!w) continue;
+      const seen = new Set();
+      w.exercises.forEach(ex => {
+        const it = library.find(l => l.id === ex.libId);
+        if (it) seen.add(it.color);
+      });
+      seen.forEach(c => { dayCount[c] = (dayCount[c] || 0) + 1; });
+    }
+    const topColors = Object.entries(dayCount).sort((a, b) => b[1] - a[1]).slice(0, 4);
+    const colorTotal = topColors.reduce((sum, [, count]) => sum + count, 0);
+    return { topColors, colorTotal };
+  }, [workouts, library, calYr, calMo, calDim]);
+
   return (
     <DarkCtx.Provider value={darkMode}>
       <LangCtx.Provider value={lang}>
-        <div style={{ display:"flex", justifyContent:"center", alignItems:"center", minHeight:"100dvh",
-          background: isMobile ? theme.bg : "#1C1C1E",
-          fontFamily: "-apple-system,'SF Pro Text','Helvetica Neue',sans-serif" }}>
-          <div style={isMobile ? {
-            width:"100%", height:"100dvh", background:theme.card,
-            display:"flex", flexDirection:"column", overflow:"hidden",
-            containerType:"inline-size",   // ← 新增：讓內部子元件可用 cqw 抓到「這個外殼」的實際寬度
-          } : {
-            width:393, height:852, background:theme.card, borderRadius:52,
-            overflow:"hidden", display:"flex", flexDirection:"column", position:"relative",
-            boxShadow:"0 0 0 1px rgba(255,255,255,0.1),0 0 0 10px #2C2C2E,0 0 0 11px rgba(255,255,255,0.07),0 40px 100px rgba(0,0,0,0.7)",
-            containerType:"inline-size",   // ← 新增：同上，讓 Mac 預覽的固定外殼也套用同一套邏輯
-          }}>
-            {!isMobile && <StatusBar />}
-            {swUpdateAvailable && (
-              <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:10,
-                padding:"10px 16px", background:theme.blue, color:"#fff", fontSize:13, fontWeight:600, flexShrink:0 }}>
-                <span>{T[lang].swUpdateMsg}</span>
-                <button onClick={() => window.location.reload()}
-                  style={{ background:"rgba(255,255,255,0.25)", border:"none", borderRadius:8, padding:"5px 12px", color:"#fff", fontSize:12, fontWeight:700, cursor:"pointer", flexShrink:0 }}>
-                  {T[lang].swUpdateBtn}
-                </button>
+        <CalendarGradientCtx.Provider value={{ ...monthColorStats, viewDate: calendarViewDate, setViewDate: setCalendarViewDate }}>
+          <div style={{ display:"flex", justifyContent:"center", alignItems:"center", minHeight:"100dvh",
+            background: isMobile ? theme.bg : "#1C1C1E",
+            fontFamily: "-apple-system,'SF Pro Text','Helvetica Neue',sans-serif" }}>
+            <div style={isMobile ? {
+              width:"100%", height:"100dvh", background:theme.card,
+              display:"flex", flexDirection:"column", overflow:"hidden",
+              containerType:"inline-size",   // ← 新增：讓內部子元件可用 cqw 抓到「這個外殼」的實際寬度
+            } : {
+              width:393, height:852, background:theme.card, borderRadius:52,
+              overflow:"hidden", display:"flex", flexDirection:"column", position:"relative",
+              boxShadow:"0 0 0 1px rgba(255,255,255,0.1),0 0 0 10px #2C2C2E,0 0 0 11px rgba(255,255,255,0.07),0 40px 100px rgba(0,0,0,0.7)",
+              containerType:"inline-size",   // ← 新增：同上，讓 Mac 預覽的固定外殼也套用同一套邏輯
+            }}>
+              {!isMobile && <StatusBar />}
+              {swUpdateAvailable && (
+                <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:10,
+                  padding:"10px 16px", background:theme.blue, color:"#fff", fontSize:13, fontWeight:600, flexShrink:0 }}>
+                  <span>{T[lang].swUpdateMsg}</span>
+                  <button onClick={() => window.location.reload()}
+                    style={{ background:"rgba(255,255,255,0.25)", border:"none", borderRadius:8, padding:"5px 12px", color:"#fff", fontSize:12, fontWeight:700, cursor:"pointer", flexShrink:0 }}>
+                    {T[lang].swUpdateBtn}
+                  </button>
+                </div>
+              )}
+              {toast && (
+                <div style={{ position:"absolute", top:60, left:"50%", transform:"translateX(-50%)",
+                  background:"rgba(0,0,0,0.82)", color:"#fff", borderRadius:20, padding:"10px 20px",
+                  fontSize:14, fontWeight:500, zIndex:400, whiteSpace:"nowrap",
+                  boxShadow:"0 4px 16px rgba(0,0,0,0.3)" }}>
+                  {toast}
+                </div>
+              )}
+              <div style={{ flex:1, display:"flex", flexDirection:"column", overflow:"hidden", background:theme.bg }}>
+                {tab === "detail"
+                  ? <DetailTab
+                      workout={detailWorkout}
+                      library={library}
+                      onBack={() => setTab(prevTab)}
+                      onOpenLibItem={openLibItem}
+                      onUpdateWorkout={handleUpdateWorkout}
+                      onDeleteWorkout={(id) => {
+                        handleDeleteWorkout(id);
+                        const remaining = workouts.filter(w => w.id !== id && w.date === detailDate);
+                        setTab(remaining.length > 0 ? "daydetail" : "history");
+                      }} />
+                : tab === "daydetail"
+                  ? <DayDetailTab
+                      dayWorkouts={[...workouts.filter(w => w.date === detailDate)].reverse()}
+                      library={library}
+                      onBack={() => setTab("history")}
+                      onOpenLibItem={openLibItem}
+                      onEditWorkout={handleEditWorkout} />
+                : tab === "log"
+                  ? <LogTab library={library} routines={routines} workouts={workouts} onSave={handleSave} onAddToLibrary={handleAddToLibrary} showToast={showToast} onOpenRoutines={openRoutines} />
+                : tab === "history"
+                  ? <HistoryTab workouts={workouts} library={library} onOpenDay={openDayDetail} />
+                : tab === "library"
+                  ? <LibraryTab library={library} setLibrary={setLibrary} openItemId={libItemId} setOpenItemId={setLibItemId} />
+                : tab === "routine"
+                  ? <RoutineTab routines={routines} setRoutines={setRoutines} library={library} workouts={workouts} homeStatPeriod={homeStatPeriod} setHomeStatPeriod={setHomeStatPeriod} onBack={() => setTab(prevTab)} />
+                : tab === "about"
+                  ? <AboutTab workouts={workouts} library={library} routines={routines} onImport={handleImport} onReset={handleReset} onClear={handleClear} calendarGradientMode={calendarGradientMode} setCalendarGradientMode={setCalendarGradientMode} calendarGradientStyle={calendarGradientStyle} setCalendarGradientStyle={setCalendarGradientStyle} />
+                : <HomeTab workouts={workouts} library={library} routines={routines} homeStatPeriod={homeStatPeriod} setTab={navigate} lang={lang} setLang={setLang} darkMode={darkMode} setDarkMode={setDarkMode} openDayDetail={openDayDetail} calendarGradientMode={calendarGradientMode} calendarGradientStyle={calendarGradientStyle} />
+                }
               </div>
-            )}
-            {toast && (
-              <div style={{ position:"absolute", top:60, left:"50%", transform:"translateX(-50%)",
-                background:"rgba(0,0,0,0.82)", color:"#fff", borderRadius:20, padding:"10px 20px",
-                fontSize:14, fontWeight:500, zIndex:400, whiteSpace:"nowrap",
-                boxShadow:"0 4px 16px rgba(0,0,0,0.3)" }}>
-                {toast}
-              </div>
-            )}
-            <div style={{ flex:1, display:"flex", flexDirection:"column", overflow:"hidden", background:theme.bg }}>
-              {tab === "detail"
-                ? <DetailTab
-                    workout={detailWorkout}
-                    library={library}
-                    onBack={() => setTab(prevTab)}
-                    onOpenLibItem={openLibItem}
-                    onUpdateWorkout={handleUpdateWorkout}
-                    onDeleteWorkout={(id) => {
-                      handleDeleteWorkout(id);
-                      const remaining = workouts.filter(w => w.id !== id && w.date === detailDate);
-                      setTab(remaining.length > 0 ? "daydetail" : "history");
-                    }} />
-              : tab === "daydetail"
-                ? <DayDetailTab
-                    dayWorkouts={[...workouts.filter(w => w.date === detailDate)].reverse()}
-                    library={library}
-                    onBack={() => setTab("history")}
-                    onOpenLibItem={openLibItem}
-                    onEditWorkout={handleEditWorkout} />
-              : tab === "log"
-                ? <LogTab library={library} routines={routines} workouts={workouts} onSave={handleSave} onAddToLibrary={handleAddToLibrary} showToast={showToast} onOpenRoutines={openRoutines} />
-              : tab === "history"
-                ? <HistoryTab workouts={workouts} library={library} onOpenDay={openDayDetail} />
-              : tab === "library"
-                ? <LibraryTab library={library} setLibrary={setLibrary} openItemId={libItemId} setOpenItemId={setLibItemId} />
-              : tab === "routine"
-                ? <RoutineTab routines={routines} setRoutines={setRoutines} library={library} workouts={workouts} homeStatPeriod={homeStatPeriod} setHomeStatPeriod={setHomeStatPeriod} onBack={() => setTab(prevTab)} />
-              : tab === "about"
-                ? <AboutTab workouts={workouts} library={library} routines={routines} onImport={handleImport} onReset={handleReset} onClear={handleClear}/>
-              : <HomeTab workouts={workouts} library={library} routines={routines} homeStatPeriod={homeStatPeriod} setTab={navigate} lang={lang} setLang={setLang} darkMode={darkMode} setDarkMode={setDarkMode} openDayDetail={openDayDetail} />}
+              {tab !== "detail" && tab !== "daydetail" && tab !== "routine" && <BottomNav tab={tab} setTab={setTab} />}
             </div>
-            {tab !== "detail" && tab !== "daydetail" && tab !== "routine" && <BottomNav tab={tab} setTab={setTab} />}
           </div>
-        </div>
+        </CalendarGradientCtx.Provider>
       </LangCtx.Provider>
     </DarkCtx.Provider>
   );

@@ -5,11 +5,12 @@ import { Card, SLabel } from "../components/ui.jsx";
 import { todayStr } from "../utils/date.js";
 import { exportMDByScope } from "../utils/exportUtils.js";
 import { BottomSheet } from "../components/BottomSheet.jsx";
+import { ConfirmDialog } from "../components/ConfirmDialog.jsx";
 
 // ── 版本號：每次發布只需改這一行 ──────────────────────────────
-const APP_VERSION = "2.1.2_b";
+const APP_VERSION = "2.1.3_b";
 
-export function AboutTab({ workouts, library, routines, onImport, onReset, onClear }) {
+export function AboutTab({ workouts, library, routines, onImport, onReset, onClear, calendarGradientMode, setCalendarGradientMode, calendarGradientStyle, setCalendarGradientStyle }) {
   const lang = useLang(); const t = T[lang]; const C = useC();
   const isZh = lang === "zh";
   const [importConfirm,  setImportConfirm]  = useState(null);
@@ -175,25 +176,19 @@ export function AboutTab({ workouts, library, routines, onImport, onReset, onCle
             </div>
       </BottomSheet>
 
-      {importConfirm && (
-        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.5)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:300, padding:"20px" }}>
-          <div style={{ background:C.card, borderRadius:16, padding:"24px 20px", width:"100%", maxWidth:320 }}>
-            <div style={{ fontSize:17, fontWeight:700, color:C.text, marginBottom:10, textAlign:"center" }}>{isZh ? "確認匯入" : "Confirm Import"}</div>
-            <div style={{ fontSize:14, color:C.sub, marginBottom:8, textAlign:"center", lineHeight:1.6 }}>
-              {isZh
-                ? `找到 ${importConfirm.workouts.length} 筆訓練紀錄、${importConfirm.library.length} 個動作、${importConfirm.routines.length} 條規則。`
-                : `Found ${importConfirm.workouts.length} workouts, ${importConfirm.library.length} exercises, and ${importConfirm.routines.length} routines.`}
-            </div>
-            <div style={{ fontSize:13, color:C.red, marginBottom:20, textAlign:"center", lineHeight:1.6, background:`${C.red}10`, borderRadius:10, padding:"8px 12px" }}>
-              {isZh ? "⚠️ 這將覆蓋你目前所有的資料，此動作無法復原。" : "⚠️ This will overwrite all your current data. This cannot be undone."}
-            </div>
-            <div style={{ display:"flex", gap:10 }}>
-              <button onClick={() => setImportConfirm(null)} style={{ flex:1, padding:"12px", background:C.f5, border:"none", borderRadius:12, fontSize:15, fontWeight:600, color:C.sub, cursor:"pointer" }}>{isZh ? "取消" : "Cancel"}</button>
-              <button onClick={confirmImport} style={{ flex:1, padding:"12px", background:C.blue, border:"none", borderRadius:12, fontSize:15, fontWeight:600, color:"#fff", cursor:"pointer" }}>{isZh ? "確認匯入" : "Import"}</button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmDialog
+        open={!!importConfirm}
+        onClose={() => setImportConfirm(null)}
+        onConfirm={confirmImport}
+        title={isZh ? "確認匯入" : "Confirm Import"}
+        message={importConfirm ? (isZh
+          ? `找到 ${importConfirm.workouts.length} 筆訓練紀錄、${importConfirm.library.length} 個動作、${importConfirm.routines.length} 條規則。`
+          : `Found ${importConfirm.workouts.length} workouts, ${importConfirm.library.length} exercises, and ${importConfirm.routines.length} routines.`) : ""}
+        warning={isZh ? "⚠️ 這將覆蓋你目前所有的資料，此動作無法復原。" : "⚠️ This will overwrite all your current data. This cannot be undone."}
+        cancelLabel={isZh ? "取消" : "Cancel"}
+        confirmLabel={isZh ? "確認匯入" : "Import"}
+        confirmVariant="primary"
+      />
 
       <div style={{ padding:"8px 20px 16px", background:C.card, borderBottom:`1px solid ${C.sep}` }}>
         <div style={{ fontSize:13, color:C.label, marginBottom:2 }}>{isZh ? "關於" : "About"}</div>
@@ -248,6 +243,30 @@ export function AboutTab({ workouts, library, routines, onImport, onReset, onCle
           <div style={{ padding:"14px 16px", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
             <span style={{ fontSize:14, color:C.text }}>{isZh ? "授權" : "License"}</span>
             <span style={{ fontSize:14, color:C.label }}>MIT © 2026 Ruby Chen</span>
+          </div>
+        </Card>
+
+        <SLabel>{t.calGradientSectionTitle}</SLabel>
+        <Card style={{ marginBottom:16 }}>
+          <div style={{ padding:"14px 16px", display:"flex", gap:8, borderBottom:`1px solid ${C.sep}` }}>
+            {[["animated", t.calGradientAnimated], ["static", t.calGradientStatic], ["off", t.calGradientOff]].map(([mode, label]) => (
+              <button key={mode} onClick={() => setCalendarGradientMode(mode)}
+                style={{ flex:1, background:calendarGradientMode===mode?C.blue:"none", border:`1px solid ${calendarGradientMode===mode?C.blue:C.sep}`, borderRadius:10, padding:"10px", fontSize:13, fontWeight:600, color:calendarGradientMode===mode?"#fff":C.sub, cursor:"pointer" }}>
+                {label}
+              </button>
+            ))}
+          </div>
+          <div style={{ padding:"14px 16px", opacity:calendarGradientMode==="off"?0.4:1, transition:"opacity 0.2s" }}>
+            <div style={{ display:"flex", gap:8 }}>
+              <button onClick={() => calendarGradientMode!=="off" && setCalendarGradientStyle("linear")} disabled={calendarGradientMode==="off"}
+                style={{ flex:1, background:calendarGradientStyle==="linear"?C.blue:"none", border:`1px solid ${calendarGradientStyle==="linear"?C.blue:C.sep}`, borderRadius:10, padding:"10px", fontSize:13, fontWeight:600, color:calendarGradientStyle==="linear"?"#fff":C.sub, cursor:calendarGradientMode==="off"?"not-allowed":"pointer" }}>
+                {t.calGradientLinear}
+              </button>
+              <button onClick={() => calendarGradientMode!=="off" && setCalendarGradientStyle("conic")} disabled={calendarGradientMode==="off"}
+                style={{ flex:1, background:calendarGradientStyle==="conic"?C.blue:"none", border:`1px solid ${calendarGradientStyle==="conic"?C.blue:C.sep}`, borderRadius:10, padding:"10px", fontSize:13, fontWeight:600, color:calendarGradientStyle==="conic"?"#fff":C.sub, cursor:calendarGradientMode==="off"?"not-allowed":"pointer" }}>
+                {t.calGradientConic}
+              </button>
+            </div>
           </div>
         </Card>
 
@@ -309,32 +328,29 @@ export function AboutTab({ workouts, library, routines, onImport, onReset, onCle
         </Card>
 
         {/* Reset 確認對話框 */}
-        {resetConfirm && (
-          <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.5)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:300, padding:"20px" }}>
-            <div style={{ background:C.card, borderRadius:16, padding:"24px 20px", width:"100%", maxWidth:320 }}>
-              <div style={{ fontSize:17, fontWeight:700, color:C.text, marginBottom:10, textAlign:"center" }}>{t.resetConfirmTitle}</div>
-              <div style={{ fontSize:14, color:C.sub, marginBottom:20, textAlign:"center", lineHeight:1.6 }}>{t.resetConfirmMsg}</div>
-              <div style={{ display:"flex", gap:10 }}>
-                <button onClick={() => setResetConfirm(false)} style={{ flex:1, padding:"12px", background:C.f5, border:"none", borderRadius:12, fontSize:15, fontWeight:600, color:C.sub, cursor:"pointer" }}>{t.confirmCancel}</button>
-                <button onClick={() => { onReset(); setResetConfirm(false); }} style={{ flex:1, padding:"12px", background:C.blue, border:"none", borderRadius:12, fontSize:15, fontWeight:600, color:"#fff", cursor:"pointer" }}>{t.confirmProceed}</button>
-              </div>
-            </div>
-          </div>
-        )}
+       <ConfirmDialog
+          open={resetConfirm}
+          onClose={() => setResetConfirm(false)}
+          onConfirm={() => { onReset(); setResetConfirm(false); }}
+          title={t.resetConfirmTitle}
+          message={t.resetConfirmMsg}
+          cancelLabel={t.confirmCancel}
+          confirmLabel={t.confirmProceed}
+          confirmVariant="primary"
+        />
 
         {/* Clear 確認對話框 */}
-        {clearConfirm && (
-          <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.5)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:300, padding:"20px" }}>
-            <div style={{ background:C.card, borderRadius:16, padding:"24px 20px", width:"100%", maxWidth:320 }}>
-              <div style={{ fontSize:17, fontWeight:700, color:C.blue, marginBottom:10, textAlign:"center" }}>{t.clearConfirmTitle}</div>
-              <div style={{ fontSize:14, color:C.sub, marginBottom:20, textAlign:"center", lineHeight:1.6 }}>{t.clearConfirmMsg}</div>
-              <div style={{ display:"flex", gap:10 }}>
-                <button onClick={() => setClearConfirm(false)} style={{ flex:1, padding:"12px", background:C.f5, border:"none", borderRadius:12, fontSize:15, fontWeight:600, color:C.sub, cursor:"pointer" }}>{t.confirmCancel}</button>
-                <button onClick={() => { onClear(); setClearConfirm(false); }} style={{ flex:1, padding:"12px", background:C.blue, border:"none", borderRadius:12, fontSize:15, fontWeight:600, color:"#fff", cursor:"pointer" }}>{t.confirmProceed}</button>
-              </div>
-            </div>
-          </div>
-        )}
+        <ConfirmDialog
+          open={clearConfirm}
+          onClose={() => setClearConfirm(false)}
+          onConfirm={() => { onClear(); setClearConfirm(false); }}
+          title={t.clearConfirmTitle}
+          titleColor={C.blue}
+          message={t.clearConfirmMsg}
+          cancelLabel={t.confirmCancel}
+          confirmLabel={t.confirmProceed}
+          confirmVariant="primary"
+        />
       </div>
     </div>
   );

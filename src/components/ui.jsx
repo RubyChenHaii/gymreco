@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useC, withAlpha, TINT_BG_ALPHA, TINT_BORDER_ALPHA } from "../theme.js";
+import { useC, useCardShadow, withAlpha, TINT_BG_ALPHA, TINT_BORDER_ALPHA } from "../theme.js";
 import { useLang, T } from "../data/i18n.js";
 
 export function Div({ left=0 }) {
@@ -13,6 +13,7 @@ export function Div({ left=0 }) {
 // tint.borderStyle："solid"（預設）｜"dashed"
 export function Card({ children, style={}, onClick, tint }) {
   const C = useC();
+  const cardShadow = useCardShadow();
   const tintStyle = tint ? (() => {
     const borderColor = withAlpha(tint.color, TINT_BORDER_ALPHA);
     const borderLine = `2px ${tint.borderStyle || "solid"} ${borderColor}`;
@@ -24,7 +25,7 @@ export function Card({ children, style={}, onClick, tint }) {
   })() : {};
 
   return (
-    <div onClick={onClick} style={{ background:C.card, borderRadius:16, overflow:"hidden", boxShadow:"0 1px 4px rgba(0,0,0,0.12)", cursor:onClick?"pointer":"default", ...tintStyle, ...style }}>
+    <div onClick={onClick} style={{ background:C.card, borderRadius:16, overflow:"hidden", boxShadow:cardShadow, cursor:onClick?"pointer":"default", ...tintStyle, ...style }}>
       {children}
     </div>
   );

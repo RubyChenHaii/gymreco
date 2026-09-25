@@ -7,6 +7,8 @@ import { NumberPicker } from "../components/NumberPicker.jsx";
 import { uid } from "../utils/date.js";
 import { isRoutineComplete, MAX_ROUTINES } from "../utils/routineUtils.js";
 import { BottomSheet } from "../components/BottomSheet.jsx";
+import { ConfirmDialog } from "../components/ConfirmDialog.jsx";
+import { InfoButton } from "../components/Button.jsx";
 
 const emptyForm = () => ({ period: "week", matchType: "exercise", matchValue: "", targetCount: 3 });
 
@@ -107,18 +109,16 @@ export function RoutineTab({ routines, setRoutines, library, workouts, homeStatP
     <div style={{ flex:1, overflowY:"auto", background:C.bg, display:"flex", flexDirection:"column" }}>
 
       {/* 刪除確認 */}
-      {confirmDeleteId && (
-        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.5)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:300, padding:"20px" }}>
-          <div style={{ background:C.card, borderRadius:16, padding:"24px 20px", width:"100%", maxWidth:320 }}>
-            <div style={{ fontSize:17, fontWeight:700, color:C.text, marginBottom:10, textAlign:"center" }}>{t.routineDeleteConfirmTitle}</div>
-            <div style={{ fontSize:14, color:C.sub, marginBottom:20, textAlign:"center", lineHeight:1.6 }}>{t.routineDeleteConfirmMsg}</div>
-            <div style={{ display:"flex", gap:10 }}>
-              <button onClick={() => setConfirmDeleteId(null)} style={{ flex:1, padding:"12px", background:C.f5, border:"none", borderRadius:12, fontSize:15, fontWeight:600, color:C.sub, cursor:"pointer" }}>{t.confirmCancel}</button>
-              <button onClick={() => doDelete(confirmDeleteId)} style={{ flex:1, padding:"12px", background:C.red, border:"none", borderRadius:12, fontSize:15, fontWeight:600, color:"#fff", cursor:"pointer" }}>{t.confirmProceed}</button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmDialog
+        open={!!confirmDeleteId}
+        onClose={() => setConfirmDeleteId(null)}
+        onConfirm={() => doDelete(confirmDeleteId)}
+        title={t.routineDeleteConfirmTitle}
+        message={t.routineDeleteConfirmMsg}
+        cancelLabel={t.confirmCancel}
+        confirmLabel={t.confirmProceed}
+        confirmVariant="danger"
+      />
 
       {/* 動作選擇 Bottom Sheet */}
       <BottomSheet open={showExPicker} onClose={() => { setShowExPicker(false); setExSearch(""); }} title={t.routineMatchExercise}>
@@ -149,13 +149,7 @@ export function RoutineTab({ routines, setRoutines, library, workouts, homeStatP
         <button onClick={onBack} style={{ background:"none", border:"none", cursor:"pointer", padding:"4px 0", color:C.blue, fontSize:16, fontWeight:500, flexShrink:0 }}>{t.detailBack}</button>
         <div style={{ flex:1, display:"flex", alignItems:"center", justifyContent:"center", gap:6 }}>
           <span style={{ fontSize:20, fontWeight:700, color:C.text }}>{t.routineTitle}</span>
-          <button onClick={() => setShowDedupHint(v => !v)}
-            style={{ width:20, height:20, borderRadius:"50%", background:`${C.blue}25`, border:"none", cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", padding:0, flexShrink:0 }}>
-            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke={C.blue} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="12" y1="13" x2="12" y2="18"/>
-              <circle cx="12" cy="7.5" r="1.5" fill={C.blue} stroke="none"/>
-            </svg>
-          </button>
+          <InfoButton onClick={() => setShowDedupHint(v => !v)} />
         </div>
         <div style={{ width:25 }} />
       </div>
@@ -264,13 +258,7 @@ export function RoutineTab({ routines, setRoutines, library, workouts, homeStatP
 
         <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:showHomeStatHint?4:8, paddingLeft:2 }}>
           <span style={{ fontSize:12, fontWeight:500, color:C.label, letterSpacing:0.4, textTransform:"uppercase" }}>{t.homeStatSectionTitle}</span>
-          <button onClick={() => setShowHomeStatHint(v => !v)}
-            style={{ width:16, height:16, borderRadius:"50%", background:`${C.blue}25`, border:"none", cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", padding:0, flexShrink:0 }}>
-            <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke={C.blue} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="12" y1="13" x2="12" y2="18"/>
-              <circle cx="12" cy="7.5" r="1.5" fill={C.blue} stroke="none"/>
-            </svg>
-          </button>
+          <InfoButton size={18} onClick={() => setShowHomeStatHint(v => !v)} />
         </div>
         {showHomeStatHint && (
           <div style={{ fontSize:11, color:C.blue, opacity:0.85, marginBottom:8, paddingLeft:2 }}>{t.homeStatSectionHint}</div>

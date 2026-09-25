@@ -297,7 +297,7 @@ export function LogTab({ library, routines, workouts, onSave, onAddToLibrary, sh
         </button>
       </div>
 
-      {/* Library picker sheet */}
+      {/* Library picker BottomSheet */}
       <BottomSheet open={showLibPicker} onClose={() => { setShowLib(false); setLibSearch(""); }} title={t.logPickerTitle}>
         <div style={{ padding:"12px 16px", borderBottom:`1px solid ${C.sep}` }}>
           <input value={libSearch} onChange={e => setLibSearch(e.target.value)} placeholder={t.logPickerSearch}
@@ -335,7 +335,7 @@ export function LogTab({ library, routines, workouts, onSave, onAddToLibrary, sh
           </div>
       </BottomSheet>
 
-      {/* 新增動作 sheet */}
+      {/* 新增動作 BottomSheet */}
       <BottomSheet open={showAddNew} onClose={() => setShowAddNew(false)} title={t.logAddNewTitle} maxHeight="80vh" zIndex={300}>
         <div style={{ overflowY:"auto", padding:"16px 20px 32px" }}>
           <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:6 }}>{t.addName}</div>

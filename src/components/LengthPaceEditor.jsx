@@ -3,6 +3,7 @@ import { useC, fluidSize } from "../theme.js";
 import { useLang, T } from "../data/i18n.js";
 import { NumberPicker } from "./NumberPicker.jsx";
 import { calcOverallPace, fmtDistance, fmtPace, splitDistance, joinDistance, timeToPace, paceToTime } from "../utils/paceUtils.js";
+import { InfoButton } from "./Button.jsx";
 
 const DISTANCE_MIN = 0;     // 每段（整數位）距離下限
 const DISTANCE_MAX = 10;    // 每段（整數位）距離上限；總距離已在下方「整體配速」加總顯示
@@ -71,13 +72,7 @@ export function LengthPaceEditor({ lengthPace, onChange }) {
     <div>
       <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:8, paddingLeft:2 }}>
         <span style={{ fontSize:12, color:C.label }}>{t.lpSegments}</span>
-        <button onClick={() => setShowHint(v => !v)}
-          style={{ width:18, height:18, borderRadius:"50%", background:`${C.blue}25`, border:"none", cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", padding:0, flexShrink:0 }}>
-          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke={C.blue} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="12" y1="13" x2="12" y2="18"/>
-            <circle cx="12" cy="7.5" r="1.5" fill={C.blue} stroke="none"/>
-          </svg>
-        </button>
+        <InfoButton size={18} onClick={() => setShowHint(v => !v)} />
       </div>
       {showHint && (
         <div style={{ fontSize:11, color:C.blue, opacity:0.85, marginBottom:10, paddingLeft:2 }}>{t.lpFieldsHint}</div>
