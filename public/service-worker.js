@@ -16,6 +16,7 @@ const isHTML=(url)=>{
   return p.endsWith('/')||p.endsWith('.html');
 };
 const isJS=(url)=>/\.js$/.test(new URL(url).pathname);
+const isCSS=(url)=>/\.css$/.test(new URL(url).pathname);
 
 self.addEventListener('install',event=>{
   event.waitUntil(
@@ -64,10 +65,10 @@ self.addEventListener('fetch',event=>{
 
   const url=event.request.url;
 
-  // HTML 和 JS：網路優先，但加上逾時保護，避免弱網路時卡住
-  if(isHTML(url)||isJS(url)){
-    event.respondWith(networkFirstWithTimeout(event.request));
-    return;
+  // HTML、JS 和 CSS：網路優先，但加上逾時保護，避免弱網路時卡住
+  if(isHTML(url)||isJS(url)||isCSS(url)){
+  event.respondWith(networkFirstWithTimeout(event.request));
+  return;
   }
 
   // 靜態資源（圖示等）：快取優先，本來就不會有卡住問題，維持原樣
