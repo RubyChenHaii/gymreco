@@ -5,15 +5,19 @@
 <h1 align="center"> GymReco </h1>
 
 <h5 align="center">
-  A lightweight, local-first workout tracker, designed to make long-term training focused and effortless.
+  A lightweight, minimalist workout journal.
 </h5>
 
 <h5 align="center">
-  輕量、以本地儲存為核心的健身紀錄 App，讓長期訓練變得簡單、專注。
+  Text-based logging, designed to keep long-term training simple and focused.
+</h5>
+
+<h5 align="center">
+  簡約、輕量、以文字記錄為核心的健身日記 App，讓長期訓練變得簡單、專注。
 </h5>
 
 <p align="center">
-<img src="https://img.shields.io/badge/version-2.1.0_beta-violet.svg?style=for-the-badge"/>
+<img src="https://img.shields.io/badge/version-2.1.x_beta-violet.svg?style=for-the-badge"/>
 <a href="https://linktr.ee/rubytheduckouo"><img src="https://img.shields.io/badge/author-ruby_chen-brightgreen?style=for-the-badge"></a>
 <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge"/></a>
 </p>
@@ -58,13 +62,9 @@ Then: **Share → Add to Home Screen** for full-screen experience.
 
 ### 📅 Training Calendar｜訓練月曆
 
-- Calendar overview with coloured dots for quick visual scanning. 
+- Calendar overview with coloured tones for quick visual scanning. 
   
-  - 月曆以顏色點標示訓練類型，快速辨識本月訓練內容。
-
-- Collapsible yearly and monthly history views. 
-  
-  - 年度與月份皆可收合，讓長期紀錄保持整潔。
+  - 月曆以顏色標示訓練類型，快速辨識本月訓練內容。
 
 - Log workouts up to 10 days in the past. 
   
@@ -112,13 +112,15 @@ Then: **Share → Add to Home Screen** for full-screen experience.
 
 ## 📸 Screenshots
 
-<div style="display: flex; overflow-x: auto; gap: 12px; padding: 8px 0; max-width: 100%;">
-  <img src="public/screenshots/1_Homepage.PNG" alt="畫面 1" height="320" style="border-radius: 8px;" />
-  <img src="public/screenshots/2_History.PNG" alt="畫面 2" height="320" style="border-radius: 8px;" />
-  <img src="public/screenshots/3_Detail.PNG" alt="畫面 3" height="320" style="border-radius: 8px;" />
-  <img src="public/screenshots/4_Log.PNG" alt="畫面 4" height="320" style="border-radius: 8px;" />
-  <img src="public/screenshots/5_Library.PNG" alt="畫面 5" height="320" style="border-radius: 8px;" />
-</div>
+<table>
+  <tr>
+    <td><img src="public/screenshots/1_Homepage.PNG" height="320" width="auto" alt="item 1"></td>
+    <td><img src="public/screenshots/2_History.PNG" height="320" width="auto" alt="Item 2"></td>
+    <td><img src="public/screenshots/3_Detail.PNG" height="320" width="auto" alt="Item 3"></td>
+    <td><img src="public/screenshots/4_Log.PNG" height="320" width="auto" alt="Item 4"></td>
+    <td><img src="public/screenshots/5_Library.PNG" height="320" width="auto" alt="Item 5"></td>
+  </tr>
+</table>
 
 ---
 
