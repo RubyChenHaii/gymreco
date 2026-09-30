@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="public/logo512.png" width="100" style="border-radius: 8px;">
+  <img src="public/logo512.png" width="100">
 </p>
 
 <h1 align="center"> GymReco </h1>
@@ -114,11 +114,11 @@ Then: **Share → Add to Home Screen** for full-screen experience.
 
 <table>
   <tr>
-    <td><img src="public/screenshots/1_Homepage.PNG" alt="homepage"></td>
-    <td><img src="public/screenshots/2_History.PNG" alt="history"></td>
-    <td><img src="public/screenshots/3_Detail.PNG" alt="detail"></td>
-    <td><img src="public/screenshots/4_Log.PNG" alt="log"></td>
-    <td><img src="public/screenshots/5_Library.PNG" alt="library"></td>
+    <td><img src="public/screenshots/1_Homepage.PNG" width="180" alt="homepage"></td>
+    <td><img src="public/screenshots/2_History.PNG" width="180" alt="history"></td>
+    <td><img src="public/screenshots/3_Detail.PNG" width="180" alt="detail"></td>
+    <td><img src="public/screenshots/4_Log.PNG" width="180" alt="log"></td>
+    <td><img src="public/screenshots/5_Library.PNG" width="180" alt="library"></td>
   </tr>
 </table>
 
