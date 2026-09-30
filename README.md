@@ -114,11 +114,11 @@ Then: **Share → Add to Home Screen** for full-screen experience.
 
 <table>
   <tr>
-    <td><img src="public/screenshots/1_Homepage.PNG" height="320" width="auto" alt="item 1"></td>
-    <td><img src="public/screenshots/2_History.PNG" height="320" width="auto" alt="Item 2"></td>
-    <td><img src="public/screenshots/3_Detail.PNG" height="320" width="auto" alt="Item 3"></td>
-    <td><img src="public/screenshots/4_Log.PNG" height="320" width="auto" alt="Item 4"></td>
-    <td><img src="public/screenshots/5_Library.PNG" height="320" width="auto" alt="Item 5"></td>
+    <td><img src="public/screenshots/1_Homepage.PNG" height="500" width="auto" alt="item 1"></td>
+    <td><img src="public/screenshots/2_History.PNG" height="500" width="auto" alt="Item 2"></td>
+    <td><img src="public/screenshots/3_Detail.PNG" height="500" width="auto" alt="Item 3"></td>
+    <td><img src="public/screenshots/4_Log.PNG" height="500" width="auto" alt="Item 4"></td>
+    <td><img src="public/screenshots/5_Library.PNG" height="500" width="auto" alt="Item 5"></td>
   </tr>
 </table>
 
