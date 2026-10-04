@@ -7,7 +7,8 @@ import { Div, Card, SLabel } from "../components/ui.jsx";
 import { calcOverallPace, fmtDistance, fmtPace } from "../utils/paceUtils.js";
 import { withAlpha, TINT_BG_ALPHA, TINT_BORDER_ALPHA } from "../theme.js";
 import { ConfirmDialog } from "../components/ConfirmDialog.jsx";
-import { InfoButton } from "../components/Button.jsx";
+import { Button, InfoButton } from "../components/Button.jsx";
+import { ExerciseFieldsGroup } from "../components/SelectionControls.jsx";
 
 
 function LibItemDetail({ item, onUpdate, onDelete, onBack }) {
@@ -75,36 +76,16 @@ function LibItemDetail({ item, onUpdate, onDelete, onBack }) {
         {editingMeta && (
           <div style={{ padding:"16px 16px 0" }}>
           <Card style={{ marginBottom:16, padding:"16px" }}>
-            <div style={{ fontSize:13, fontWeight:700, color:C.text, marginBottom:10 }}>{t.libItemEditTitle}</div>
-            <input value={editName} onChange={e => setEditName(e.target.value)} placeholder={t.addName}
-              style={{ width:"100%", background:C.f5, border:`1px solid ${C.sep}`, borderRadius:10, padding:"10px 12px", fontSize:15, color:C.text, boxSizing:"border-box", outline:"none", fontFamily:"inherit", marginBottom:10 }} />
-            <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:6 }}>{t.libItemMuscle}</div>
-            <div style={{ display:"flex", flexWrap:"wrap", gap:6, marginBottom:10 }}>
-              {MG_OPTIONS.map(mg => (
-                <button key={mg} onClick={() => setEditMG(mg)} style={{ background:editMG===mg?C.blue:"none", border:`1px solid ${editMG===mg?C.blue:C.sep}`, borderRadius:20, padding:"4px 12px", fontSize:12, color:editMG===mg?"#fff":C.sub, cursor:"pointer" }}>
-                  {lang === "en" ? MG_EN[mg] || mg : mg}
-                </button>
-              ))}
-            </div>
-            <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:6 }}>{t.libItemColor}</div>
-            <div style={{ display:"flex", gap:8, flexWrap:"wrap", marginBottom:14 }}>
-              {COLOR_OPTS.map(col => (
-                <button key={col} onClick={() => setEditColor(col)} style={{ width:28, height:28, borderRadius:"50%", background:col, border:editColor===col?`3px solid ${C.text}`:"3px solid transparent", cursor:"pointer", padding:0, boxSizing:"border-box" }} />
-              ))}
-            </div>
-            <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:8 }}>{t.recModeLabel}</div>
-            <div style={{ display:"flex", gap:8, marginBottom:8 }}>
-              {RECORDING_MODES.map(m => (
-                <button key={m} onClick={() => setEditRecMode(m)}
-                  style={{ flex:1, background:editRecMode===m?C.blue:"none", border:`1px solid ${editRecMode===m?C.blue:C.sep}`, borderRadius:10, padding:"8px 10px", fontSize:13, fontWeight:600, color:editRecMode===m?"#fff":C.sub, cursor:"pointer" }}>
-                  {m === "weight_sets" ? t.recModeWeightSets : t.recModeLengthPace}
-                </button>
-              ))}
-            </div>
-            <div style={{ fontSize:11, color:C.label, lineHeight:1.6, marginBottom:14 }}>{t.recModeSwitchHint}</div>
-            <div style={{ display:"flex", gap:8 }}>
-              <button onClick={save} disabled={!anyDirty} style={{ flex:1, padding:"10px", background:!anyDirty?"#C7C7CC":C.blue, border:"none", borderRadius:12, color:"#fff", fontSize:14, fontWeight:600, cursor:!anyDirty?"not-allowed":"pointer" }}>{t.libItemSave}</button>
-              <button onClick={() => setConfirmDelete(true)} style={{ padding:"10px 14px", background:"none", border:`1.5px solid ${C.red}`, borderRadius:12, color:C.red, fontSize:14, fontWeight:600, cursor:"pointer" }}>{t.libItemDelete}</button>
+            <div style={{ fontSize:13, fontWeight:700, color:C.text, marginBottom:14 }}>{t.libItemEditTitle}</div>
+            <ExerciseFieldsGroup
+              name={editName} onNameChange={setEditName}
+              recMode={editRecMode} onRecModeChange={setEditRecMode} recModeHint={t.recModeSwitchHint}
+              muscleGroup={editMG} onMuscleGroupChange={setEditMG}
+              color={editColor} onColorChange={setEditColor}
+            />
+            <div style={{ display:"flex", gap:8, marginTop:16 }}>
+              <Button variant="primary" size="md" disabled={!anyDirty} onClick={save} style={{ flex:1 }}>{t.libItemSave}</Button>
+              <Button variant="danger" size="md" fullWidth={false} onClick={() => setConfirmDelete(true)} style={{ padding:"10px 30px" }}>{t.libItemDelete}</Button>
             </div>
           </Card>
           </div>
@@ -272,35 +253,16 @@ export function LibraryTab({ library, setLibrary, openItemId, setOpenItemId }) {
       <div style={{ padding:"16px" }}>
         {showAdd && (
           <Card style={{ marginBottom:16, padding:"16px" }}>
-            <div style={{ fontSize:14, fontWeight:700, color:C.text, marginBottom:12 }}>{t.addBtn}</div>
-            <input value={newName} onChange={e => setNewName(e.target.value)} placeholder={t.addName}
-              style={{ width:"100%", background:C.f5, border:`1px solid ${C.sep}`, borderRadius:10, padding:"10px 12px", fontSize:15, color:C.text, boxSizing:"border-box", outline:"none", fontFamily:"inherit", marginBottom:12 }} />
-            <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:6 }}>{t.recModeLabel}</div>
-            <div style={{ display:"flex", gap:8, marginBottom:12 }}>
-              {RECORDING_MODES.map(m => (
-                <button key={m} onClick={() => setNewRecMode(m)}
-                   style={{ flex:1, background:newRecMode===m?C.blue:"none", border:`1px solid ${newRecMode===m?C.blue:C.sep}`, borderRadius:10, padding:"8px 10px", fontSize:13, fontWeight:600, color:newRecMode===m?"#fff":C.sub, cursor:"pointer" }}>
-                   {m === "weight_sets" ? t.recModeWeightSets : t.recModeLengthPace}
-                </button>
-              ))}
-            </div>
-            <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:6 }}>{t.addMuscle}</div>
-            <div style={{ display:"flex", flexWrap:"wrap", gap:6, marginBottom:12 }}>
-              {MG_OPTIONS.map(mg => (
-                <button key={mg} onClick={() => setNewMG(mg)} style={{ background:newMG===mg?C.blue:"none", border:`1px solid ${newMG===mg?C.blue:C.sep}`, borderRadius:20, padding:"5px 12px", fontSize:13, color:newMG===mg?"#fff":C.sub, cursor:"pointer" }}>
-                  {lang === "en" ? MG_EN[mg] || mg : mg}
-                </button>
-              ))}
-            </div>
-            <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:6 }}>{t.addColor}</div>
-            <div style={{ display:"flex", gap:8, flexWrap:"wrap", marginBottom:14 }}>
-              {COLOR_OPTS.map(col => (
-                <button key={col} onClick={() => setNewColor(col)} style={{ width:28, height:28, borderRadius:"50%", background:col, border:newColor===col?`3px solid ${C.text}`:"3px solid transparent", cursor:"pointer", padding:0, boxSizing:"border-box" }} />
-              ))}
-            </div>
-            <div style={{ display:"flex", gap:8 }}>
-              <button onClick={addItem} disabled={!newName.trim()} style={{ flex:1, padding:"11px", background:newName.trim()?C.blue:"#C7C7CC", border:"none", borderRadius:12, color:"#fff", fontSize:15, fontWeight:600, cursor:newName.trim()?"pointer":"not-allowed" }}>{t.addBtn}</button>
-              <button onClick={() => {  setShowAdd(false); setNewName(""); setNewRecMode(RECORDING_MODES[0]); }} style={{ padding:"11px 20px", background:C.f5, border:"none", borderRadius:12, color:C.sub, fontSize:15, cursor:"pointer" }}>{t.addCancel}</button>
+            <div style={{ fontSize:14, fontWeight:700, color:C.text, marginBottom:14 }}>{t.addBtn}</div>
+            <ExerciseFieldsGroup
+              name={newName} onNameChange={setNewName}
+              recMode={newRecMode} onRecModeChange={setNewRecMode}
+              muscleGroup={newMG} onMuscleGroupChange={setNewMG}
+              color={newColor} onColorChange={setNewColor}
+            />
+            <div style={{ display:"flex", gap:8, marginTop:16 }}>
+              <Button variant="primary" size="md" disabled={!newName.trim()} onClick={addItem} style={{ flex:1 }}>{t.addBtn}</Button>
+              <Button variant="ghost" size="md" fullWidth={false} onClick={() => { setShowAdd(false); setNewName(""); setNewRecMode(RECORDING_MODES[0]); }} style={{ padding:"10px 30px" }}>{t.addCancel}</Button>
             </div>
           </Card>
         )}

@@ -49,7 +49,7 @@ export const T = {
     // Library item detail
     libItemEdit:"編輯此動作", libItemDone:"完成",
     libItemEditTitle:"編輯動作資訊", libItemMuscle:"訓練部位",
-    libItemColor:"顏色", libItemSave:"儲存", libItemDelete:"刪除動作",
+    libItemColor:"顏色", libItemSave:"儲存", libItemDelete:"刪除",
     libNoteTitle:"動作知識筆記",
     libNoteSub:"姿勢提醒、器材設定心得、長期累積的know-how\n 點按即可編輯筆記",
     libNotePlaceholder:"在這裡記錄這個動作的一切知識…",

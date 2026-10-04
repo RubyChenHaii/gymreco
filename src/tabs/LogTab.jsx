@@ -9,6 +9,8 @@ import { LengthPaceEditor } from "../components/LengthPaceEditor.jsx";
 import { isRoutineComplete, wouldPendingRowsAddDay } from "../utils/routineUtils.js";
 import { BottomSheet } from "../components/BottomSheet.jsx";
 import { GLASS_SURFACE_SHADOW, SUBHEADER_MIN_HEIGHT } from "../theme.js";
+import { Button } from "../components/Button.jsx";
+import { ExerciseFieldsGroup } from "../components/SelectionControls.jsx";
 
 // LogTab 內嵌的規則總覽區塊：週/月分組顯示已建立規則的達標進度，並提供「+ 新增規則」入口
 // 點擊任一規則列或「+ 新增規則」都會導向 RoutineTab 全螢幕畫面進行實際管理（新增/編輯/刪除）
@@ -338,42 +340,13 @@ export function LogTab({ library, routines, workouts, onSave, onAddToLibrary, sh
       {/* 新增動作 BottomSheet */}
       <BottomSheet open={showAddNew} onClose={() => setShowAddNew(false)} title={t.logAddNewTitle} maxHeight="80vh" zIndex={300}>
         <div style={{ overflowY:"auto", padding:"16px 20px 32px" }}>
-          <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:6 }}>{t.addName}</div>
-          <input value={newName} onChange={e => setNewName(e.target.value)} placeholder={t.addName}
-            style={{ width:"100%", background:C.f5, border:`1px solid ${C.sep}`, borderRadius:10, padding:"10px 12px", fontSize:15, color:C.text, boxSizing:"border-box", outline:"none", fontFamily:"inherit", marginBottom:16 }} />
-
-          <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:8 }}>{t.recModeLabel}</div>
-          <div style={{ display:"flex", gap:8, marginBottom:16 }}>
-            {RECORDING_MODES.map(m => (
-              <button key={m} onClick={() => setNewRecMode(m)}
-                style={{ flex:1, background:newRecMode===m?C.blue:"none", border:`1px solid ${newRecMode===m?C.blue:C.sep}`, borderRadius:10, padding:"10px 12px", fontSize:13, fontWeight:600, color:newRecMode===m?"#fff":C.sub, cursor:"pointer" }}>
-                {m === "weight_sets" ? t.recModeWeightSets : t.recModeLengthPace}
-              </button>
-            ))}
-          </div>
-
-          <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:8 }}>{t.addMuscle}</div>
-          <div style={{ display:"flex", flexWrap:"wrap", gap:6, marginBottom:16 }}>
-            {MG_OPTIONS.map(mg => (
-              <button key={mg} onClick={() => setNewMG(mg)}
-                style={{ background:newMG===mg?C.blue:"none", border:`1px solid ${newMG===mg?C.blue:C.sep}`, borderRadius:20, padding:"5px 12px", fontSize:13, color:newMG===mg?"#fff":C.sub, cursor:"pointer" }}>
-                {lang === "en" ? MG_EN[mg] || mg : mg}
-              </button>
-            ))}
-          </div>
-
-          <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:8 }}>{t.addColor}</div>
-          <div style={{ display:"flex", gap:8, flexWrap:"wrap", marginBottom:24 }}>
-            {COLOR_OPTS.map(col => (
-              <button key={col} onClick={() => setNewColor(col)}
-                style={{ width:28, height:28, borderRadius:"50%", background:col, border:newColor===col?`3px solid ${C.text}`:"3px solid transparent", cursor:"pointer", padding:0, boxSizing:"border-box" }} />
-            ))}
-          </div>
-
-          <button onClick={handleAddNew} disabled={!newName.trim()}
-            style={{ width:"100%", padding:"14px", background:newName.trim()?C.blue:"#C7C7CC", border:"none", borderRadius:14, color:"#fff", fontSize:15, fontWeight:600, cursor:newName.trim()?"pointer":"not-allowed" }}>
-            {t.addBtn}
-          </button>
+          <ExerciseFieldsGroup
+            name={newName} onNameChange={setNewName}
+            recMode={newRecMode} onRecModeChange={setNewRecMode}
+            muscleGroup={newMG} onMuscleGroupChange={setNewMG}
+            color={newColor} onColorChange={setNewColor}
+          />
+          <Button variant="primary" size="lg" disabled={!newName.trim()} onClick={handleAddNew} style={{ marginTop:18 }}>{t.addBtn}</Button>
         </div>
       </BottomSheet>
     </div>

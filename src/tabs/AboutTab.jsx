@@ -6,9 +6,10 @@ import { todayStr } from "../utils/date.js";
 import { exportMDByScope } from "../utils/exportUtils.js";
 import { BottomSheet } from "../components/BottomSheet.jsx";
 import { ConfirmDialog } from "../components/ConfirmDialog.jsx";
+import { SegmentedControl } from "../components/SelectionControls.jsx";
 
 // ── 版本號：每次發布只需改這一行 ──────────────────────────────
-const APP_VERSION = "2.1.3_b";
+const APP_VERSION = "2.1.4_b";
 
 export function AboutTab({ workouts, library, routines, onImport, onReset, onClear, calendarGradientMode, setCalendarGradientMode, calendarGradientStyle, setCalendarGradientStyle }) {
   const lang = useLang(); const t = T[lang]; const C = useC();
@@ -206,10 +207,10 @@ export function AboutTab({ workouts, library, routines, onImport, onReset, onCle
 
         <SLabel>{isZh ? "簡介" : "Description"}</SLabel>
         <Card style={{ marginBottom:16 }}>
-          <div style={{ padding:"14px 16px", fontSize:14, color:C.sub, lineHeight:1.8 }}>
+          <div style={{ padding:"14px 16px", fontSize:14, color:C.sub, lineHeight:1.8, whiteSpace:"pre-line" }}>
             {isZh
-              ? "GymReco 是一款手機優先的健身紀錄 App，讓你在重訓時快速記錄動作、重量與組次。支援個人動作庫管理、知識筆記累積，以及訓練日曆總覽。所有資料存於本機，不需要帳號。"
-              : "GymReco is a mobile-first PWA workout tracker. Quickly log exercises, weights, and sets during your training. Features a personal exercise library with knowledge notes and a training calendar. All data is stored locally — no account required."}
+              ? "GymReco 是一款手機優先的健身日誌 App，讓你在重訓時快速記錄動作、重量與組次。\n 支援個人動作庫管理、知識筆記累積，以及訓練日曆總覽。所有資料存於本機，不需要帳號。"
+              : "GymReco is a mobile-first PWA workout tracker / journal. Quickly log exercises, weights, and sets during your training. \n Features a personal exercise library with knowledge notes and a training calendar. All data is stored locally — no account required."}
           </div>
         </Card>
 
@@ -248,25 +249,15 @@ export function AboutTab({ workouts, library, routines, onImport, onReset, onCle
 
         <SLabel>{t.calGradientSectionTitle}</SLabel>
         <Card style={{ marginBottom:16 }}>
-          <div style={{ padding:"14px 16px", display:"flex", gap:8, borderBottom:`1px solid ${C.sep}` }}>
-            {[["animated", t.calGradientAnimated], ["static", t.calGradientStatic], ["off", t.calGradientOff]].map(([mode, label]) => (
-              <button key={mode} onClick={() => setCalendarGradientMode(mode)}
-                style={{ flex:1, background:calendarGradientMode===mode?C.blue:"none", border:`1px solid ${calendarGradientMode===mode?C.blue:C.sep}`, borderRadius:10, padding:"10px", fontSize:13, fontWeight:600, color:calendarGradientMode===mode?"#fff":C.sub, cursor:"pointer" }}>
-                {label}
-              </button>
-            ))}
+          <div style={{ padding:"14px 16px", borderBottom:`1px solid ${C.sep}` }}>
+            <SegmentedControl
+              options={[["animated",t.calGradientAnimated],["static",t.calGradientStatic],["off",t.calGradientOff]].map(([v,l])=>({value:v,label:l}))}
+              value={calendarGradientMode} onChange={setCalendarGradientMode} />
           </div>
-          <div style={{ padding:"14px 16px", opacity:calendarGradientMode==="off"?0.4:1, transition:"opacity 0.2s" }}>
-            <div style={{ display:"flex", gap:8 }}>
-              <button onClick={() => calendarGradientMode!=="off" && setCalendarGradientStyle("linear")} disabled={calendarGradientMode==="off"}
-                style={{ flex:1, background:calendarGradientStyle==="linear"?C.blue:"none", border:`1px solid ${calendarGradientStyle==="linear"?C.blue:C.sep}`, borderRadius:10, padding:"10px", fontSize:13, fontWeight:600, color:calendarGradientStyle==="linear"?"#fff":C.sub, cursor:calendarGradientMode==="off"?"not-allowed":"pointer" }}>
-                {t.calGradientLinear}
-              </button>
-              <button onClick={() => calendarGradientMode!=="off" && setCalendarGradientStyle("conic")} disabled={calendarGradientMode==="off"}
-                style={{ flex:1, background:calendarGradientStyle==="conic"?C.blue:"none", border:`1px solid ${calendarGradientStyle==="conic"?C.blue:C.sep}`, borderRadius:10, padding:"10px", fontSize:13, fontWeight:600, color:calendarGradientStyle==="conic"?"#fff":C.sub, cursor:calendarGradientMode==="off"?"not-allowed":"pointer" }}>
-                {t.calGradientConic}
-              </button>
-            </div>
+          <div style={{ padding:"14px 16px" }}>
+            <SegmentedControl
+              options={[["linear",t.calGradientLinear],["conic",t.calGradientConic]].map(([v,l])=>({value:v,label:l}))}
+              value={calendarGradientStyle} onChange={setCalendarGradientStyle} disabled={calendarGradientMode==="off"} />
           </div>
         </Card>
 

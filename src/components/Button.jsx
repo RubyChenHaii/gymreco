@@ -2,7 +2,7 @@ import { useC, RADIUS, FONT } from "../theme.js";
 
 const SIZE_STYLES = {
   lg: { padding:"16px",      fontSize:FONT.headline, radius:RADIUS.xl },
-  md: { padding:"11px 16px", fontSize:FONT.callout,  radius:RADIUS.lg },
+  md: { padding:"12px 16px", fontSize:FONT.callout,  radius:RADIUS.lg },
   sm: { padding:"8px 14px",  fontSize:FONT.body,     radius:RADIUS.md },
 };
 
@@ -19,6 +19,9 @@ export function Button({ children, onClick, variant="primary", size="lg", disabl
     outline: { background:"none",                         color:C.sub,  border:`1px solid ${C.sep}` },
     ghost:   { background: C.f5,                           color:C.sub,  border:"none" },
     danger:  { background: disabled ? "#C7C7CC" : C.red,  color:"#fff", border:"none" },
+    // 專供 SegmentedControl 使用，獨立於上面五組之外，方便之後單獨微調選項按鈕的樣式
+    segment:        { background: C.blue, color:"#fff", border:"none" },
+    segmentOutline: { background:"none",  color:C.sub,  border:`1px solid ${C.sep}` },
   };
 
   return (

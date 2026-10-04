@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLang, T, MG_EN } from "../data/i18n.js";
-import { MG_OPTIONS, COLOR_OPTS, ROUTINE_PERIODS, ROUTINE_MATCH_TYPES } from "../data/constants.js";
+import { MG_OPTIONS, ROUTINE_PERIODS, ROUTINE_MATCH_TYPES } from "../data/constants.js";
 import { useC, SUBHEADER_MIN_HEIGHT } from "../theme.js";
 import { Div, Card, SLabel } from "../components/ui.jsx";
 import { NumberPicker } from "../components/NumberPicker.jsx";
@@ -9,6 +9,7 @@ import { isRoutineComplete, MAX_ROUTINES } from "../utils/routineUtils.js";
 import { BottomSheet } from "../components/BottomSheet.jsx";
 import { ConfirmDialog } from "../components/ConfirmDialog.jsx";
 import { InfoButton } from "../components/Button.jsx";
+import { SegmentedControl, ColorPicker, ChipGroup } from "../components/SelectionControls.jsx";
 
 const emptyForm = () => ({ period: "week", matchType: "exercise", matchValue: "", targetCount: 3 });
 
@@ -185,23 +186,13 @@ export function RoutineTab({ routines, setRoutines, library, workouts, homeStatP
           </div>
 
           <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:8 }}>{t.routinePeriodLabel}</div>
-          <div style={{ display:"flex", gap:8, marginBottom:16 }}>
-            {ROUTINE_PERIODS.map(p => (
-              <button key={p} onClick={() => setForm(f => ({ ...f, period: p }))}
-                style={{ flex:1, background:form.period===p?C.blue:"none", border:`1px solid ${form.period===p?C.blue:C.sep}`, borderRadius:10, padding:"9px 10px", fontSize:13, fontWeight:600, color:form.period===p?"#fff":C.sub, cursor:"pointer" }}>
-                {periodLabel(p)}
-              </button>
-            ))}
+          <div style={{ marginBottom:16 }}>
+            <SegmentedControl options={ROUTINE_PERIODS.map(p => ({ value:p, label:periodLabel(p) }))} value={form.period} onChange={p => setForm(f => ({ ...f, period:p }))} />
           </div>
 
           <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:8 }}>{t.routineMatchTypeLabel}</div>
-          <div style={{ display:"flex", gap:8, marginBottom:14 }}>
-            {ROUTINE_MATCH_TYPES.map(m => (
-              <button key={m} onClick={() => setMatchType(m)}
-                style={{ flex:1, background:form.matchType===m?C.blue:"none", border:`1px solid ${form.matchType===m?C.blue:C.sep}`, borderRadius:10, padding:"9px 8px", fontSize:12, fontWeight:600, color:form.matchType===m?"#fff":C.sub, cursor:"pointer" }}>
-                {matchTypeLabel(m)}
-              </button>
-            ))}
+          <div style={{ marginBottom:14 }}>
+            <SegmentedControl options={ROUTINE_MATCH_TYPES.map(m => ({ value:m, label:matchTypeLabel(m) }))} value={form.matchType} onChange={setMatchType} size="sm" />
           </div>
 
           {form.matchType === "exercise" && (
@@ -215,22 +206,14 @@ export function RoutineTab({ routines, setRoutines, library, workouts, homeStatP
           )}
 
           {form.matchType === "color" && (
-            <div style={{ display:"flex", gap:8, flexWrap:"wrap", marginBottom:16 }}>
-              {COLOR_OPTS.map(col => (
-                <button key={col} onClick={() => setForm(f => ({ ...f, matchValue: col }))}
-                  style={{ width:30, height:30, borderRadius:"50%", background:col, border:form.matchValue===col?`3px solid ${C.text}`:"3px solid transparent", cursor:"pointer", padding:0, boxSizing:"border-box" }} />
-              ))}
+            <div style={{ marginBottom:16 }}>
+              <ColorPicker value={form.matchValue} onChange={col => setForm(f => ({ ...f, matchValue:col }))} size={30} />
             </div>
           )}
 
           {form.matchType === "muscleGroup" && (
-            <div style={{ display:"flex", flexWrap:"wrap", gap:6, marginBottom:16 }}>
-              {MG_OPTIONS.map(mg => (
-                <button key={mg} onClick={() => setForm(f => ({ ...f, matchValue: mg }))}
-                  style={{ background:form.matchValue===mg?C.blue:"none", border:`1px solid ${form.matchValue===mg?C.blue:C.sep}`, borderRadius:20, padding:"5px 12px", fontSize:13, color:form.matchValue===mg?"#fff":C.sub, cursor:"pointer" }}>
-                  {groupLabel(mg)}
-                </button>
-              ))}
+            <div style={{ marginBottom:16 }}>
+              <ChipGroup options={MG_OPTIONS.map(mg => ({ value:mg, label:groupLabel(mg) }))} value={form.matchValue} onChange={mg => setForm(f => ({ ...f, matchValue:mg }))} />
             </div>
           )}
 
@@ -263,13 +246,8 @@ export function RoutineTab({ routines, setRoutines, library, workouts, homeStatP
         {showHomeStatHint && (
           <div style={{ fontSize:11, color:C.blue, opacity:0.85, marginBottom:8, paddingLeft:2 }}>{t.homeStatSectionHint}</div>
         )}
-        <div style={{ display:"flex", gap:8, marginBottom:20 }}>
-          {ROUTINE_PERIODS.map(p => (
-            <button key={p} onClick={() => setHomeStatPeriod(p)}
-              style={{ flex:1, background:homeStatPeriod===p?C.blue:"none", border:`1px solid ${homeStatPeriod===p?C.blue:C.sep}`, borderRadius:10, padding:"9px 10px", fontSize:13, fontWeight:600, color:homeStatPeriod===p?"#fff":C.sub, cursor:"pointer" }}>
-              {periodLabel(p)}
-            </button>
-          ))}
+        <div style={{ marginBottom:20 }}>
+          <SegmentedControl options={ROUTINE_PERIODS.map(p => ({ value:p, label:periodLabel(p) }))} value={homeStatPeriod} onChange={setHomeStatPeriod} />
         </div>
         
         
