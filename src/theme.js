@@ -116,6 +116,6 @@ export const TINT_BORDER_ALPHA = "60"; // 邊框透明度，約 37.6%（原本 5
 // ── 首頁月曆背景漸層 Token ──────────────────────────────────────
 // 依「本月各顏色出現天數」比例混合出的動態底色
 // 這個透明度是起始值，深色/淺色模式下實際效果可能不同，可依需要再拆成 LIGHT/DARK 兩組獨立微調
-export const CALENDAR_GRADIENT_ALPHA = "40"; // 約 25% 不透明度
+export const CALENDAR_GRADIENT_ALPHA = "47"; // 不透明度約為 28%，經實機測試在淺色、深色背景下顯示效果良好的中間值
 
 export const withAlpha = (hexColor, alphaHex) => `${hexColor}${alphaHex}`;

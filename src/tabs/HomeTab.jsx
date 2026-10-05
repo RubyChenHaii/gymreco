@@ -51,74 +51,75 @@ function Calendar({ workouts, library, onDayClick, gradientMode, gradientStyle }
   return (
     <Card style={{ marginBottom:16, position:"relative" }}>
       {gradientImage && (
-        <div
-          key={`${yr}-${mo}-${gradientStyle}`}
-          style={{
-            position:"absolute", inset:0, zIndex:0,
-            pointerEvents:"none",
-            backgroundImage: gradientImage,
-            backgroundSize: gradientStyle === "linear" ? (gradientMode === "animated" ? "200% 200%" : "100% 100%") : "100% 100%",
-            animation: gradientMode === "animated"
-              ? (gradientStyle === "linear"
-                  ? "gymreco-cal-flow 12s ease infinite, gymreco-cal-fadein 0.6s ease"
-                  : "gymreco-cal-conic-spin 18s linear infinite, gymreco-cal-fadein 0.6s ease")
-              : "gymreco-cal-fadein 0.6s ease",
-          }}
-        />
+      <div
+        key={`${yr}-${mo}-${gradientStyle}`}
+        style={{
+          position:"absolute", inset:0, zIndex:0,
+          pointerEvents:"none",
+          backgroundImage: gradientImage,
+          backgroundSize: gradientStyle === "linear" ? (gradientMode === "animated" ? "200% 200%" : "100% 100%") : "100% 100%",
+          animation: gradientMode === "animated"
+            ? (gradientStyle === "linear"
+              ? "gymreco-cal-flow 12s ease infinite, gymreco-cal-fadein 0.6s ease"
+              : "gymreco-cal-conic-spin 18s linear infinite, gymreco-cal-fadein 0.6s ease")
+            : "gymreco-cal-fadein 0.6s ease",
+        }}
+      />
       )}
-        <div style={{ position:"relative", zIndex:1 }}></div>
-        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"14px 16px 10px" }}>
-          {/* 月份切換列 */}
-          <button onClick={() => setViewDate(new Date(yr, mo - 1, 1))} style={{ background:"none", border:"none", cursor:"pointer", fontSize:20, color:C.blue, padding:"0 4px", lineHeight:1 }}>‹</button>
-          <span style={{ fontSize:15, fontWeight:700, color:C.text }}>
-            {lang === "zh" ? `${yr} 年 ${mo + 1} 月` : `${MONTHS_EN[mo]} ${yr}`}
-          </span>
-          <button onClick={() => setViewDate(new Date(yr, mo + 1, 1))} style={{ background:"none", border:"none", cursor:"pointer", fontSize:20, color:C.blue, padding:"0 4px", lineHeight:1 }}>›</button>
+        <div style={{ position:"relative", zIndex:1 }}>
+          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"14px 16px 10px" }}>
+            {/* 月份切換列 */}
+            <button onClick={() => setViewDate(new Date(yr, mo - 1, 1))} style={{ background:"none", border:"none", cursor:"pointer", fontSize:20, color:C.blue, padding:"0 4px", lineHeight:1 }}>‹</button>
+            <span style={{ fontSize:15, fontWeight:700, color:C.text }}>
+              {lang === "zh" ? `${yr} 年 ${mo + 1} 月` : `${MONTHS_EN[mo]} ${yr}`}
+            </span>
+            <button onClick={() => setViewDate(new Date(yr, mo + 1, 1))} style={{ background:"none", border:"none", cursor:"pointer", fontSize:20, color:C.blue, padding:"0 4px", lineHeight:1 }}>›</button>
+          </div>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(7,1fr)", padding:"0 10px 6px" }}>
+            {/* 星期列 */}
+            {t.weekdays.map((d, i) => (
+              <div key={d} style={{ textAlign:"center", fontSize:11, fontWeight:600, color:i===0?C.red:i===6?`${C.blue}99`:C.label, padding:"2px 0" }}>{d}</div>
+            ))}
+          </div>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(7,1fr)", padding:"0 10px 14px", gap:"2px 0" }}>
+            {/* 日期格 */}
+            {cells.map((day, idx) => {
+              if (!day) return <div key={`_${idx}`} />;
+              const ds = `${yr}-${String(mo + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+              const w = byDate[ds];
+              const isToday = ds === todStr;
+              const dow = (firstDay + day - 1) % 7;
+              return (
+                <div key={day} onClick={() => w && onDayClick(ds)}
+                  style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:3, padding:"4px 2px", cursor:w?"pointer":"default", borderRadius:10 }}>
+                  <span style={{ fontSize:13, fontWeight:isToday?700:400, width:26, height:26, display:"flex", alignItems:"center", justifyContent:"center", borderRadius:"50%",
+                    background:isToday?C.blue:"transparent",
+                    color:isToday?"#fff":dow===0?C.red:dow===6?`${C.blue}99`:C.text }}>
+                    {day}
+                  </span>
+                  {w && (
+                    <div style={{ display:"flex", gap:2, justifyContent:"center", flexWrap:"wrap", maxWidth:28 }}>
+                      {(() => {
+                        const seen = new Set();
+                        const dots = [];
+                        for (const ex of w.exercises) {
+                          const it = library.find(l => l.id === ex.libId);
+                          if (!it || seen.has(it.color)) continue;
+                          seen.add(it.color);
+                          dots.push(it);
+                          if (dots.length === 3) break;
+                        }
+                        return dots.map((it, i) => (
+                          <div key={i} style={{ width:5, height:5, borderRadius:"50%", background:it.color }} />
+                        ));
+                      })()}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(7,1fr)", padding:"0 10px 6px" }}>
-          {/* 星期列 */}
-          {t.weekdays.map((d, i) => (
-            <div key={d} style={{ textAlign:"center", fontSize:11, fontWeight:600, color:i===0?C.red:i===6?`${C.blue}99`:C.label, padding:"2px 0" }}>{d}</div>
-          ))}
-        </div>
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(7,1fr)", padding:"0 10px 14px", gap:"2px 0" }}>
-          {/* 日期格 */}
-          {cells.map((day, idx) => {
-            if (!day) return <div key={`_${idx}`} />;
-            const ds = `${yr}-${String(mo + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-            const w = byDate[ds];
-            const isToday = ds === todStr;
-            const dow = (firstDay + day - 1) % 7;
-            return (
-              <div key={day} onClick={() => w && onDayClick(ds)}
-                style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:3, padding:"4px 2px", cursor:w?"pointer":"default", borderRadius:10 }}>
-                <span style={{ fontSize:13, fontWeight:isToday?700:400, width:26, height:26, display:"flex", alignItems:"center", justifyContent:"center", borderRadius:"50%",
-                  background:isToday?C.blue:"transparent",
-                  color:isToday?"#fff":dow===0?C.red:dow===6?`${C.blue}99`:C.text }}>
-                  {day}
-                </span>
-                {w && (
-                  <div style={{ display:"flex", gap:2, justifyContent:"center", flexWrap:"wrap", maxWidth:28 }}>
-                    {(() => {
-                      const seen = new Set();
-                      const dots = [];
-                      for (const ex of w.exercises) {
-                        const it = library.find(l => l.id === ex.libId);
-                        if (!it || seen.has(it.color)) continue;
-                        seen.add(it.color);
-                        dots.push(it);
-                        if (dots.length === 3) break;
-                      }
-                      return dots.map((it, i) => (
-                        <div key={i} style={{ width:5, height:5, borderRadius:"50%", background:it.color }} />
-                      ));
-                    })()}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-      </div>
     </Card>
   );
 }
