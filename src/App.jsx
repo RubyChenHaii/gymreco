@@ -4,6 +4,7 @@ import { INIT_LIBRARY, INIT_WORKOUTS } from "./data/initialData.js";
 import { LIGHT, DARK, DarkCtx, CalendarGradientCtx } from "./theme.js";
 import { lsGet, lsSet } from "./hooks/useStorage.js";
 import { StatusBar, BottomNav } from "./components/ui.jsx";
+import { SwipeBackView } from "./components/SwipeBackView.jsx";
 import { HomeTab }    from "./tabs/HomeTab.jsx";
 import { LogTab }     from "./tabs/LogTab.jsx";
 import { HistoryTab } from "./tabs/HistoryTab.jsx";
@@ -12,10 +13,32 @@ import { LibraryTab } from "./tabs/LibraryTab.jsx";
 import { RoutineTab } from "./tabs/RoutineTab.jsx";
 import { AboutTab }   from "./tabs/AboutTab.jsx";
 
+const SUB_TABS = ["detail", "daydetail", "routine"]; // 子頁：進入時要把來源頁推入導覽堆疊
 export default function App() {
   const [tab,       setTab]       = useState("home");
-  const [prevTab,   setPrevTab]   = useState("home");
-  const navigate = (newTab) => { setPrevTab(tab); setTab(newTab); };
+  // 導覽堆疊：依序記錄每個子頁「進入前所在的頁面」，取代原本只能記一層的 prevTab
+  const [navStack, setNavStack] = useState([]);
+  // 目前的動作庫詳情是否從訓練頁（detail / daydetail）的「動作庫 →」進入；是的話返回要回到來源頁，而不是動作庫列表
+  const [libItemFromSub, setLibItemFromSub] = useState(false);
+
+  // 進入子頁 → 推入來源頁；切換到一般分頁 → 清空堆疊
+  const navigate = (newTab) => {
+    setNavStack(s => SUB_TABS.includes(newTab) ? [...s, tab] : []);
+    setTab(newTab);
+  };
+  // 返回 steps 層（預設 1 層）；堆疊為空時保底回首頁
+  const goBack = (steps = 1) => {
+    const idx = Math.max(0, navStack.length - steps);
+    setTab(navStack[idx] ?? "home");
+    setNavStack(navStack.slice(0, idx));
+  };
+  // 底部分頁列切換：視為「重新開始」，清空堆疊與來源標記；點目前所在分頁則不處理
+  const switchTab = (newTab) => {
+    if (newTab === tab) return;
+    setNavStack([]);
+    setLibItemFromSub(false);
+    setTab(newTab);
+  };
 
   const [workouts,  setWorkouts]  = useState(() => lsGet("wt_workouts", INIT_WORKOUTS));
   const [library,   setLibrary]   = useState(() => lsGet("wt_library",  INIT_LIBRARY));
@@ -75,7 +98,21 @@ export default function App() {
     }, 0);
   };
 
-  const openLibItem        = (id) => { setLibItemId(id); setTab("library"); };
+  // 從訓練頁的「動作庫 →」進入：推入來源頁、標記來源，之後返回就會回到那一頁
+  const openLibItem = (id) => {
+    setNavStack(s => [...s, tab]);
+    setLibItemFromSub(true);
+    setLibItemId(id);
+    setTab("library");
+  };
+  // 交給 LibraryTab 當 setOpenItemId 用：
+  // - 傳入 id（動作庫列表點選）→ 一般進入，不算來自訓練頁
+  // - 傳入 null（返回 / 刪除動作 / 右滑）→ 若來自訓練頁，就回到來源頁，否則只是回到動作庫列表
+  const handleSetLibItem = (id) => {
+    setLibItemId(id);
+    if (id !== null) { setLibItemFromSub(false); return; }
+    if (libItemFromSub) { setLibItemFromSub(false); goBack(); }
+  };
   const handleAddToLibrary  = (newItem) => setLibrary(p => [...p, newItem]);
   const handleUpdateWorkout = (updated) => {
     setWorkouts(p => p.map(w => w.id === updated.id ? updated : w));
@@ -191,39 +228,46 @@ const handleReset = () => {
                 </div>
               )}
               <div style={{ flex:1, display:"flex", flexDirection:"column", overflow:"hidden", background:theme.bg }}>
-                {tab === "detail"
-                  ? <DetailTab
-                      workout={detailWorkout}
-                      library={library}
-                      onBack={() => setTab(prevTab)}
-                      onOpenLibItem={openLibItem}
-                      onUpdateWorkout={handleUpdateWorkout}
-                      onDeleteWorkout={(id) => {
-                        handleDeleteWorkout(id);
-                        const remaining = workouts.filter(w => w.id !== id && w.date === detailDate);
-                        setTab(remaining.length > 0 ? "daydetail" : "history");
-                      }} />
+                  {tab === "detail"
+                  ? <SwipeBackView key="detail" onBack={() => goBack()}>
+                      <DetailTab
+                        workout={detailWorkout}
+                        library={library}
+                        onBack={() => goBack()}
+                        onOpenLibItem={openLibItem}
+                        onUpdateWorkout={handleUpdateWorkout}
+                        onDeleteWorkout={(id) => {
+                          handleDeleteWorkout(id);
+                          const remaining = workouts.filter(w => w.id !== id && w.date === detailDate);
+                          // 當天還有其他訓練 → 回當日總覽；已清空 → 連當日總覽也跳過，直接回到進入當日總覽之前的頁面
+                          goBack(remaining.length > 0 ? 1 : 2);
+                        }} />
+                    </SwipeBackView>
                 : tab === "daydetail"
-                  ? <DayDetailTab
-                      dayWorkouts={[...workouts.filter(w => w.date === detailDate)].reverse()}
-                      library={library}
-                      onBack={() => setTab("history")}
-                      onOpenLibItem={openLibItem}
-                      onEditWorkout={handleEditWorkout} />
+                  ? <SwipeBackView key="daydetail" onBack={() => goBack()}>
+                      <DayDetailTab
+                        dayWorkouts={[...workouts.filter(w => w.date === detailDate)].reverse()}
+                        library={library}
+                        onBack={() => goBack()}
+                        onOpenLibItem={openLibItem}
+                        onEditWorkout={handleEditWorkout} />
+                    </SwipeBackView>
                 : tab === "log"
                   ? <LogTab library={library} routines={routines} workouts={workouts} onSave={handleSave} onAddToLibrary={handleAddToLibrary} showToast={showToast} onOpenRoutines={openRoutines} />
                 : tab === "history"
                   ? <HistoryTab workouts={workouts} library={library} onOpenDay={openDayDetail} />
                 : tab === "library"
-                  ? <LibraryTab library={library} setLibrary={setLibrary} openItemId={libItemId} setOpenItemId={setLibItemId} />
+                  ? <LibraryTab library={library} setLibrary={setLibrary} openItemId={libItemId} setOpenItemId={handleSetLibItem} />
                 : tab === "routine"
-                  ? <RoutineTab routines={routines} setRoutines={setRoutines} library={library} workouts={workouts} homeStatPeriod={homeStatPeriod} setHomeStatPeriod={setHomeStatPeriod} onBack={() => setTab(prevTab)} />
+                  ? <SwipeBackView key="routine" onBack={() => goBack()}>
+                      <RoutineTab routines={routines} setRoutines={setRoutines} library={library} workouts={workouts} homeStatPeriod={homeStatPeriod} setHomeStatPeriod={setHomeStatPeriod} onBack={() => goBack()} />
+                    </SwipeBackView>
                 : tab === "about"
                   ? <AboutTab workouts={workouts} library={library} routines={routines} onImport={handleImport} onReset={handleReset} onClear={handleClear} calendarGradientMode={calendarGradientMode} setCalendarGradientMode={setCalendarGradientMode} calendarGradientStyle={calendarGradientStyle} setCalendarGradientStyle={setCalendarGradientStyle} />
                 : <HomeTab workouts={workouts} library={library} routines={routines} homeStatPeriod={homeStatPeriod} setTab={navigate} lang={lang} setLang={setLang} darkMode={darkMode} setDarkMode={setDarkMode} openDayDetail={openDayDetail} calendarGradientMode={calendarGradientMode} calendarGradientStyle={calendarGradientStyle} />
                 }
               </div>
-              {tab !== "detail" && tab !== "daydetail" && tab !== "routine" && <BottomNav tab={tab} setTab={setTab} />}
+              {tab !== "detail" && tab !== "daydetail" && tab !== "routine" && <BottomNav tab={tab} setTab={switchTab} />}
             </div>
           </div>
         </CalendarGradientCtx.Provider>

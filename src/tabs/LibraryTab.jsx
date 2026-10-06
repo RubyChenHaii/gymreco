@@ -9,6 +9,7 @@ import { withAlpha, TINT_BG_ALPHA, TINT_BORDER_ALPHA } from "../theme.js";
 import { ConfirmDialog } from "../components/ConfirmDialog.jsx";
 import { Button, InfoButton } from "../components/Button.jsx";
 import { ExerciseFieldsGroup } from "../components/SelectionControls.jsx";
+import { SwipeBackView } from "../components/SwipeBackView.jsx";
 
 
 function LibItemDetail({ item, onUpdate, onDelete, onBack }) {
@@ -228,10 +229,12 @@ export function LibraryTab({ library, setLibrary, openItemId, setOpenItemId }) {
   if (openItemId) {
     const item = library.find(l => l.id === openItemId);
     if (item) return (
-      <LibItemDetail item={item}
-        onUpdate={updated => setLibrary(p => p.map(l => l.id === updated.id ? updated : l))}
-        onDelete={() => { setLibrary(p => p.filter(l => l.id !== openItemId)); setOpenItemId(null); }}
-        onBack={() => setOpenItemId(null)} />
+      <SwipeBackView key="libitem" onBack={() => setOpenItemId(null)}>
+        <LibItemDetail item={item}
+          onUpdate={updated => setLibrary(p => p.map(l => l.id === updated.id ? updated : l))}
+          onDelete={() => { setLibrary(p => p.filter(l => l.id !== openItemId)); setOpenItemId(null); }}
+          onBack={() => setOpenItemId(null)} />
+      </SwipeBackView>
     );
   }
 

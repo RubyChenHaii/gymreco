@@ -9,7 +9,7 @@ import { ConfirmDialog } from "../components/ConfirmDialog.jsx";
 import { SegmentedControl } from "../components/SelectionControls.jsx";
 
 // ── 版本號：每次發布只需改這一行 ──────────────────────────────
-const APP_VERSION = "2.1.4_b";
+const APP_VERSION = "2.1.4_b2";
 
 export function AboutTab({ workouts, library, routines, onImport, onReset, onClear, calendarGradientMode, setCalendarGradientMode, calendarGradientStyle, setCalendarGradientStyle }) {
   const lang = useLang(); const t = T[lang]; const C = useC();
