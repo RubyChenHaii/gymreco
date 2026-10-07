@@ -7,9 +7,13 @@ import { exportMDByScope } from "../utils/exportUtils.js";
 import { BottomSheet } from "../components/BottomSheet.jsx";
 import { ConfirmDialog } from "../components/ConfirmDialog.jsx";
 import { SegmentedControl } from "../components/SelectionControls.jsx";
+import { Button } from "../components/Button.jsx";
 
 // ── 版本號：每次發布只需改這一行 ──────────────────────────────
 const APP_VERSION = "2.1.4_b2";
+
+// 「標題＋副標題在左、箭頭在右」的整列按鈕共用版型（匯出/匯入/重設/清除）
+const rowStyle = { marginBottom:10, textAlign:"left", display:"flex", justifyContent:"space-between", alignItems:"center" };
 
 export function AboutTab({ workouts, library, routines, onImport, onReset, onClear, calendarGradientMode, setCalendarGradientMode, calendarGradientStyle, setCalendarGradientStyle }) {
   const lang = useLang(); const t = T[lang]; const C = useC();
@@ -265,31 +269,28 @@ export function AboutTab({ workouts, library, routines, onImport, onReset, onCle
         <Card style={{ marginBottom:16 }}>
           <div style={{ padding:"14px 16px 6px" }}>
             <div style={{ fontSize:12, color:C.label, marginBottom:12 }}>{t.exportSub}</div>
-            <button onClick={exportJSON}
-              style={{ width:"100%", padding:"12px 16px", background:C.blue, border:"none", borderRadius:12, color:"#fff", fontSize:14, fontWeight:600, cursor:"pointer", marginBottom:10, textAlign:"left", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+              <Button variant="primary" size="md" onClick={exportJSON} style={rowStyle}>
               <div>
                 <div>{t.exportJSON}</div>
                 <div style={{ fontSize:11, fontWeight:400, opacity:0.8, marginTop:2 }}>{t.exportJSONSub}</div>
               </div>
               <span style={{ fontSize:18 }}>↓</span>
-            </button>
-            <button onClick={() => setShowMDSheet(true)}
-              style={{ width:"100%", padding:"12px 16px", background:C.f5, border:`1px solid ${C.sep}`, borderRadius:12, color:C.text, fontSize:14, fontWeight:600, cursor:"pointer", marginBottom:10, textAlign:"left", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+            </Button>
+              <Button variant="ghost" size="md" onClick={() => setShowMDSheet(true)} style={{ ...rowStyle, color:C.text, border:`1px solid ${C.sep}` }}>
               <div>
                 <div>{t.exportMD}</div>
                 <div style={{ fontSize:11, fontWeight:400, color:C.label, marginTop:2 }}>{t.exportMDSub}</div>
               </div>
               <span style={{ fontSize:18, color:C.label }}>›</span>
-            </button>
+            </Button>
             <input ref={fileInputRef} type="file" accept=".json" onChange={handleFileSelect} style={{ display:"none" }} />
-            <button onClick={() => fileInputRef.current.click()}
-              style={{ width:"100%", padding:"12px 16px", background:C.f5, border:`1.5px dashed ${C.sep}`, borderRadius:12, color:C.sub, fontSize:14, fontWeight:600, cursor:"pointer", marginBottom:4, textAlign:"left", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+            <Button variant="ghost" size="md" onClick={() => fileInputRef.current.click()} style={{ ...rowStyle, marginBottom:4, border:`1.5px dashed ${C.sub}26` }}>
               <div>
                 <div>{isZh ? "匯入 JSON（還原備份）" : "Import JSON (Restore Backup)"}</div>
                 <div style={{ fontSize:11, fontWeight:400, color:C.label, marginTop:2 }}>{isZh ? "將覆蓋目前所有資料" : "Will overwrite all current data"}</div>
               </div>
               <span style={{ fontSize:18, color:C.label }}>↑</span>
-            </button>
+            </Button>
             {importError && <div style={{ fontSize:12, color:C.red, marginTop:6, paddingLeft:4 }}>{importError}</div>}
           </div>
         </Card>
@@ -298,23 +299,21 @@ export function AboutTab({ workouts, library, routines, onImport, onReset, onCle
         <Card style={{ marginBottom:32 }}>
           <div style={{ padding:"14px 16px" }}>
             {/* Reset */}
-            <button onClick={() => setResetConfirm(true)}
-              style={{ width:"100%", padding:"12px 16px", background:C.f5, border:`1px solid ${C.sep}`, borderRadius:12, color:C.text, fontSize:14, fontWeight:600, cursor:"pointer", marginBottom:10, textAlign:"left", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+              <Button variant="ghost" size="md" onClick={() => setResetConfirm(true)} style={{ ...rowStyle, color:C.text, border:`1px solid ${C.sep}` }}>
               <div>
                 <div>{t.resetBtn}</div>
                 <div style={{ fontSize:11, fontWeight:400, color:C.label, marginTop:2 }}>{t.resetSub}</div>
               </div>
               <span style={{ fontSize:16 }}>↺</span>
-            </button>
+            </Button>
             {/* Clear */}
-            <button onClick={() => setClearConfirm(true)}
-              style={{ width:"100%", padding:"12px 16px", background:`${C.blue}15`, border:`1.5px solid ${C.blue}`, borderRadius:12, color:C.blue, fontSize:14, fontWeight:600, cursor:"pointer", textAlign:"left", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+              <Button variant="tinted" size="md" onClick={() => setClearConfirm(true)} style={{ ...rowStyle, marginBottom:0, background:`${C.blue}15`, border:`1.5px solid ${C.blue}` }}>
               <div>
                 <div>{t.clearBtn}</div>
                 <div style={{ fontSize:11, fontWeight:400, color:`${C.blue}99`, marginTop:2 }}>{t.clearSub}</div>
               </div>
               <span style={{ fontSize:16 }}>✕</span>
-            </button>
+            </Button>
           </div>
         </Card>
 
