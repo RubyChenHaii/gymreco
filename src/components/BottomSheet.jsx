@@ -30,6 +30,11 @@ export function BottomSheet({ open, onClose, title, children, maxHeight = "75vh"
     }
     setDragY(0); // 不論是否觸發關閉，放開後面板都重置回原位（若已關閉，重置對畫面已無影響）
   };
+  // 系統中斷手勢（例如來電、系統手勢接手）→ 直接彈回原位，不觸發關閉
+  const handleTouchCancel = () => {
+    dragging.current = false;
+    setDragY(0);
+  };
 
   return (
     <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.45)", display:"flex", flexDirection:"column", zIndex }}
@@ -40,24 +45,28 @@ export function BottomSheet({ open, onClose, title, children, maxHeight = "75vh"
         transform:`translateY(${dragY}px)`,
         transition: dragging.current ? "none" : "transform 0.25s ease-out", // 拖曳中即時跟隨手指、放開後才有動畫回彈
       }}>
-        {/* 下方區段爲 BottomSheet 頂端的「拖拉把手」，現在具備真實的可拖曳行為 */}
+        {/* 拖曳區：把手＋標題列共用同一組手勢，整塊都能往下拖曳關閉 */}
         <div
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
-          // style padding: 上方、左右、下方。
-          style={{ display:"flex", justifyContent:"center", padding:"10px 0 4px", flexShrink:0, cursor:"grab", touchAction:"none" }}>
-          <div style={{ width:36, height:4, borderRadius:2, background:C.sep }} />
-        </div>
-        {/* 下方區段爲標題列：包含 BottomSheet 左上角的 Title 及右上角的「關閉 X」按鈕 ，包在一個 div 中 */}
-        {title && (
-            <div style={{ padding:"3px 20px 20px", display:"flex", justifyContent:"space-between", alignItems:"center", borderBottom:`1px solid ${C.sep}`, flexShrink:0}}>
-             <span style={{ fontSize:17, fontWeight:700, color:C.text }}>{title}</span>
-                {/* 下方二行爲右上角的「關閉 X」按鈕樣式 */}
-             <button onClick={onClose}
+          onTouchCancel={handleTouchCancel}
+          style={{ flexShrink:0, touchAction:"none" }}>
+          {/* 下方區段爲 BottomSheet 頂端的「拖拉把手」 */}
+          {/* style padding: 上方、左右、下方。 */}
+          <div style={{ display:"flex", justifyContent:"center", padding:"10px 0 4px", cursor:"grab" }}>
+            <div style={{ width:36, height:4, borderRadius:2, background:C.sep }} />
+          </div>
+          {/* 下方區段爲標題列：包含 BottomSheet 左上角的 Title 及右上角的「關閉 X」按鈕 ，包在一個 div 中 */}
+          {title && (
+            <div style={{ padding:"3px 20px 20px", display:"flex", justifyContent:"space-between", alignItems:"center", borderBottom:`1px solid ${C.sep}` }}>
+              <span style={{ fontSize:17, fontWeight:700, color:C.text }}>{title}</span>
+              {/* 下方二行爲右上角的「關閉 X」按鈕樣式 */}
+              <button onClick={onClose}
                 style={{ background:C.f5, border:"none", borderRadius:"50%", width:28, height:28, color:C.label, fontSize:16, cursor:"pointer", flexShrink:0 }}>×</button>
             </div>
-        )}
+          )}
+        </div>
         {children}
       </div>
     </div>

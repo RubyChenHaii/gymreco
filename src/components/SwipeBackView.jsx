@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useC } from "../theme.js";
 
-const EDGE_WIDTH       = 16;    // 左側感應條寬度（px）
+const EDGE_WIDTH       = 24;    // 左側感應條寬度（px）
 const START_THRESHOLD  = 6;     // 水平位移超過這個值才算「開始手勢」
 const CLOSE_RATIO      = 0.35;  // 拖曳超過外殼寬度的 35% 放開就返回
 const FLING_VELOCITY   = 0.5;   // 放開時速度（px/ms）超過此值也算返回（快速一甩）
