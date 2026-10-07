@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { useC, useGlass, GLASS_BLUR } from "../theme.js";
 
-const DRAG_CLOSE_THRESHOLD = 80; // 拖曳超過這個距離（px）放開才會觸發關閉，數值可自行調整靈敏度
+const DRAG_CLOSE_THRESHOLD = 120; // 拖曳超過這個距離（px）放開才會觸發關閉，數值可自行調整靈敏度
 
 // title 選填：不帶 title 時不顯示標題列（目前 5 處都有標題，先保留彈性）
 // zIndex 預設 200，若這個 Sheet 需要疊在另一個 Sheet 之上（例如 LogTab 的新增動作 sheet），呼叫端傳 300
