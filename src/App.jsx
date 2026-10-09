@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { LangCtx, T } from "./data/i18n.js";
-import { INIT_LIBRARY, INIT_WORKOUTS } from "./data/initialData.js";
+import { INIT_LIBRARY, INIT_WORKOUTS, INIT_ROUTINES } from "./data/initialData.js";
 import { LIGHT, DARK, DarkCtx, CalendarGradientCtx } from "./theme.js";
 import { lsGet, lsSet } from "./hooks/useStorage.js";
 import { StatusBar, BottomNav } from "./components/ui.jsx";
@@ -42,7 +42,7 @@ export default function App() {
 
   const [workouts,  setWorkouts]  = useState(() => lsGet("wt_workouts", INIT_WORKOUTS));
   const [library,   setLibrary]   = useState(() => lsGet("wt_library",  INIT_LIBRARY));
-  const [routines,  setRoutines]  = useState(() => lsGet("wt_routines", []));
+  const [routines,  setRoutines]  = useState(() => lsGet("wt_routines", INIT_ROUTINES));
   const [detailId,  setDetailId]  = useState(null);
   const [detailDate,setDetailDate]= useState(null);
   const [libItemId, setLibItemId] = useState(null);
@@ -151,7 +151,7 @@ export default function App() {
 const handleReset = () => {
     setWorkouts(INIT_WORKOUTS);
     setLibrary(INIT_LIBRARY);
-    setRoutines([]);
+    setRoutines(INIT_ROUTINES);
     showToast(lang === "zh" ? "✅ 已還原為預設範例資料" : "✅ Restored to default sample data");
   };
   const handleClear = () => {

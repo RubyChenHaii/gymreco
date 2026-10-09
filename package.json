@@ -19,7 +19,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build && node scripts/sync-sw-version.js",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "init-data": "node scripts/export-initial-data.js"
   },
   "eslintConfig": {
     "extends": [
