@@ -8,7 +8,7 @@ import { uid } from "../utils/date.js";
 import { isRoutineComplete, MAX_ROUTINES } from "../utils/routineUtils.js";
 import { BottomSheet } from "../components/BottomSheet.jsx";
 import { ConfirmDialog } from "../components/ConfirmDialog.jsx";
-import { InfoButton } from "../components/Button.jsx";
+import { Button, BackButton, InfoButton } from "../components/Button.jsx";
 import { SegmentedControl, ColorPicker, ChipGroup } from "../components/SelectionControls.jsx";
 
 const emptyForm = () => ({ period: "week", matchType: "exercise", matchValue: "", targetCount: 3 });
@@ -147,7 +147,7 @@ export function RoutineTab({ routines, setRoutines, library, workouts, homeStatP
       </BottomSheet>
 
       <div style={{ padding:"8px 20px 14px", minHeight:SUBHEADER_MIN_HEIGHT, boxSizing:"border-box", background:C.card, borderBottom:`1px solid ${C.sep}`, display:"flex", alignItems:"center", gap:8 }}>
-        <button onClick={onBack} style={{ background:"none", border:"none", cursor:"pointer", padding:"4px 0", color:C.blue, fontSize:16, fontWeight:500, flexShrink:0 }}>{t.detailBack}</button>
+        <BackButton onClick={onBack}>{t.detailBack}</BackButton>
         <div style={{ flex:1, display:"flex", alignItems:"center", justifyContent:"center", gap:6 }}>
           <span style={{ fontSize:20, fontWeight:700, color:C.text }}>{t.routineTitle}</span>
           <InfoButton onClick={() => setShowDedupHint(v => !v)} />
@@ -226,15 +226,13 @@ export function RoutineTab({ routines, setRoutines, library, workouts, homeStatP
           {atMax && <div style={{ fontSize:12, color:C.orange, marginBottom:12, lineHeight:1.6 }}>{t.routineMaxReached}</div>}
 
           <div style={{ display:"flex", gap:8 }}>
-            <button onClick={save} disabled={!canSave}
-              style={{ flex:1, padding:"11px", background:canSave?C.blue:"#C7C7CC", border:"none", borderRadius:12, color:"#fff", fontSize:14, fontWeight:600, cursor:canSave?"pointer":"not-allowed" }}>
+            <Button variant="primary" size="md" disabled={!canSave} onClick={save} style={{ flex:1 }}>
               {t.routineSave}
-            </button>
+            </Button>
             {editingId && (
-              <button onClick={startNew}
-                style={{ padding:"11px 16px", background:"none", border:`1px solid ${C.sep}`, borderRadius:12, color:C.sub, fontSize:14, fontWeight:600, cursor:"pointer" }}>
+              <Button variant="outline" size="md" fullWidth={false} onClick={startNew}>
                 {t.routineCancelEdit}
-              </button>
+              </Button>
             )}
           </div>
         </Card>

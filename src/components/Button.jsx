@@ -19,6 +19,8 @@ export function Button({ children, onClick, variant="primary", size="lg", disabl
     outline: { background:"none",                         color:C.sub,  border:`1px solid ${C.sep}` },
     ghost:   { background: C.f5,                           color:C.sub,  border:"none" },
     danger:  { background: disabled ? "#C7C7CC" : C.red,  color:"#fff", border:"none" },
+    dangerOutline: { background:"none", color: disabled ? "#C7C7CC" : C.red, border:`1.5px solid ${disabled ? "#C7C7CC" : C.red}` },
+    dashed: { background:C.card, color:C.blue, border:`2px dashed ${C.sep}` },
     // 專供 SegmentedControl 使用，獨立於上面五組之外，方便之後單獨微調選項按鈕的樣式
     segment:        { background: C.blue, color:"#fff", border:"none" },
     segmentOutline: { background:"none",  color:C.sub,  border:`1px solid ${C.sep}` },
@@ -83,6 +85,18 @@ export function CloseButton({ onClick, size=28, style={} }) {
         ...style,
       }}>
       ×
+    </button>
+  );
+}
+
+// 給子頁頁首左上角「‹ 返回」用的文字型按鈕 -- 預計導入：DetailTab×2、RoutineTab、LibItemDetail
+export function BackButton({ onClick, children, style={} }) {
+  const C = useC();
+  return (
+    <button onClick={onClick}
+      style={{ background:"none", border:"none", cursor:"pointer", padding:"4px 0",
+        color:C.blue, fontSize:16, fontWeight:500, flexShrink:0, ...style }}>
+      {children}
     </button>
   );
 }

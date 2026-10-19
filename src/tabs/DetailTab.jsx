@@ -8,6 +8,7 @@ import { WeightSetEditor } from "../components/WeightSetEditor.jsx";
 import { LengthPaceEditor } from "../components/LengthPaceEditor.jsx";
 import { calcOverallPace, fmtDistance, fmtPace } from "../utils/paceUtils.js";
 import { ConfirmDialog } from "../components/ConfirmDialog.jsx";
+import { Button, BackButton } from "../components/Button.jsx";
 
 //下方為DetailTab，呼叫DetailTabInner，主要負責顯示「單次」訓練紀錄。
 //DayDetailTab則是呼叫DetailTab，負責逐條列出當日的每條訓練紀錄。
@@ -58,9 +59,7 @@ function DetailTabInner({ workout, library, onBack, onOpenLibItem, onUpdateWorko
       />
 
       <div style={{ padding:"8px 16px 14px", background:C.card, borderBottom:`1px solid ${C.sep}`, display:"flex", alignItems:"center", gap:8 }}>
-        <button onClick={onBack} style={{ background:"none", border:"none", cursor:"pointer", padding:"4px 0", color:C.blue, fontSize:16, fontWeight:500, flexShrink:0 }}>
-          {t.detailBack}
-        </button>
+        <BackButton onClick={onBack}>{t.detailBack}</BackButton>
         <div style={{ flex:1, textAlign:"center" }}>
           <div style={{ fontSize:16, fontWeight:600, color:C.text }}>{d.getMonth() + 1}/{d.getDate()} {wdLabel}</div>
           <div style={{ display:"flex", justifyContent:"center", gap:6, marginTop:4, flexWrap:"wrap" }}>
@@ -71,10 +70,10 @@ function DetailTabInner({ workout, library, onBack, onOpenLibItem, onUpdateWorko
             ))}
           </div>
         </div>
-        <button onClick={() => setConfirmDelete(true)}
-          style={{ background:"none", border:`1.5px solid ${C.red}`, borderRadius:8, padding:"5px 10px", fontSize:12, fontWeight:600, color:C.red, cursor:"pointer", flexShrink:0 }}>
+        <Button variant="dangerOutline" size="sm" fullWidth={false} onClick={() => setConfirmDelete(true)}
+          style={{ padding:"5px 10px", fontSize:12, borderRadius:8, flexShrink:0 }}>
           {lang === "zh" ? "刪除" : "Delete"}
-        </button>
+        </Button>
       </div>
 
       <div style={{ padding:"16px" }}>
@@ -120,11 +119,10 @@ function DetailTabInner({ workout, library, onBack, onOpenLibItem, onUpdateWorko
             </Card>
           );
         })}
-
-        <button onClick={save}
-          style={{ width:"100%", padding:"16px", background:C.blue, border:"none", borderRadius:16, color:"#fff", fontSize:15, fontWeight:600, cursor:"pointer", marginTop:4, boxShadow:`0 4px 16px ${C.blue}40` }}>
+        <Button variant="primary" size="lg" onClick={save}
+          style={{ fontSize:15, marginTop:4, boxShadow:`0 4px 16px ${C.blue}40` }}>
           {t.detailSaveEdit}
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -192,7 +190,7 @@ export function DayDetailTab({ dayWorkouts, library, onBack, onOpenLibItem, onEd
   return (
     <div style={{ flex:1, overflowY:"auto", background:C.bg }}>
       <div style={{ padding:"8px 16px 14px", background:C.card, borderBottom:`1px solid ${C.sep}`, display:"flex", alignItems:"center", gap:8 }}>
-        <button onClick={onBack} style={{ background:"none", border:"none", cursor:"pointer", padding:"4px 0", color:C.blue, fontSize:16, fontWeight:500, flexShrink:0 }}>{t.detailBack}</button>
+        <BackButton onClick={onBack}>{t.detailBack}</BackButton>
         <div style={{ flex:1, textAlign:"center" }}>
           <div style={{ fontSize:16, fontWeight:600, color:C.text }}>{d.getMonth() + 1}/{d.getDate()} {wdLabel}</div>
           <div style={{ display:"flex", justifyContent:"center", gap:6, marginTop:4, flexWrap:"wrap" }}>
@@ -305,10 +303,10 @@ export function DayDetailTab({ dayWorkouts, library, onBack, onOpenLibItem, onEd
                 </Card>
               );
             })}
-            <button onClick={() => onEditWorkout(workout.id)}
-              style={{ width:"100%", padding:"12px", background:`${C.f3}`, borderRadius:16, border:`1px solid ${C.blue}50`, fontSize:15, fontWeight:600, color:`${C.sub}`, cursor:"pointer", marginBottom:15, boxShadow:`0 0px 3px ${C.Bshadow}` }}>
+            <Button variant="tinted" size="lg" onClick={() => onEditWorkout(workout.id)}
+              style={{ padding:"12px", fontSize:15, color:C.sub, marginBottom:15, boxShadow:`0 0px 3px ${C.Bshadow}` }}>
               {lang === "zh" ? "編輯此訓練" : "Edit This Session"}
-            </button>
+            </Button>
           </div>
         ))}
         

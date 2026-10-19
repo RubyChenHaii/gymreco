@@ -222,10 +222,10 @@ export function LogTab({ library, routines, workouts, onSave, onAddToLibrary, sh
             {!isToday && <span style={{ fontSize:11, fontWeight:600, color:C.orange, background:`${C.orange}15`, borderRadius:6, padding:"2px 8px" }}>{lang === "zh" ? "補登" : "Back-log"}</span>}
           </div>
         </div>
-        <button onClick={() => setShowDatePicker(true)}
-          style={{ background:C.f5, border:`1px solid ${C.sep}`, borderRadius:10, padding:"6px 12px", fontSize:13, color:C.sub, cursor:"pointer", marginBottom:4, fontWeight:500 }}>
+        <Button variant="ghost" size="sm" fullWidth={false} onClick={() => setShowDatePicker(true)}
+          style={{ padding:"6px 12px", fontWeight:500, border:`1px solid ${C.sep}`, marginBottom:4 }}>
           {lang === "zh" ? "更改日期" : "Change Date"}
-        </button>
+        </Button>
       </div>
 
       <div style={{ padding:"16px" }}>
@@ -289,14 +289,14 @@ export function LogTab({ library, routines, workouts, onSave, onAddToLibrary, sh
           );
         })}
 
-        <button onClick={() => setShowLib(true)}
-          style={{ width:"100%", padding:"15px", background:C.card, border:`2px dashed ${C.sep}`, borderRadius:16, color:C.blue, fontSize:15, fontWeight:600, cursor:"pointer", marginBottom:12, display:"flex", alignItems:"center", justifyContent:"center", gap:6, boxSizing:"border-box" }}>
+        <Button variant="dashed" size="lg" onClick={() => setShowLib(true)}
+          style={{ padding:"15px", fontSize:15, marginBottom:12 }}>
           {t.logAddExercise}
-        </button>
-        <button onClick={handleSave} disabled={rows.length === 0}
-          style={{ width:"100%", padding:"16px", background:rows.length>0?C.blue:"#C7C7CC", border:"none", borderRadius:16, color:"#fff", fontSize:17, fontWeight:600, cursor:rows.length>0?"pointer":"not-allowed", boxShadow:rows.length>0?"0 4px 16px rgba(0,122,255,0.3)":"none" }}>
+        </Button>
+        <Button variant="primary" size="lg" disabled={rows.length === 0} onClick={handleSave}
+          style={{ fontSize:17, boxShadow: rows.length > 0 ? "0 4px 16px rgba(0,122,255,0.3)" : "none" }}>
           {t.logSave}
-        </button>
+        </Button>
       </div>
 
       {/* Library picker BottomSheet */}

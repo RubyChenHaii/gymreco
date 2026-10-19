@@ -7,7 +7,7 @@ import { Div, Card, SLabel } from "../components/ui.jsx";
 import { calcOverallPace, fmtDistance, fmtPace } from "../utils/paceUtils.js";
 import { withAlpha, TINT_BG_ALPHA, TINT_BORDER_ALPHA } from "../theme.js";
 import { ConfirmDialog } from "../components/ConfirmDialog.jsx";
-import { Button, InfoButton } from "../components/Button.jsx";
+import { Button, BackButton, InfoButton } from "../components/Button.jsx";
 import { ExerciseFieldsGroup } from "../components/SelectionControls.jsx";
 import { SwipeBackView } from "../components/SwipeBackView.jsx";
 
@@ -63,15 +63,16 @@ function LibItemDetail({ item, onUpdate, onDelete, onBack }) {
         confirmVariant="danger"
       />
       <div style={{ padding:"8px 20px 14px", background:C.card, borderBottom:`1px solid ${C.sep}`, display:"flex", alignItems:"center", gap:10 }}>
-        <button onClick={onBack} style={{ background:"none", border:"none", cursor:"pointer", padding:"4px 0", color:C.blue, fontSize:16, fontWeight:500 }}>‹</button>
+        <BackButton onClick={onBack}>‹</BackButton>
         <div style={{ flex:1, display:"flex", alignItems:"center", gap:8 }}>
           <div style={{ width:12, height:12, borderRadius:"50%", background:editColor }} />
           <span style={{ fontSize:17, fontWeight:700, color:C.text }}>{editName}</span>
           <span style={{ fontSize:12, color:editColor, background:`${editColor}15`, borderRadius:6, padding:"2px 8px", fontWeight:600 }}>{mgLabel}</span>
         </div>
-        <button onClick={() => setEM(v => !v)} style={{ background:editingMeta?`${C.blue}15`:C.f5, border:"none", borderRadius:8, padding:"6px 12px", fontSize:12, fontWeight:600, color:editingMeta?C.blue:C.sub, cursor:"pointer" }}>
+        <Button variant={editingMeta ? "tinted" : "ghost"} size="sm" fullWidth={false} onClick={() => setEM(v => !v)}
+          style={{ padding:"6px 12px", fontSize:12, borderRadius:8, flexShrink:0 }}>
           {editingMeta ? t.libItemDone : t.libItemEdit}
-        </button>
+        </Button>
       </div>
       <div style={{ flex:1, overflowY:"auto" }}>
         {editingMeta && (
@@ -156,7 +157,7 @@ function LibItemDetail({ item, onUpdate, onDelete, onBack }) {
             </div>
             {noteDirty && (
               <div style={{ padding:"0 16px 14px" }}>
-                <button onClick={save} style={{ width:"100%", padding:"11px", background:C.blue, border:"none", borderRadius:12, color:"#fff", fontSize:14, fontWeight:600, cursor:"pointer" }}>{t.libNoteSave}</button>
+                <Button variant="primary" size="md" onClick={save}>{t.libNoteSave}</Button>
               </div>
             )}
           </Card>
@@ -251,7 +252,8 @@ export function LibraryTab({ library, setLibrary, openItemId, setOpenItemId }) {
             <InfoButton onClick={() => setShowDateColorHint(v => !v)} />
           </div>
         </div>
-        <button onClick={() => setShowAdd(v => !v)} style={{ background:C.blue, border:"none", borderRadius:12, padding:"8px 16px", color:"#fff", fontSize:14, fontWeight:600, cursor:"pointer", marginBottom:4 }}>{t.libAdd}</button>
+        <Button variant="primary" size="md" fullWidth={false} onClick={() => setShowAdd(v => !v)}
+        style={{ padding:"8px 16px", marginBottom:4 }}>{t.libAdd}</Button>
       </div>
       <div style={{ padding:"16px" }}>
         {showAdd && (
