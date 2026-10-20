@@ -14,6 +14,7 @@ export const T = {
     sectionCalendar:"訓練日曆", sectionRecent:"最近紀錄",
     emptyRecent:"還沒有紀錄，點「記錄」開始吧！",
     btnStartToday:"＋ 開始今日訓練",
+    btnContinueWorkout:"繼續本次訓練",
     // Calendar
     weekdays:["日","一","二","三","四","五","六"],
     // Log
@@ -142,13 +143,17 @@ export const T = {
     calGradientConic:"放射狀",
   },
   en: {
+    // Nav
     navHome:"Home", navHistory:"History", navLog:"Train", navLibrary:"Library", navAbout:"About",
+    // Home
     homeSubtitle:"Workout Journal", homeTitle:"Overview",
     statMonthDays:"Workout days this month", statLibCount:"Exercises in library", statWeeklyGoals:"Weekly Goals Met", statMonthlyGoals:"Monthly Goals Met",
     days:"days",
     sectionCalendar:"Training Calendar", sectionRecent:"Recent Workouts",
     emptyRecent:"No workouts yet. Tap \"Log\" to start!",
     btnStartToday:"＋ Start Today's Workout",
+    btnContinueWorkout:"Continue Current Workout",
+    // Calendar
     weekdays:["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],
     logSubtitle:"New Workout", logMuscleLabel:"Muscle:",
     logCustomMuscle:"＋ Custom", logCollapse:"Collapse",

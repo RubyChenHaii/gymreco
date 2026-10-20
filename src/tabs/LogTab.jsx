@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState , useRef, useEffect } from "react";
 import { useLang, T, MG_EN } from "../data/i18n.js";
 import { MG_OPTIONS, COLOR_OPTS, WEEKDAYS, WEEKDAY_CN, MONTHS_EN, RECORDING_MODES } from "../data/constants.js";
 import { useC } from "../theme.js";
@@ -11,6 +11,8 @@ import { BottomSheet } from "../components/BottomSheet.jsx";
 import { GLASS_SURFACE_SHADOW, SUBHEADER_MIN_HEIGHT } from "../theme.js";
 import { Button } from "../components/Button.jsx";
 import { ExerciseFieldsGroup } from "../components/SelectionControls.jsx";
+import { loadLogDraft, saveLogDraft, clearLogDraft } from "../utils/logDraft.js";
+import { AutoGrowTextarea } from "../components/AutoGrowTextarea.jsx";
 
 // LogTab 內嵌的規則總覽區塊：週/月分組顯示已建立規則的達標進度，並提供「+ 新增規則」入口
 // 點擊任一規則列或「+ 新增規則」都會導向 RoutineTab 全螢幕畫面進行實際管理（新增/編輯/刪除）
@@ -87,12 +89,14 @@ function RoutineOverview({ routines, library, workouts, onOpenRoutines, t, C, la
 
 export function LogTab({ library, routines, workouts, onSave, onAddToLibrary, showToast, onOpenRoutines }) {
   const lang = useLang(); const t = T[lang]; const C = useC();
+    // 只在元件第一次掛載時讀一次草稿（切換分頁、App 重啟後回到這裡，都會從這裡還原）
+  const [initialDraft] = useState(() => loadLogDraft(library));
   const [muscleGroups,    setMG]            = useState([]);
   const [showMGPicker,    setShowMG]        = useState(false);
-  const [rows,            setRows]          = useState([]);
+  const [rows,            setRows]          = useState(() => initialDraft?.rows ?? []);
   const [showLibPicker,   setShowLib]       = useState(false);
   const [libSearch,       setLibSearch]     = useState("");
-  const [selectedDate,    setSelectedDate]  = useState(todayStr());
+  const [selectedDate,    setSelectedDate]  = useState(() => initialDraft?.selectedDate ?? todayStr());
   const [showDatePicker,  setShowDatePicker]= useState(false);
 
   // 新增動作 sheet 狀態
@@ -101,6 +105,17 @@ export function LogTab({ library, routines, workouts, onSave, onAddToLibrary, sh
   const [newMG,        setNewMG]       = useState(MG_OPTIONS[0]);
   const [newColor,     setNewColor]    = useState(COLOR_OPTS[0]);
   const [newRecMode,   setNewRecMode]  = useState(RECORDING_MODES[0]);
+
+  // 草稿自動儲存：rows 或日期有任何改變就寫入。
+  // 用 ref 記住「上一次的內容」：剛還原草稿、尚未修改時內容相同 → 不寫入，
+  // 這樣「只是打開看」不會更新最後修改時間，3 小時期限才會是從真正的最後一次修改算起
+  const lastDraftJson = useRef(JSON.stringify({ rows, selectedDate }));
+  useEffect(() => {
+    const json = JSON.stringify({ rows, selectedDate });
+    if (json === lastDraftJson.current) return;
+    lastDraftJson.current = json;
+    saveLogDraft({ rows, selectedDate });
+  }, [rows, selectedDate]);
 
   const addRow = (libId) => {
     const item = library.find(l => l.id === libId);
@@ -166,6 +181,7 @@ export function LogTab({ library, routines, workouts, onSave, onAddToLibrary, sh
      })),
     };
     const noteUpdates = rows.filter(r => r.noteDirty).map(r => ({ libId: r.libId, note: r.noteLocal }));
+    clearLogDraft();   // 同步清除：存檔後立刻回首頁，首頁不能還讀到舊草稿
     setRows([]); setMG([]); setSelectedDate(todayStr());
     setTimeout(() => onSave(workout, noteUpdates), 0);
   };
@@ -249,8 +265,7 @@ export function LogTab({ library, routines, workouts, onSave, onAddToLibrary, sh
                   <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4 }}>{t.logEquipLabel}</div>
                   {row.equipment && <div style={{ fontSize:10, color:C.blue, background:`${C.blue}10`, borderRadius:6, padding:"2px 8px" }}>{t.logEquipHint}</div>}
                 </div>
-                <textarea value={row.equipment} onChange={e => upd(i, { equipment: e.target.value })} placeholder={t.logEquipPlaceholder}
-                  style={{ width:"100%", background:C.f3, border:`1px solid ${C.sep}`, borderRadius:10, padding:"10px 12px", fontSize:13, color:C.sub, resize:"none", height:54, boxSizing:"border-box", outline:"none", fontFamily:"inherit", lineHeight:1.5 }} />
+                <AutoGrowTextarea tone="plain" minHeight={54} value={row.equipment} onChange={e => upd(i, { equipment: e.target.value })} placeholder={t.logEquipPlaceholder} />
               </div>
               <Div />
               <div style={{ padding:"12px 16px" }}>
@@ -275,15 +290,13 @@ export function LogTab({ library, routines, workouts, onSave, onAddToLibrary, sh
                   </div>
                   {row.noteDirty && <span style={{ fontSize:10, color:C.orange, fontWeight:600, background:`${C.orange}15`, borderRadius:6, padding:"2px 8px" }}>{t.logKnowledgeDirty}</span>}
                 </div>
-                <textarea value={row.noteLocal} onChange={e => upd(i, { noteLocal: e.target.value, noteDirty: true })} placeholder={t.logKnowledgePlaceholder}
-                  style={{ width:"100%", background:C.f3, border:`1px solid ${C.sep}`, borderRadius:10, padding:"10px 12px", fontSize:13, color:C.sub, resize:"none", height:90, boxSizing:"border-box", outline:"none", fontFamily:"inherit", lineHeight:1.6 }} />
+                <AutoGrowTextarea tone="plain" minHeight={90} value={row.noteLocal} onChange={e => upd(i, { noteLocal: e.target.value, noteDirty: true })} placeholder={t.logKnowledgePlaceholder} />
               </div>
               <Div />
               <div style={{ padding:"12px 16px" }}>
                 <div style={{ fontSize:11, fontWeight:600, color:C.orange, letterSpacing:0.4, marginBottom:2 }}>{t.logFeelingLabel}</div>
                 <div style={{ fontSize:10, color:C.label, marginBottom:6 }}>{t.logFeelingSub}</div>
-                <textarea value={row.feeling} onChange={e => upd(i, { feeling: e.target.value })} placeholder={t.logFeelingPlaceholder}
-                  style={{ width:"100%", background:`${C.orange}08`, border:`1px solid ${C.orange}30`, borderRadius:10, padding:"10px 12px", fontSize:13, color:C.sub, resize:"none", height:64, boxSizing:"border-box", outline:"none", fontFamily:"inherit", lineHeight:1.6 }} />
+                <AutoGrowTextarea value={row.feeling} onChange={e => upd(i, { feeling: e.target.value })} placeholder={t.logFeelingPlaceholder} />
               </div>
             </Card>
           );

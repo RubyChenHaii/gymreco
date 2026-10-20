@@ -10,6 +10,7 @@ import { ConfirmDialog } from "../components/ConfirmDialog.jsx";
 import { Button, BackButton, InfoButton } from "../components/Button.jsx";
 import { ExerciseFieldsGroup } from "../components/SelectionControls.jsx";
 import { SwipeBackView } from "../components/SwipeBackView.jsx";
+import { CollapsibleText } from "../components/AutoGrowTextarea.jsx";
 
 
 function LibItemDetail({ item, onUpdate, onDelete, onBack }) {
@@ -172,7 +173,7 @@ function LibItemDetail({ item, onUpdate, onDelete, onBack }) {
               <span style={{ fontSize:14, fontWeight:700, color:C.text }}>{fmtDate(h.date, lang)}</span>
               <span style={{ fontSize:12, color:C.label }}>{h.date}</span>
             </div>
-            {h.equipment && (<><Div /><div style={{ padding:"8px 16px" }}><div style={{ fontSize:11, fontWeight:600, color:C.label, marginBottom:3 }}>{t.libEquip}</div><div style={{ fontSize:13, color:C.sub, whiteSpace:"pre-wrap" }}>{h.equipment}</div></div></>)}
+            {h.equipment && (<><Div /><div style={{ padding:"10px 16px" }}><div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:4 }}>{t.libEquip}</div><div style={{ fontSize:13, color:C.sub, lineHeight:1.6, whiteSpace:"pre-wrap" }}>{h.equipment}</div></div></>)}
             <Div />
             <div style={{ padding:"10px 16px" }}>
               {(h.mode || "weight_sets") === "length_pace" ? (
@@ -202,7 +203,14 @@ function LibItemDetail({ item, onUpdate, onDelete, onBack }) {
                ))
              )}
             </div>
-            {h.feeling && (<><Div /><div style={{ padding:"8px 16px 12px" }}><div style={{ fontSize:11, fontWeight:600, color:C.orange, marginBottom:4 }}>{t.libHistoryFeeling}</div><div style={{ fontSize:13, color:C.sub, lineHeight:1.6, whiteSpace:"pre-wrap", background:`${C.orange}08`, borderRadius:8, padding:"8px 10px" }}>{h.feeling}</div></div></>)}
+            {h.feeling && (
+              <>
+                <Div />
+                <div style={{ padding:"10px 16px 14px" }}>
+                  <CollapsibleText label={t.libHistoryFeeling} text={h.feeling} />
+                </div>
+              </>
+            )}
           </Card>
         ))}
         </div>

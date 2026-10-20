@@ -3,6 +3,7 @@ import { LangCtx, T } from "./data/i18n.js";
 import { INIT_LIBRARY, INIT_WORKOUTS, INIT_ROUTINES } from "./data/initialData.js";
 import { LIGHT, DARK, DarkCtx, CalendarGradientCtx } from "./theme.js";
 import { lsGet, lsSet } from "./hooks/useStorage.js";
+import { clearLogDraft } from "./utils/logDraft.js";
 import { StatusBar, BottomNav } from "./components/ui.jsx";
 import { SwipeBackView } from "./components/SwipeBackView.jsx";
 import { HomeTab }    from "./tabs/HomeTab.jsx";
@@ -143,18 +144,21 @@ export default function App() {
   const openRoutines        = () => navigate("routine");
   const handleEditWorkout   = (id) => { setDetailId(id); navigate("detail"); };
   const handleImport        = (newWorkouts, newLibrary, newRoutines) => {
+    clearLogDraft();
     setWorkouts(newWorkouts);
     setLibrary(newLibrary);
     setRoutines(newRoutines || []);
     showToast(lang === "zh" ? "✅ 資料已成功匯入！" : "✅ Data imported successfully!");
   };
 const handleReset = () => {
+    clearLogDraft();  
     setWorkouts(INIT_WORKOUTS);
     setLibrary(INIT_LIBRARY);
     setRoutines(INIT_ROUTINES);
     showToast(lang === "zh" ? "✅ 已還原為預設範例資料" : "✅ Restored to default sample data");
   };
   const handleClear = () => {
+    clearLogDraft();
     setWorkouts([]);
     setLibrary([]);
     setRoutines([]);

@@ -6,6 +6,8 @@ import { useC, withAlpha, CALENDAR_GRADIENT_ALPHA } from "../theme.js";
 import { todayStr, localDate, fmtDate } from "../utils/date.js";
 import { Div, Card, SLabel } from "../components/ui.jsx";
 import { isRoutineComplete } from "../utils/routineUtils.js";
+import { useState } from "react";
+import { hasLogDraft } from "../utils/logDraft.js";
 
 function Calendar({ workouts, library, onDayClick, gradientMode, gradientStyle }) {
   const lang = useLang(); const t = T[lang]; const C = useC();
@@ -126,6 +128,8 @@ function Calendar({ workouts, library, onDayClick, gradientMode, gradientStyle }
 
 export function HomeTab({ workouts, library, routines, homeStatPeriod, setTab, lang, setLang, darkMode, setDarkMode, openDayDetail, calendarGradientMode, calendarGradientStyle }) {
   const t = T[lang]; const C = useC();
+  // 掛載時讀一次即可：每次從別的分頁回到首頁，HomeTab 都會重新掛載
+  const [hasDraft] = useState(() => hasLogDraft(library));
   const now = new Date();
   const thisMonthDays = new Set(
     workouts
@@ -213,8 +217,11 @@ export function HomeTab({ workouts, library, routines, homeStatPeriod, setTab, l
             </div>
           ))}
         </Card>
-        <Button variant="tinted" onClick={() => setTab("log")} style={{ marginTop:2, fontWeight:750, boxShadow:`0 2px 10px ${C.Bshadow}` }}>
-          {t.btnStartToday}
+        <Button variant="tinted" onClick={() => setTab("log")}
+          style={hasDraft
+            ? { marginTop:2, fontWeight:750, color:C.sub, background:`${C.yellow}26`, border:`1px solid ${C.yellow}8C`, boxShadow:`0 2px 10px ${C.sub}59` }
+            : { marginTop:2, fontWeight:750, boxShadow:`0 2px 10px ${C.Bshadow}` }}>
+          {hasDraft ? t.btnContinueWorkout : t.btnStartToday}
         </Button>
       </div>
     </div>

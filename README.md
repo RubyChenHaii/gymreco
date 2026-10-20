@@ -17,7 +17,7 @@
 </h5>
 
 <p align="center">
-<img src="https://img.shields.io/badge/version-2.1.x_beta-violet.svg?style=for-the-badge"/>
+<img src="https://img.shields.io/badge/version-2.1.5_beta-violet.svg?style=for-the-badge"/>
 <a href="https://linktr.ee/rubytheduckouo"><img src="https://img.shields.io/badge/author-ruby_chen-brightgreen?style=for-the-badge"></a>
 <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge"/></a>
 </p>
@@ -45,67 +45,67 @@ Then: **Share → Add to Home Screen** for full-screen experience.
 ### 📚 Workout Library｜訓練動作庫
 
 - Log workouts with weight, sets, reps, and session journals. 
-  
+
   - 紀錄重量、組數、次數與當次感受日記。
 
 - Save every workout as detailed history. 
-  
+
   - 將每次訓練資料保存為歷史紀錄。
 
 - Personal exercise library with persistent exercise notes.
-  
+
   - 建立自己的動作庫，並為每個動作保存永久筆記。
 
 - Record distance and pace with multi-segment support. (Designed to work alongside real-time tracking apps with GPS, e.g. Nike Run Club.) 
-  
+
   - 支援距離與配速紀錄，並可記錄多段配速。（搭配具 GPS 即時追蹤功能的 App 使用，如 Nike Run Club。）
 
 ### 📅 Training Calendar｜訓練月曆
 
 - Calendar overview with coloured tones for quick visual scanning. 
-  
+
   - 月曆以顏色標示訓練類型，快速辨識本月訓練內容。
 
 - Log workouts up to 10 days in the past. 
-  
+
   - 支援補登 10 天內的訓練紀錄。
 
 - **Routines**: Create simple workout Routine rules, track weekly / monthly training goals!
-  
+
   - **規律**：製作簡單的運動目標，讓運動成為習慣！
 
 ### 🤖 AI-ready Workout Export｜爲 AI 分析設計的匯出功能
 
 - Copy Daily workout (TXT) to clipboard in one tap. 
-  
+
   - 將單日運動紀錄一鍵複製到剪貼簿。
 
 - Export long-term workout logs as AI-ready Markdown. 
-  
+
   - 將長期運動紀錄匯出為適合 AI 分析的結構化 Markdown。
 
 ### 🍉 Hassle-Free Experience｜輕鬆使用
 
 - Bilingual interface (中文 / English) + Night Mode.
-  
+
   - 內建中英文介面與深色模式。
 
 - Install as a PWA, works offline, and updates automatically.
-  
+
   - 可安裝至桌面，支援離線使用並自動更新。
 
 ### 🔒 Data & Privacy｜資料與隱私
 
 - All data stays in your browser via localStorage — no account required.
-  
+
   - 所有資料皆儲存在瀏覽器 localStorage，不需登入帳號。
 
 - Export / Import JSON for seamless, offline data backup.
-  
+
   - 存檔 / 讀檔：支援 JSON 匯出及匯入功能。
 
 - Restore sample data or start with a clean library anytime.
-  
+
   - 可隨時恢復範例資料，或一鍵清空，從自己的訓練開始。
 
 ---
@@ -254,68 +254,55 @@ Today, GymReco continues to evolve through daily real-world use — including my
 
 ---
 
+## ❓ Known Issues｜已知問題
+
+**RepsPicker**
+
+- Scrolling the RepsPicker may bring unexpected jump-scrolling in the whole screen (likely a WebKit/iOS nested-scroll touch-handling quirk)
+
 ## 📋 Changelog｜版本紀錄
 
-**v2.1.x (In Development)**
+**v2.1.5_beta**
 
-- Added **Routines** feature: Create simple workout Routine rules, track weekly / monthly training goals.
+- **Back Gesture Support:** Enabled left-to-edge swipe right to navigate back to the previous page.
 
-- **Componentization & Style Unification:** Extracted reusable UI components (e.g. BottomTab) and unified their visual styling.
+- **LogTab Draft Preservation:** Auto-saves unsubmitted logs to localStorage for up to 3 hours, ensuring seamless and worry-free recording.
 
-- Various UI/UX refinements and bug fixes.
+- **AutoGrowTextArea:** Collapsible sections for workout notes and session feedback, with optimized text editing experience.
 
-**v2.0.0**
+- **Routines & Goal Tracking:** Added custom Routine rules to monitor weekly and monthly training consistency.
 
-- Added **Length/Pace** recording mode with automatic Overall Pace calculation. Designed to work alongside real-time tracking apps with GPS such as Nike Run Club.
+- **Architecture Refactoring:** Standardized global design system and extracted shared UI components (e.g., `BottomTab`, `Buttons` ).
 
-- **UI Enhancements:** Revamped the visual design with a richer colour palette and a more elegant, energetic look. Workouts are now easier to distinguish at a glance.
+- **Polished Experience:** General UI/UX refinements and operational bug fixes.
 
-- **Various Fixes:** Fixed the scroll component (`RepsPicker`), refreshed the Library icon, and squashed minor bugs.
+**v2.0.0 — Major UI & Cardio Expansion**
 
-**v1.9.5**
+- **Distance & Pace Mode:** Introduced Length/Pace recording with auto-calculated overall pace (built for NRC / GPS app integration).
 
-- Added monthly / yearly Markdown exports to About page
+- **Design System Overhaul:** Revamped color system for better visual hierarchy and workout identification.
 
-- Added Year category in History page
+- **Interaction Fixes:** Refreshed exercise library icons and upgraded interactive pickers (`RepsPicker`).
 
-**v1.9.2**
+---
 
-- Added **Copy Today's Workout (TXT)** to clipboard for one-tap sharing
+**Older Releases (v1.0 – v1.9.5)**
 
-- Added **AI-ready workout export** in a structured Markdown format for long-term AI-assisted training analysis
+<details>
+<summary>Click to view historic updates (v1.0 – v1.9.5)</summary>
 
-- Top left corner of the Home Page now shows "workout days this month" instead of "workouts this week"
+* **v1.9.0 – v1.9.5 (Data & AI Workflows)**
 
-**v1.9.1**
+  * Added structured **AI-ready Markdown export** and direct TXT sharing.
 
-- Calendar dots now deduplicated by colour (one dot per colour per day), preserving workout order
+  * Added historical analytics views (Yearly category, monthly grouping, and multi-color calendar dots).
 
-- Exercise library now shows a hint explaining the calendar dot behaviour
+  * Major modularization refactor (decoupled 1,700-line monolith into 15 components).
 
-- Added "Stretching" as a new muscle group category in the exercise library
+  * Added back-log support (up to 10 days) and network-first Service Worker.
 
-- Maintenance tools in About page: Reset to sample data / Start Fresh (clear all data)
+* **v1.0.0 – v1.6.0 (Foundation & PWA Infrastructure)**
 
-**v1.9.0**
+  * Complete JSON data backup feature, PWA setup, and security hardening.
 
-- Full codebase refactor: from a single 1,700-line file into 15 modular component files
-
-- Service Worker updated to network-first strategy for automatic silent updates
-
-- Strengthened JSON import validation
-
-- Full i18n audit: all UI strings now go through the translation system
-
-- Monthly grouping with collapsible sections in History tab
-
-- Inline session editing in Detail view
-
-- Back-log: log workouts up to 10 days in the past, with a custom date picker
-
-**v1.6.0**
-
-- JSON/CSV export and JSON import (About page)
-
-**v1.0–1.5**
-
-- Initial build, feature expansion, PWA deployment, security hardening
+</details>

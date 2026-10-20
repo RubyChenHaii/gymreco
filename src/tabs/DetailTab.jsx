@@ -9,6 +9,7 @@ import { LengthPaceEditor } from "../components/LengthPaceEditor.jsx";
 import { calcOverallPace, fmtDistance, fmtPace } from "../utils/paceUtils.js";
 import { ConfirmDialog } from "../components/ConfirmDialog.jsx";
 import { Button, BackButton } from "../components/Button.jsx";
+import { AutoGrowTextarea, CollapsibleText } from "../components/AutoGrowTextarea.jsx";
 
 //下方為DetailTab，呼叫DetailTabInner，主要負責顯示「單次」訓練紀錄。
 //DayDetailTab則是呼叫DetailTab，負責逐條列出當日的每條訓練紀錄。
@@ -98,8 +99,7 @@ function DetailTabInner({ workout, library, onBack, onOpenLibItem, onUpdateWorko
               <Div />
               <div style={{ padding:"12px 16px" }}>
                 <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:6 }}>{t.detailEquip}</div>
-                <textarea value={row.equipment} onChange={e => updRow(i, { equipment: e.target.value })} placeholder={t.logEquipPlaceholder}
-                  style={{ width:"100%", background:C.f3, border:`1px solid ${C.sep}`, borderRadius:10, padding:"10px 12px", fontSize:13, color:C.sub, resize:"none", height:54, boxSizing:"border-box", outline:"none", fontFamily:"inherit", lineHeight:1.5 }} />
+                <AutoGrowTextarea tone="plain" minHeight={54} value={row.equipment} onChange={e => updRow(i, { equipment: e.target.value })} placeholder={t.logEquipPlaceholder} />
               </div>
               <Div />
               <div style={{ padding:"12px 16px" }}>
@@ -113,8 +113,7 @@ function DetailTabInner({ workout, library, onBack, onOpenLibItem, onUpdateWorko
               <Div />
               <div style={{ padding:"12px 16px" }}>
                 <div style={{ fontSize:11, fontWeight:600, color:C.orange, letterSpacing:0.4, marginBottom:2 }}>{t.detailFeeling}</div>
-                <textarea value={row.feeling || ""} onChange={e => updRow(i, { feeling: e.target.value })} placeholder={t.logFeelingPlaceholder}
-                  style={{ width:"100%", background:`${C.orange}08`, border:`1px solid ${C.orange}30`, borderRadius:10, padding:"10px 12px", fontSize:13, color:C.sub, resize:"none", height:64, boxSizing:"border-box", outline:"none", fontFamily:"inherit", lineHeight:1.6 }} />
+                <AutoGrowTextarea value={row.feeling || ""} onChange={e => updRow(i, { feeling: e.target.value })} placeholder={t.logFeelingPlaceholder} />
               </div>
             </Card>
           );
@@ -299,7 +298,14 @@ export function DayDetailTab({ dayWorkouts, library, onBack, onOpenLibItem, onEd
                       </>
                     );
                   })()}
-                  {ex.feeling && (<><Div /><div style={{ padding:"10px 16px 14px" }}><div style={{ fontSize:11, fontWeight:600, color:C.orange, letterSpacing:0.4, marginBottom:2 }}>{t.detailFeeling}</div><div style={{ fontSize:13, color:C.sub, lineHeight:1.7, whiteSpace:"pre-wrap", background:`${C.orange}08`, border:`1px solid ${C.orange}25`, borderRadius:10, padding:"10px 12px" }}>{ex.feeling}</div></div></>)}
+                  {ex.feeling && (
+                    <>
+                      <Div />
+                      <div style={{ padding:"10px 16px 14px" }}>
+                        <CollapsibleText label={t.detailFeeling} text={ex.feeling} />
+                      </div>
+                    </>
+                  )}
                 </Card>
               );
             })}
