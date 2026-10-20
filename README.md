@@ -118,7 +118,7 @@ Then: **Share → Add to Home Screen** for full-screen experience.
     <td><img src="public/screenshots/2_History.PNG" width="270" alt="history"></td>
     <td><img src="public/screenshots/5_Library.PNG" width="270" alt="library"></td>
   </tr>
-  </tr>
+  <tr>
     <td><img src="public/screenshots/3_Detail.PNG" width="270" alt="detail"></td>
     <td><img src="public/screenshots/4_Log.PNG" width="270" alt="log"></td>
   </tr>

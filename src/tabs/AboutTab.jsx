@@ -232,7 +232,7 @@ export function AboutTab({ workouts, library, routines, onImport, onReset, onCle
         <SLabel>{isZh ? "連結" : "Links"}</SLabel>
         <Card style={{ marginBottom:16 }}>
           <a href="https://github.com/rubychenhaii/gymreco" target="_blank" rel="noopener noreferrer"
-            style={{ display:"flex", alignItems:"center", gap:12, padding:"14px 16px", textDecoration:"none" }}>
+            style={{ display:"flex", alignItems:"center", gap:12, padding:"14px 16px", borderBottom:`1px solid ${C.sep}`, textDecoration:"none" }}>
             <div style={{ width:32, height:32, borderRadius:8, background:"#1C1C1E", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
               <svg viewBox="0 0 24 24" width="18" height="18" fill="#fff"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.744 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
             </div>
@@ -240,6 +240,24 @@ export function AboutTab({ workouts, library, routines, onImport, onReset, onCle
               <div style={{ fontSize:14, fontWeight:600, color:C.text }}>GitHub</div>
               <div style={{ fontSize:12, color:C.label }}>rubychenhaii/gymreco</div>
             </div>
+            {/* 下方為箭頭圖示 */}
+            <svg viewBox="0 0 24 24" fill={C.sep} width="14" height="14"><path d="M10 6l6 6-6 6V6z"/></svg>
+          </a>
+          <a href="https://music.apple.com/tw/playlist/gymreco-essentials/pl.u-76oNP2NtWM7dkYP" target="_blank" rel="noopener noreferrer"
+            style={{ display:"flex", alignItems:"center", gap:12, padding:"14px 16px", textDecoration:"none" }}>
+              <svg width="32" height="32" viewBox="0 0 512 512" style={{ flexShrink: 0, display: "block" }}>
+                {/* 1. 雙色調淺藍背景 (#d2e6ff)，rx="80" 實現完美的圓角裁切 */}
+                <rect width="512" height="512" rx="120" fill="#d2e6ff" />
+                {/* 2. 灰色啞鈴圖案 (#595757) */}
+                <g transform="translate(25.5, 25.5) scale(0.9)">
+                <path fill="#595757" d="M438.13,204.36a11.15,11.15,0,0,1,0,15.73L401.71,256.5a11.14,11.14,0,0,1-15.72,0l-46.74-46.73L209.77,339.25,256.5,386a11.14,11.14,0,0,1,0,15.72l-36.41,36.42a11.15,11.15,0,0,1-15.73,0L191,424.74,175.91,439.8a11.15,11.15,0,0,1-15.73,0l-88-88a11.15,11.15,0,0,1,0-15.73L87.26,321,73.87,307.64a11.15,11.15,0,0,1,0-15.73l36.42-36.41a11.14,11.14,0,0,1,15.72,0l46.74,46.73L302.23,172.75,255.5,126a11.15,11.15,0,0,1,0-15.73l36.41-36.41a11.15,11.15,0,0,1,15.73,0L321,87.26,336.09,72.2a11.15,11.15,0,0,1,15.73,0l88,88a11.15,11.15,0,0,1,0,15.73L424.74,191Z"/>
+                </g>
+              </svg>
+            <div style={{ flex:1 }}>
+              <div style={{ fontSize:14, fontWeight:600, color:C.text }}>GymReco Essentials - Playlist</div>
+              <div style={{ fontSize:12, color:C.label }}>music.apple.com/tw/playlist/</div>
+            </div>
+            {/* 下方為箭頭圖示 */}
             <svg viewBox="0 0 24 24" fill={C.sep} width="14" height="14"><path d="M10 6l6 6-6 6V6z"/></svg>
           </a>
         </Card>
