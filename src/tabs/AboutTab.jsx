@@ -10,7 +10,7 @@ import { SegmentedControl } from "../components/SelectionControls.jsx";
 import { Button } from "../components/Button.jsx";
 
 // ── 版本號：每次發布只需改這一行 ──────────────────────────────
-const APP_VERSION = "2.1.5_b";
+const APP_VERSION = "2.1.5";
 
 // 「標題＋副標題在左、箭頭在右」的整列按鈕共用版型（匯出/匯入/重設/清除）
 const rowStyle = { marginBottom:10, textAlign:"left", display:"flex", justifyContent:"space-between", alignItems:"center" };
@@ -246,7 +246,7 @@ export function AboutTab({ workouts, library, routines, onImport, onReset, onCle
           <a href="https://music.apple.com/tw/playlist/gymreco-essentials/pl.u-76oNP2NtWM7dkYP" target="_blank" rel="noopener noreferrer"
             style={{ display:"flex", alignItems:"center", gap:12, padding:"14px 16px", textDecoration:"none" }}>
               <svg width="32" height="32" viewBox="0 0 512 512" style={{ flexShrink: 0, display: "block" }}>
-                {/* 1. 雙色調淺藍背景 (#d2e6ff)，rx="80" 實現完美的圓角裁切 */}
+                {/* 1. 雙色調淺藍背景 (#d2e6ff)，圓角裁切 */}
                 <rect width="512" height="512" rx="120" fill="#d2e6ff" />
                 {/* 2. 灰色啞鈴圖案 (#595757) */}
                 <path fill="#595757" d="M438.13,204.36a11.15,11.15,0,0,1,0,15.73L401.71,256.5a11.14,11.14,0,0,1-15.72,0l-46.74-46.73L209.77,339.25,256.5,386a11.14,11.14,0,0,1,0,15.72l-36.41,36.42a11.15,11.15,0,0,1-15.73,0L191,424.74,175.91,439.8a11.15,11.15,0,0,1-15.73,0l-88-88a11.15,11.15,0,0,1,0-15.73L87.26,321,73.87,307.64a11.15,11.15,0,0,1,0-15.73l36.42-36.41a11.14,11.14,0,0,1,15.72,0l46.74,46.73L302.23,172.75,255.5,126a11.15,11.15,0,0,1,0-15.73l36.41-36.41a11.15,11.15,0,0,1,15.73,0L321,87.26,336.09,72.2a11.15,11.15,0,0,1,15.73,0l88,88a11.15,11.15,0,0,1,0,15.73L424.74,191Z"/>

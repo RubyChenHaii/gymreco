@@ -89,7 +89,7 @@ export function CloseButton({ onClick, size=28, style={} }) {
   );
 }
 
-// 給子頁頁首左上角「‹ 返回」用的文字型按鈕 -- 預計導入：DetailTab×2、RoutineTab、LibItemDetail
+// 給子頁頁首左上角「‹ 返回」用的文字型按鈕
 export function BackButton({ onClick, children, style={} }) {
   const C = useC();
   return (
