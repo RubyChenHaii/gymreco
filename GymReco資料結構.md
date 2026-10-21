@@ -1,6 +1,6 @@
-# GymReco 資料結構 — v2.1.5_b
+# GymReco 資料結構 — v2.1.5
 
-> 依 Project 內實際檔案（已同步至 v2.1.5_b）整理。圖中「→」表示 import / 呼叫關係。
+> 依 Project 內實際檔案（已同步至 v2.1.5）整理。圖中「→」表示 import / 呼叫關係。
 
 ## 1. 專案目錄樹
 
@@ -69,17 +69,17 @@ App（tab state + navStack）
 
 ### localStorage keys
 
-| key | 內容 | 寫入者 |
-|---|---|---|
-| `wt_workouts` | 訓練紀錄陣列（新→舊） | App（lsSet） |
-| `wt_library` | 動作庫陣列（含各動作 history） | App（lsSet） |
-| `wt_routines` | 規律陣列（上限 5 條） | App（lsSet） |
-| `wt_lang` | `"zh"` / `"en"` | App |
-| `wt_dark` | 深色模式 | App |
-| `wt_homeStatPeriod` | 首頁統計看週或月規律 | App |
-| `wt_calGradientMode` | `animated` / `static` / `off` | App |
-| `wt_calGradientStyle` | `linear` / `conic` | App |
-| `wt_logDraft` ★ | 草稿 `{ updatedAt, selectedDate, rows }` | logDraft.js（同步寫入，不經 lsSet） |
+| key                   | 內容                                     | 寫入者                              |
+| --------------------- | ---------------------------------------- | ----------------------------------- |
+| `wt_workouts`         | 訓練紀錄陣列（新→舊）                    | App（lsSet）                        |
+| `wt_library`          | 動作庫陣列（含各動作 history）           | App（lsSet）                        |
+| `wt_routines`         | 規律陣列（上限 5 條）                    | App（lsSet）                        |
+| `wt_lang`             | `"zh"` / `"en"`                          | App                                 |
+| `wt_dark`             | 深色模式                                 | App                                 |
+| `wt_homeStatPeriod`   | 首頁統計看週或月規律                     | App                                 |
+| `wt_calGradientMode`  | `animated` / `static` / `off`            | App                                 |
+| `wt_calGradientStyle` | `linear` / `conic`                       | App                                 |
+| `wt_logDraft` ★       | 草稿 `{ updatedAt, selectedDate, rows }` | logDraft.js（同步寫入，不經 lsSet） |
 
 草稿清除時機：完成訓練（LogTab 同步清除）、`handleImport`／`handleReset`／`handleClear`、卡片全部移除、超過 3 小時、動作全被刪除。
 
@@ -112,35 +112,35 @@ DetailTab 刪除 → App.handleDeleteWorkout → workouts ＋ library.history �
 - `BackButton`：DetailTab×2、RoutineTab、LibraryTab（LibItemDetail）
 - `CloseButton`：目前沒有任何呼叫處
 
-| 使用者 | 用到 |
-|---|---|
-| AboutTab、HomeTab、LogTab | Button |
-| DetailTab | Button、BackButton |
-| LibraryTab、RoutineTab | Button、BackButton、InfoButton |
-| LengthPaceEditor | InfoButton |
-| ConfirmDialog、SelectionControls | Button |
+| 使用者                           | 用到                           |
+| -------------------------------- | ------------------------------ |
+| AboutTab、HomeTab、LogTab        | Button                         |
+| DetailTab                        | Button、BackButton             |
+| LibraryTab、RoutineTab           | Button、BackButton、InfoButton |
+| LengthPaceEditor                 | InfoButton                     |
+| ConfirmDialog、SelectionControls | Button                         |
 
 ### AutoGrowTextarea 家族（`components/AutoGrowTextarea.jsx`）
 
-| 元件 | tone / 設定 | 使用處 |
-|---|---|---|
-| `AutoGrowTextarea` | `feeling`（預設，最小高 64） | LogTab 當次感受、DetailTab 當次感受 |
-| `AutoGrowTextarea` | `plain`，最小高 54 | LogTab 器材設定、DetailTab 器材設定 |
-| `AutoGrowTextarea` | `plain`，最小高 90 | LogTab 動作知識筆記 |
-| `CollapsibleText` | `feeling`，預設收合 5 行 | DayDetailTab 當次感受、LibraryTab 訓練歷史感受 |
+| 元件               | tone / 設定                  | 使用處                                         |
+| ------------------ | ---------------------------- | ---------------------------------------------- |
+| `AutoGrowTextarea` | `feeling`（預設，最小高 64） | LogTab 當次感受、DetailTab 當次感受            |
+| `AutoGrowTextarea` | `plain`，最小高 54           | LogTab 器材設定、DetailTab 器材設定            |
+| `AutoGrowTextarea` | `plain`，最小高 90           | LogTab 動作知識筆記                            |
+| `CollapsibleText`  | `feeling`，預設收合 5 行     | DayDetailTab 當次感受、LibraryTab 訓練歷史感受 |
 
 刻意保持手刻：DayDetailTab 的動作知識筆記（收合保留 1 行）、各處唯讀的器材設定顯示、LibItemDetail 的筆記欄位（自己的增高機制）。
 
 ### 其他共用元件被誰使用
 
-| 元件 | 使用者 |
-|---|---|
-| `BottomSheet` | AboutTab、LogTab×2、RoutineTab |
-| `ConfirmDialog` | AboutTab×3、DetailTab、LibraryTab、RoutineTab |
-| `SelectionControls` | AboutTab、LogTab、LibraryTab、RoutineTab |
-| `SwipeBackView` | App（detail／daydetail／routine）、LibraryTab |
-| `WeightSetEditor`／`LengthPaceEditor` | LogTab、DetailTab |
-| `NumberPicker` | RoutineTab、LengthPaceEditor、RepsPicker |
+| 元件                                  | 使用者                                        |
+| ------------------------------------- | --------------------------------------------- |
+| `BottomSheet`                         | AboutTab、LogTab×2、RoutineTab                |
+| `ConfirmDialog`                       | AboutTab×3、DetailTab、LibraryTab、RoutineTab |
+| `SelectionControls`                   | AboutTab、LogTab、LibraryTab、RoutineTab      |
+| `SwipeBackView`                       | App（detail／daydetail／routine）、LibraryTab |
+| `WeightSetEditor`／`LengthPaceEditor` | LogTab、DetailTab                             |
+| `NumberPicker`                        | RoutineTab、LengthPaceEditor、RepsPicker      |
 
 ## 5. 模組依賴（簡圖）
 
@@ -169,4 +169,4 @@ components/AutoGrowTextarea → theme（useC）
 - 版本單一來源：`tabs/AboutTab.jsx` 的 `APP_VERSION`（目前 `2.1.5_b`）
 - `npm run build` 後由 `scripts/sync-sw-version.js` 把版本寫入 `build/service-worker.js` 的 `CACHE_NAME` 與 `package.json`
 - 部署：`npm run deploy`（`gh-pages -d build`）
-- 範例資料更新：`npm run init-data -- <備份.json> [--shift-days N] [--set id=日期] [--edit] [--write]`
+- `export-initial-data.js` 範例資料更新腳本：`npm run init-data -- <備份.json> [--shift-days N] [--set id=日期] [--edit] [--write]`

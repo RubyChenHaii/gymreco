@@ -17,7 +17,7 @@
 </h5>
 
 <p align="center">
-<img src="https://img.shields.io/badge/version-2.1.5_beta-violet.svg?style=for-the-badge"/>
+<img src="https://img.shields.io/badge/version-2.1.5-violet.svg?style=for-the-badge"/>
 <a href="https://linktr.ee/rubytheduckouo"><img src="https://img.shields.io/badge/author-ruby_chen-brightgreen?style=for-the-badge"></a>
 <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge"/></a>
 </p>
@@ -262,7 +262,7 @@ Today, GymReco continues to evolve through daily real-world use — including my
 
 ## 📋 Changelog｜版本紀錄
 
-**v2.1.5_beta**
+**v2.1.5**
 
 - **Back Gesture Support:** Enabled left-to-edge swipe right to navigate back to the previous page.
 
@@ -274,7 +274,7 @@ Today, GymReco continues to evolve through daily real-world use — including my
 
 - **Architecture Refactoring:** Standardized global design system and extracted shared UI components (e.g., `BottomTab`, `Buttons` ).
 
-- **Polished Experience:** General UI/UX refinements and operational bug fixes.
+- **Data Utility:** Added `export-initial-data.js`, a utility script that converts exported JSON data into `initialData.js`. For detailed usage instructions, see [GymReco資料結構.md](./GymReco資料結構.md).
 
 **v2.0.0 — Major UI & Cardio Expansion**
 
