@@ -166,7 +166,7 @@ components/AutoGrowTextarea → theme（useC）
 
 ## 6. 版本與建置
 
-- 版本單一來源：`tabs/AboutTab.jsx` 的 `APP_VERSION`（目前 `2.1.5_b`）
+- 版本單一來源：`tabs/AboutTab.jsx` 的 `APP_VERSION`（目前 `2.1.5`）
 - `npm run build` 後由 `scripts/sync-sw-version.js` 把版本寫入 `build/service-worker.js` 的 `CACHE_NAME` 與 `package.json`
 - 部署：`npm run deploy`（`gh-pages -d build`）
 - `export-initial-data.js` 範例資料更新腳本：`npm run init-data -- <備份.json> [--shift-days N] [--set id=日期] [--edit] [--write]`
