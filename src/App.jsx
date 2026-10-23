@@ -288,7 +288,7 @@ const handleReset = () => {
                 : <HomeTab workouts={workouts} library={library} routines={routines} homeStatPeriod={homeStatPeriod} setTab={navigate} lang={lang} setLang={setLang} darkMode={darkMode} setDarkMode={setDarkMode} openDayDetail={openDayDetail} calendarGradientMode={calendarGradientMode} calendarGradientStyle={calendarGradientStyle} />
                 }
               </div>
-              {tab !== "detail" && tab !== "daydetail" && tab !== "routine" && <BottomNav tab={tab} setTab={switchTab} />}
+              {tab !== "detail" && tab !== "daydetail" && tab !== "routine" && !vvHeight && <BottomNav tab={tab} setTab={switchTab} />}
             </div>
           </div>
         </CalendarGradientCtx.Provider>
