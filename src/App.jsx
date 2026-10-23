@@ -54,6 +54,22 @@ export default function App() {
   const [calendarGradientStyle, setCalendarGradientStyle] = useState(() => lsGet("wt_calGradientStyle", "linear")); // "linear" | "conic"
   const [calendarViewDate, setCalendarViewDate] = useState(new Date());
   const [toast,     setToast]     = useState(null);
+  const [vvHeight, setVvHeight] = useState(null); // null = 鍵盤未開
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const update = () => {
+      const open = window.innerHeight - vv.height > 100;
+      setVvHeight(open ? vv.height : null);
+      if (open) window.scrollTo(0, 0); // 還原 iOS 為了顯示輸入框而平移的 visual viewport
+    };
+    vv.addEventListener("resize", update);
+    vv.addEventListener("scroll", update);
+    return () => {
+      vv.removeEventListener("resize", update);
+      vv.removeEventListener("scroll", update);
+    };
+  }, []);
 
   const theme = darkMode ? DARK : LIGHT;
   const detailWorkout = workouts.find(w => w.id === detailId) || null;
@@ -66,6 +82,7 @@ export default function App() {
   useEffect(() => { lsSet("wt_homeStatPeriod", homeStatPeriod); }, [homeStatPeriod]);
   useEffect(() => { lsSet("wt_calGradientMode", calendarGradientMode); }, [calendarGradientMode]);
   useEffect(() => { lsSet("wt_calGradientStyle", calendarGradientStyle); }, [calendarGradientStyle]);
+  
   const [swUpdateAvailable, setSwUpdateAvailable] = useState(false);
   useEffect(() => {
     const handleSwUpdate = () => setSwUpdateAvailable(true);
@@ -199,13 +216,13 @@ const handleReset = () => {
     <DarkCtx.Provider value={darkMode}>
       <LangCtx.Provider value={lang}>
         <CalendarGradientCtx.Provider value={{ ...monthColorStats, viewDate: calendarViewDate, setViewDate: setCalendarViewDate }}>
-          <div style={{ display:"flex", justifyContent:"center", alignItems:"center", minHeight:"100dvh",
-            background: isMobile ? theme.bg : "#1C1C1E",
-            fontFamily: "-apple-system,'SF Pro Text','Helvetica Neue',sans-serif" }}>
+          <div style={{ display:"flex", justifyContent:"center", alignItems: isMobile ? "flex-start" : "center", minHeight:"100dvh",
+          background: isMobile ? theme.bg : "#1C1C1E",
+          fontFamily: "-apple-system,'SF Pro Text','Helvetica Neue',sans-serif" }}>
             <div style={isMobile ? {
-              width:"100%", height:"100dvh", background:theme.card,
+              width:"100%", height: vvHeight ? `${vvHeight}px` : "100dvh", background:theme.card,
               display:"flex", flexDirection:"column", overflow:"hidden",
-              containerType:"inline-size",   // ← 新增：讓內部子元件可用 cqw 抓到「這個外殼」的實際寬度
+              containerType:"inline-size",   // 讓內部子元件可用 cqw 抓到「這個外殼」的實際寬度
             } : {
               width:393, height:852, background:theme.card, borderRadius:52,
               overflow:"hidden", display:"flex", flexDirection:"column", position:"relative",

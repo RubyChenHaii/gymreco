@@ -1,6 +1,17 @@
 import { useState, useRef, useLayoutEffect } from "react";
 import { useC } from "../theme.js";
 
+// 找最近的可捲動祖先（LogTab / DetailTab 外層 overflowY:auto 的容器）
+const getScrollParent = (el) => {
+  let p = el?.parentElement;
+  while (p) {
+    const oy = getComputedStyle(p).overflowY;
+    if ((oy === "auto" || oy === "scroll") && p.scrollHeight > p.clientHeight) return p;
+    p = p.parentElement;
+  }
+  return null;
+};
+
 // ── 共用外觀 ──────────────────────────────────────────────
 // 編輯（AutoGrowTextarea）與顯示（CollapsibleText）共用同一套框的樣式，兩邊看起來才會一致
 // tone："feeling"（預設，橘色淡底＋橘色細框，用於「當次感受」）｜"plain"（灰色淡底＋灰色細框，預留給器材、筆記等欄位）
@@ -16,23 +27,29 @@ const accentColor = (C, tone) => tone === "plain" ? C.label : C.orange;
 // ── 編輯用：會隨內容自動增高的 textarea ──────────────────
 // 用法與一般 <textarea> 相同（value / onChange / placeholder…）
 // 最小高度用 minHeight 設定（預設 64）；不要在 style 傳 height，高度由這個元件控制
-export function AutoGrowTextarea({ value, tone = "feeling", minHeight = 64, style = {}, ...rest }) {
+export function AutoGrowTextarea({ value, tone = "feeling", minHeight = 64, style = {}, onFocus, ...rest }) {
   const C = useC();
   const ref = useRef(null);
 
-  // value 改變（含初次掛載）時重新量測：先把高度歸零成 auto，才能量到內容真正需要的高度。
-  // 用 useLayoutEffect：在畫面繪製前就調整完，不會看到「先出現固定高度再跳一下」的閃動
   useLayoutEffect(() => {
     const el = ref.current;
     if (!el) return;
+    const sp = getScrollParent(el);
+    const prevTop = sp ? sp.scrollTop : 0;      // 量測前記住捲動位置
     el.style.height = "auto";
-    // border-box 下，高度要把上下邊框算進去（scrollHeight 只含內容與 padding）
     const borders = el.offsetHeight - el.clientHeight;
     el.style.height = el.scrollHeight + borders + "px";
+    if (sp) sp.scrollTop = prevTop;             // 高度塌縮又長回來後還原，避免畫面跳動
   }, [value]);
 
+  const handleFocus = (e) => {
+    onFocus?.(e);
+    // 等鍵盤動畫與 App 外殼高度調整完，再把欄位捲到可視區中間
+    setTimeout(() => ref.current?.scrollIntoView({ block: "center", behavior: "smooth" }), 350);
+  };
+
   return (
-    <textarea ref={ref} value={value} rows={1}
+    <textarea ref={ref} value={value} rows={1} onFocus={handleFocus}
       style={{ ...boxStyle(C, tone), minHeight, outline:"none", overflow:"hidden", resize:"none", ...style }}
       {...rest} />
   );
