@@ -71,6 +71,32 @@ export default function App() {
     };
   }, []);
 
+  const [inputFocused, setInputFocused] = useState(false);
+  useEffect(() => {
+    const NON_TEXT = ["checkbox", "radio", "button", "submit", "file", "range", "color"];
+    const isTextField = (el) =>
+      !!el && (el.tagName === "TEXTAREA" || (el.tagName === "INPUT" && !NON_TEXT.includes(el.type)));
+    let timer;
+    const onIn = (e) => {
+      clearTimeout(timer);
+      if (isTextField(e.target)) setInputFocused(true);
+    };
+    const onOut = () => {
+      clearTimeout(timer);
+      // 延遲一下：從一個輸入框直接點到另一個時，不要讓 BottomNav 閃一下
+      timer = setTimeout(() => {
+        if (!isTextField(document.activeElement)) setInputFocused(false);
+      }, 100);
+    };
+    document.addEventListener("focusin", onIn);
+    document.addEventListener("focusout", onOut);
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener("focusin", onIn);
+      document.removeEventListener("focusout", onOut);
+    };
+  }, []);
+
   const theme = darkMode ? DARK : LIGHT;
   const detailWorkout = workouts.find(w => w.id === detailId) || null;
 
@@ -288,7 +314,7 @@ const handleReset = () => {
                 : <HomeTab workouts={workouts} library={library} routines={routines} homeStatPeriod={homeStatPeriod} setTab={navigate} lang={lang} setLang={setLang} darkMode={darkMode} setDarkMode={setDarkMode} openDayDetail={openDayDetail} calendarGradientMode={calendarGradientMode} calendarGradientStyle={calendarGradientStyle} />
                 }
               </div>
-              {tab !== "detail" && tab !== "daydetail" && tab !== "routine" && !vvHeight && <BottomNav tab={tab} setTab={switchTab} />}
+              {tab !== "detail" && tab !== "daydetail" && tab !== "routine" && !vvHeight && !inputFocused && <BottomNav tab={tab} setTab={switchTab} />}
             </div>
           </div>
         </CalendarGradientCtx.Provider>
