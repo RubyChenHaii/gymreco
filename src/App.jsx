@@ -71,32 +71,32 @@ export default function App() {
     };
   }, []);
 
-const [inputFocused, setInputFocused] = useState(false);
-useEffect(() => {
-  const NON_TEXT = ["checkbox", "radio", "button", "submit", "file", "range", "color"];
-  const isTextField = (el) =>
-    !!el && (el.tagName === "TEXTAREA" || (el.tagName === "INPUT" && !NON_TEXT.includes(el.type)));
+  const [inputFocused, setInputFocused] = useState(false);
+  useEffect(() => {
+    const NON_TEXT = ["checkbox", "radio", "button", "submit", "file", "range", "color"];
+    const isTextField = (el) =>
+      !!el && (el.tagName === "TEXTAREA" || (el.tagName === "INPUT" && !NON_TEXT.includes(el.type)));
 
-  // 唯一的真相來源：此刻瀏覽器聚焦在哪裡。重複呼叫是安全的（值相同時 React 會略過）
-  const sync = () => setInputFocused(isTextField(document.activeElement));
+    // 唯一的真相來源：此刻瀏覽器聚焦在哪裡。重複呼叫是安全的（值相同時 React 會略過）
+    const sync = () => setInputFocused(isTextField(document.activeElement));
 
-  let timer;
-  // focusout 當下 activeElement 還是 body，等一下再看，避免輸入框之間切換時閃爍
-  const onOut = () => { clearTimeout(timer); timer = setTimeout(sync, 100); };
+    let timer;
+    // focusout 當下 activeElement 還是 body，等一下再看，避免輸入框之間切換時閃爍
+    const onOut = () => { clearTimeout(timer); timer = setTimeout(sync, 100); };
 
-  // 聚焦中的輸入框被移除時不會有 focusout，改由 DOM 節點增減來觸發重新檢查
-  const mo = new MutationObserver(sync);
-  mo.observe(document.getElementById("root") || document.body, { childList: true, subtree: true });
+    // 聚焦中的輸入框被移除時不會有 focusout，改由 DOM 節點增減來觸發重新檢查
+    const mo = new MutationObserver(sync);
+    mo.observe(document.getElementById("root") || document.body, { childList: true, subtree: true });
 
-  document.addEventListener("focusin", sync);
-  document.addEventListener("focusout", onOut);
-  return () => {
-    clearTimeout(timer);
-    mo.disconnect();
-    document.removeEventListener("focusin", sync);
-    document.removeEventListener("focusout", onOut);
-  };
-}, []);
+    document.addEventListener("focusin", sync);
+    document.addEventListener("focusout", onOut);
+    return () => {
+      clearTimeout(timer);
+      mo.disconnect();
+      document.removeEventListener("focusin", sync);
+      document.removeEventListener("focusout", onOut);
+    };
+  }, []);
 
   const theme = darkMode ? DARK : LIGHT;
   const detailWorkout = workouts.find(w => w.id === detailId) || null;
