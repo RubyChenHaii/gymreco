@@ -1,3 +1,4 @@
+import { fs } from "../theme.js";
 import { useState , useRef, useEffect } from "react";
 import { useLang, T, MG_EN } from "../data/i18n.js";
 import { MG_OPTIONS, COLOR_OPTS, WEEKDAYS, WEEKDAY_CN, MONTHS_EN, RECORDING_MODES } from "../data/constants.js";
@@ -39,14 +40,14 @@ function RoutineOverview({ routines, library, workouts, onOpenRoutines, t, C, la
     return (
       <div style={{ display:"flex", alignItems:"center", gap:10, padding:"11px 16px" }}>
         {dotColor && <div style={{ width:10, height:10, borderRadius:"50%", background:dotColor, flexShrink:0 }} />}
-        <div style={{ flex:1, minWidth:0, fontSize:13, fontWeight:600, color:C.text, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>
+        <div style={{ flex:1, minWidth:0, fontSize:fs(13), fontWeight:600, color:C.text, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>
           {(routine.matchType === "exercise" ? t.routineMatchExercise : routine.matchType === "color" ? t.routineMatchColor : t.routineMatchGroup)}
           {label ? `：${label}` : ""}
         </div>
         {result.deleted ? (
-          <span style={{ fontSize:11, fontWeight:600, color:C.label, fontStyle:"italic", flexShrink:0 }}>{t.routineDeletedTag}</span>
+          <span style={{ fontSize:fs(11), fontWeight:600, color:C.label, fontStyle:"italic", flexShrink:0 }}>{t.routineDeletedTag}</span>
         ) : (
-          <span style={{ fontSize:12, fontWeight:700, color:statusColor, flexShrink:0 }}>
+          <span style={{ fontSize:fs(12), fontWeight:700, color:statusColor, flexShrink:0 }}>
             {displayCount}/{routine.targetCount} {result.complete ? "✓" : ""}
           </span>
         )}
@@ -58,8 +59,8 @@ function RoutineOverview({ routines, library, workouts, onOpenRoutines, t, C, la
     return (
       <Card onClick={onOpenRoutines} style={{ marginBottom:16 }}>
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"14px 16px" }}>
-          <span style={{ fontSize:14, fontWeight:700, color:C.text }}>{t.routineTitle}</span>
-          <span style={{ color:C.label, fontSize:12, fontWeight:300 }}>{t.routineAddEntry}</span>
+          <span style={{ fontSize:fs(14), fontWeight:700, color:C.text }}>{t.routineTitle}</span>
+          <span style={{ color:C.label, fontSize:fs(12), fontWeight:300 }}>{t.routineAddEntry}</span>
         </div>
       </Card>
     );
@@ -68,18 +69,18 @@ function RoutineOverview({ routines, library, workouts, onOpenRoutines, t, C, la
   return (
     <div onClick={onOpenRoutines} style={{ borderBottom:`1px solid ${C.sub}20`, paddingBottom:10, marginBottom:20, cursor:"pointer" }}>
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:8, paddingLeft:2 }}>
-        <span style={{ fontSize:12, fontWeight:500, color:C.label, letterSpacing:0.4, textTransform:"uppercase" }}>{t.routineTitle}</span>
-        <span style={{ color:C.label, fontSize:12, fontWeight:300 }}>{t.routineAddEntry}</span>
+        <span style={{ fontSize:fs(12), fontWeight:500, color:C.label, letterSpacing:0.4, textTransform:"uppercase" }}>{t.routineTitle}</span>
+        <span style={{ color:C.label, fontSize:fs(12), fontWeight:300 }}>{t.routineAddEntry}</span>
       </div>
       {weekRoutines.length > 0 && (
         <Card style={{ marginBottom:10, cursor:"pointer" }}>
-          <div style={{ padding:"8px 16px 2px", fontSize:11, fontWeight:600, color:C.label }}>{t.routineWeekGroup}</div>
+          <div style={{ padding:"8px 16px 2px", fontSize:fs(11), fontWeight:600, color:C.label }}>{t.routineWeekGroup}</div>
           {weekRoutines.map((r, i) => (<div key={r.id}>{i > 0 && <Div left={16} />}<Row routine={r} /></div>))}
         </Card>
       )}
       {monthRoutines.length > 0 && (
         <Card style={{ marginBottom:10, cursor:"pointer" }}>
-          <div style={{ padding:"8px 16px 2px", fontSize:11, fontWeight:600, color:C.label }}>{t.routineMonthGroup}</div>
+          <div style={{ padding:"8px 16px 2px", fontSize:fs(11), fontWeight:600, color:C.label }}>{t.routineMonthGroup}</div>
           {monthRoutines.map((r, i) => (<div key={r.id}>{i > 0 && <Div left={16} />}<Row routine={r} /></div>))}
         </Card>
       )}
@@ -204,7 +205,7 @@ export function LogTab({ library, routines, workouts, onSave, onAddToLibrary, sh
           <BottomSheet open={showDatePicker} onClose={() => setShowDatePicker(false)}
             title={lang === "zh" ? "選擇日期" : "Select Date"}>
            <div style={{ overflowY:"auto", padding:"8px 16px 32px" }}>
-             <div style={{ fontSize:12, color:C.label, textAlign:"center", padding:"8px 0 12px", lineHeight:1.6 }}>
+             <div style={{ fontSize:fs(12), color:C.label, textAlign:"center", padding:"8px 0 12px", lineHeight:1.6 }}>
                {lang === "zh" ? "補登日期僅限前 10 日之內" : "Back-logging is limited to the past 10 days"}
              </div>
              {days.map(d => {
@@ -218,8 +219,8 @@ export function LogTab({ library, routines, workouts, onSave, onAddToLibrary, sh
                 return (
                  <button key={ds} onClick={() => { setSelectedDate(ds); setShowDatePicker(false); }}
                    style={{ width:"100%", padding:"13px 16px", marginBottom:4, background:isSelected?C.blue:C.f5, border:isSelected?"none":`1px solid ${C.sep}`, borderRadius:12, cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center", boxSizing:"border-box", boxShadow: isSelected ? "none" : GLASS_SURFACE_SHADOW }}>
-                   <span style={{ fontSize:15, fontWeight:isSelected?700:400, color:isSelected?"#fff":C.text }}>{label}</span>
-                   {isT && <span style={{ fontSize:11, fontWeight:600, color:isSelected?"rgba(255,255,255,0.8)":C.blue, background:isSelected?"rgba(255,255,255,0.2)":`${C.blue}15`, borderRadius:6, padding:"2px 8px" }}>
+                   <span style={{ fontSize:fs(15), fontWeight:isSelected?700:400, color:isSelected?"#fff":C.text }}>{label}</span>
+                   {isT && <span style={{ fontSize:fs(11), fontWeight:600, color:isSelected?"rgba(255,255,255,0.8)":C.blue, background:isSelected?"rgba(255,255,255,0.2)":`${C.blue}15`, borderRadius:6, padding:"2px 8px" }}>
                      {lang === "zh" ? "今天" : "Today"}
                     </span>}
                  </button>
@@ -232,10 +233,10 @@ export function LogTab({ library, routines, workouts, onSave, onAddToLibrary, sh
 
       <div style={{ padding:"8px 20px 14px", minHeight:SUBHEADER_MIN_HEIGHT, boxSizing:"border-box", background:C.card, borderBottom:`1px solid ${C.sep}`, display:"flex", justifyContent:"space-between", alignItems:"flex-end" }}>
         <div>
-          <div style={{ fontSize:13, color:C.label, marginBottom:1 }}>{t.logSubtitle}</div>
+          <div style={{ fontSize:fs(13), color:C.label, marginBottom:1 }}>{t.logSubtitle}</div>
           <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-            <div style={{ fontSize:20, fontWeight:700, color:C.text, letterSpacing:-0.3 }}>{dateLabel}</div>
-            {!isToday && <span style={{ fontSize:11, fontWeight:600, color:C.orange, background:`${C.orange}15`, borderRadius:6, padding:"2px 8px" }}>{lang === "zh" ? "補登" : "Back-log"}</span>}
+            <div style={{ fontSize:fs(20), fontWeight:700, color:C.text, letterSpacing:-0.3 }}>{dateLabel}</div>
+            {!isToday && <span style={{ fontSize:fs(11), fontWeight:600, color:C.orange, background:`${C.orange}15`, borderRadius:6, padding:"2px 8px" }}>{lang === "zh" ? "補登" : "Back-log"}</span>}
           </div>
         </div>
         <Button variant="ghost" size="sm" fullWidth={false} onClick={() => setShowDatePicker(true)}
@@ -255,27 +256,27 @@ export function LogTab({ library, routines, workouts, onSave, onAddToLibrary, sh
             <Card key={i} tint={{ color: item.color, border:"top-bottom", borderStyle:"dashed" }} style={{ marginBottom:15 }}>
               <div style={{ display:"flex", alignItems:"center", gap:10, padding:"14px 16px 12px" }}>
                 <div style={{ width:10, height:10, borderRadius:"50%", background:item.color, flexShrink:0 }} />
-                <span style={{ flex:1, fontSize:16, fontWeight:700, color:C.text }}>{item.name}</span>
-                <span style={{ fontSize:11, color:item.color, background:`${item.color}15`, borderRadius:6, padding:"2px 8px", fontWeight:600 }}>{mgLabel}</span>
-                <button onClick={() => del(i)} style={{ background:"none", border:"none", cursor:"pointer", color:C.red, fontSize:13, fontWeight:500 }}>{t.logRemove}</button>
+                <span style={{ flex:1, fontSize:fs(16), fontWeight:700, color:C.text }}>{item.name}</span>
+                <span style={{ fontSize:fs(11), color:item.color, background:`${item.color}15`, borderRadius:6, padding:"2px 8px", fontWeight:600 }}>{mgLabel}</span>
+                <button onClick={() => del(i)} style={{ background:"none", border:"none", cursor:"pointer", color:C.red, fontSize:fs(13), fontWeight:500 }}>{t.logRemove}</button>
               </div>
               <Div />
               <div style={{ padding:"12px 16px" }}>
                 <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6 }}>
-                  <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4 }}>{t.logEquipLabel}</div>
-                  {row.equipment && <div style={{ fontSize:10, color:C.blue, background:`${C.blue}10`, borderRadius:6, padding:"2px 8px" }}>{t.logEquipHint}</div>}
+                  <div style={{ fontSize:fs(11), fontWeight:600, color:C.label, letterSpacing:0.4 }}>{t.logEquipLabel}</div>
+                  {row.equipment && <div style={{ fontSize:fs(10), color:C.blue, background:`${C.blue}10`, borderRadius:6, padding:"2px 8px" }}>{t.logEquipHint}</div>}
                 </div>
                 <AutoGrowTextarea tone="plain" minHeight={54} value={row.equipment} onChange={e => upd(i, { equipment: e.target.value })} placeholder={t.logEquipPlaceholder} />
               </div>
               <Div />
               <div style={{ padding:"12px 16px" }}>
                 <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10 }}>
-                  <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4 }}>
+                  <div style={{ fontSize:fs(11), fontWeight:600, color:C.label, letterSpacing:0.4 }}>
                     {row.mode === "length_pace" ? t.logLengthPaceLabel : t.logSetsLabel}
                   </div>
                   {row.mode === "length_pace"
-                    ? (row.lengthPace || []).some(lp => lp.distance) && <div style={{ fontSize:10, color:C.blue, background:`${C.blue}10`, borderRadius:6, padding:"2px 8px" }}>{t.logSetsHint}</div>
-                    : (row.weightSets || []).some(ws => ws.weight) && <div style={{ fontSize:10, color:C.blue, background:`${C.blue}10`, borderRadius:6, padding:"2px 8px" }}>{t.logSetsHint}</div>}
+                    ? (row.lengthPace || []).some(lp => lp.distance) && <div style={{ fontSize:fs(10), color:C.blue, background:`${C.blue}10`, borderRadius:6, padding:"2px 8px" }}>{t.logSetsHint}</div>
+                    : (row.weightSets || []).some(ws => ws.weight) && <div style={{ fontSize:fs(10), color:C.blue, background:`${C.blue}10`, borderRadius:6, padding:"2px 8px" }}>{t.logSetsHint}</div>}
                 </div>
                 {row.mode === "length_pace"
                   ? <LengthPaceEditor lengthPace={row.lengthPace} onChange={lp => upd(i, { lengthPace: lp })} />
@@ -285,17 +286,17 @@ export function LogTab({ library, routines, workouts, onSave, onAddToLibrary, sh
               <div style={{ padding:"12px 16px" }}>
                 <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:4 }}>
                   <div>
-                    <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4 }}>{t.logKnowledgeLabel}</div>
-                    <div style={{ fontSize:10, color:C.label, marginTop:1 }}>{t.logKnowledgeSub}</div>
+                    <div style={{ fontSize:fs(11), fontWeight:600, color:C.label, letterSpacing:0.4 }}>{t.logKnowledgeLabel}</div>
+                    <div style={{ fontSize:fs(10), color:C.label, marginTop:1 }}>{t.logKnowledgeSub}</div>
                   </div>
-                  {row.noteDirty && <span style={{ fontSize:10, color:C.orange, fontWeight:600, background:`${C.orange}15`, borderRadius:6, padding:"2px 8px" }}>{t.logKnowledgeDirty}</span>}
+                  {row.noteDirty && <span style={{ fontSize:fs(10), color:C.orange, fontWeight:600, background:`${C.orange}15`, borderRadius:6, padding:"2px 8px" }}>{t.logKnowledgeDirty}</span>}
                 </div>
                 <AutoGrowTextarea tone="plain" minHeight={90} value={row.noteLocal} onChange={e => upd(i, { noteLocal: e.target.value, noteDirty: true })} placeholder={t.logKnowledgePlaceholder} />
               </div>
               <Div />
               <div style={{ padding:"12px 16px" }}>
-                <div style={{ fontSize:11, fontWeight:600, color:C.orange, letterSpacing:0.4, marginBottom:2 }}>{t.logFeelingLabel}</div>
-                <div style={{ fontSize:10, color:C.label, marginBottom:6 }}>{t.logFeelingSub}</div>
+                <div style={{ fontSize:fs(11), fontWeight:600, color:C.orange, letterSpacing:0.4, marginBottom:2 }}>{t.logFeelingLabel}</div>
+                <div style={{ fontSize:fs(10), color:C.label, marginBottom:6 }}>{t.logFeelingSub}</div>
                 <AutoGrowTextarea value={row.feeling} onChange={e => upd(i, { feeling: e.target.value })} placeholder={t.logFeelingPlaceholder} />
               </div>
             </Card>
@@ -303,11 +304,11 @@ export function LogTab({ library, routines, workouts, onSave, onAddToLibrary, sh
         })}
 
         <Button variant="dashed" size="lg" onClick={() => setShowLib(true)}
-          style={{ padding:"15px", fontSize:15, marginBottom:12 }}>
+          style={{ padding:"15px", fontSize:fs(15), marginBottom:12 }}>
           {t.logAddExercise}
         </Button>
         <Button variant="primary" size="lg" disabled={rows.length === 0} onClick={handleSave}
-          style={{ fontSize:17, boxShadow: rows.length > 0 ? "0 4px 16px rgba(0,122,255,0.3)" : "none" }}>
+          style={{ fontSize:fs(17), boxShadow: rows.length > 0 ? "0 4px 16px rgba(0,122,255,0.3)" : "none" }}>
           {t.logSave}
         </Button>
       </div>
@@ -316,21 +317,21 @@ export function LogTab({ library, routines, workouts, onSave, onAddToLibrary, sh
       <BottomSheet open={showLibPicker} onClose={() => { setShowLib(false); setLibSearch(""); }} title={t.logPickerTitle}>
         <div style={{ padding:"12px 16px", borderBottom:`1px solid ${C.sep}` }}>
           <input value={libSearch} onChange={e => setLibSearch(e.target.value)} placeholder={t.logPickerSearch}
-          style={{ width:"100%", background:C.bg, border:`1px solid ${C.sep}`, borderRadius:10, padding:"10px 14px", fontSize:15, color:C.text, boxSizing:"border-box", outline:"none", fontFamily:"inherit" }} />
+          style={{ width:"100%", background:C.bg, border:`1px solid ${C.sep}`, borderRadius:10, padding:"10px 14px", fontSize:fs(15), color:C.text, boxSizing:"border-box", outline:"none", fontFamily:"inherit" }} />
         </div>
           <div style={{ overflowY:"auto", paddingBottom:20 }}>
              {/* 新增動作按鈕 */}
             <button onClick={() => setShowAddNew(true)}
               style={{ display:"flex", alignItems:"center", gap:12, width:"100%", padding:"14px 20px", background:"none", border:"none", borderBottom:`1px solid ${C.sep}`, cursor:"pointer", textAlign:"left" }}>
               <div style={{ width:28, height:28, borderRadius:"50%", background:`${C.blue}15`, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
-                 <span style={{ color:C.blue, fontSize:18, lineHeight:1 }}>+</span>
+                 <span style={{ color:C.blue, fontSize:fs(18), lineHeight:1 }}>+</span>
               </div>
-              <span style={{ fontSize:15, fontWeight:600, color:C.blue }}>{t.logAddNew}</span>
+              <span style={{ fontSize:fs(15), fontWeight:600, color:C.blue }}>{t.logAddNew}</span>
             </button>
 
             {Object.entries(grouped).map(([mg, items]) => (
               <div key={mg}>
-                <div style={{ padding:"12px 20px 6px", fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.5 }}>
+                <div style={{ padding:"12px 20px 6px", fontSize:fs(11), fontWeight:600, color:C.label, letterSpacing:0.5 }}>
                   {lang === "en" ? MG_EN[mg] || mg : mg}
                  </div>
                 {items.map((it, i) => (
@@ -339,9 +340,9 @@ export function LogTab({ library, routines, workouts, onSave, onAddToLibrary, sh
                     <button onClick={() => addRow(it.id)}
                       style={{ display:"flex", alignItems:"center", gap:12, width:"100%", padding:"13px 20px", background:"none", border:"none", cursor:"pointer", textAlign:"left" }}>
                        <div style={{ width:10, height:10, borderRadius:"50%", background:it.color, flexShrink:0 }} />
-                      <span style={{ flex:1, fontSize:16, color:C.text }}>{it.name}</span>
-                      {it.history.length > 0 && <span style={{ fontSize:11, color:C.label }}>{t.logLastSeen} {it.history[it.history.length - 1].date}</span>}
-                      <span style={{ color:C.blue, fontSize:20, lineHeight:1 }}>+</span>
+                      <span style={{ flex:1, fontSize:fs(16), color:C.text }}>{it.name}</span>
+                      {it.history.length > 0 && <span style={{ fontSize:fs(11), color:C.label }}>{t.logLastSeen} {it.history[it.history.length - 1].date}</span>}
+                      <span style={{ color:C.blue, fontSize:fs(20), lineHeight:1 }}>+</span>
                     </button>
                    </div>
                 ))}

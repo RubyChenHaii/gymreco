@@ -119,3 +119,13 @@ export const TINT_BORDER_ALPHA = "60"; // 邊框透明度，約 37.6%（原本 5
 export const CALENDAR_GRADIENT_ALPHA = "47"; // 不透明度約為 28%，經實機測試在淺色、深色背景下顯示效果良好的中間值
 
 export const withAlpha = (hexColor, alphaHex) => `${hexColor}${alphaHex}`;
+
+// ── 全域字體縮放（無障礙）──────────────────────────────────
+// FONT_SCALES：三組 presets（key 存進 localStorage 的 wt_fontScale）
+// fs(px)：把原本寫死的 px 字級換成「乘上縮放比例」的 CSS 表達式；
+// 比例由 App 最外層設定的 CSS 變數 --fs-scale 提供，沒有設定時退回 1
+// FontScaleCtx：同一個數字也以 Context 提供，給需要 JS 數值的元件用（階段 2 的 NumberPicker）
+export const FONT_SCALES = { normal: 1, large: 1.15, xlarge: 1.3 };
+export const FontScaleCtx = createContext(1);
+export const useFontScale = () => useContext(FontScaleCtx);
+export const fs = (px) => `calc(${px}px * var(--fs-scale, 1))`;

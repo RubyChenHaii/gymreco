@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useC, useCardShadow, withAlpha, TINT_BG_ALPHA, TINT_BORDER_ALPHA } from "../theme.js";
+import { useC, useCardShadow, withAlpha, TINT_BG_ALPHA, TINT_BORDER_ALPHA, fs } from "../theme.js";
 import { useLang, T } from "../data/i18n.js";
 
 export function Div({ left=0 }) {
@@ -34,7 +34,7 @@ export function Card({ children, style={}, onClick, tint }) {
 export function SLabel({ children }) {
   const C = useC();
   return (
-    <div style={{ fontSize:12, fontWeight:500, color:C.label, letterSpacing:0.4, marginBottom:8, paddingLeft:2, textTransform:"uppercase" }}>
+    <div style={{ fontSize:fs(12), fontWeight:500, color:C.label, letterSpacing:0.4, marginBottom:8, paddingLeft:2, textTransform:"uppercase" }}>
       {children}
     </div>
   );
@@ -50,7 +50,7 @@ export function StatusBar() {
   const h = t.getHours().toString().padStart(2, "0");
   const m = t.getMinutes().toString().padStart(2, "0");
   return (
-    <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"14px 24px 6px", fontSize:15, fontWeight:600, color:C.text, background:C.card, flexShrink:0, position:"relative" }}>
+    <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"14px 24px 6px", fontSize:fs(15), fontWeight:600, color:C.text, background:C.card, flexShrink:0, position:"relative" }}>
       <span>{h}:{m}</span>
       <div style={{ position:"absolute", left:"50%", transform:"translateX(-50%)", width:120, height:34, background:"#000", borderRadius:20, zIndex:1 }} />
       <div style={{ display:"flex", gap:5, alignItems:"center", fontSize:12 }}>
@@ -85,7 +85,7 @@ export function BottomNav({ tab, setTab }) {
             style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:4, border:"none", background:"none", cursor:"pointer", padding:"10px 0 22px", position:"relative" }}>
             {active && <div style={{ position:"absolute", top:0, left:"50%", transform:"translateX(-50%)", width:20, height:2, borderRadius:1, background:C.blue }} />}
             {item.svg(active)}
-            <span style={{ fontSize:10, fontWeight:active?600:400, color:active?C.blue:C.label, letterSpacing:0.2 }}>{item.label}</span>
+            <span style={{ fontSize:fs(10), fontWeight:active?600:400, color:active?C.blue:C.label, letterSpacing:0.2 }}>{item.label}</span>
           </button>
         );
       })}

@@ -1,3 +1,4 @@
+import { fs } from "../theme.js";
 import { useC, useGlass, GLASS_BLUR } from "../theme.js";
 import { Button } from "./Button.jsx";
 
@@ -27,10 +28,10 @@ export function ConfirmDialog({
         border:glass.borderTop, // 沿用玻璃 token 的髮絲邊框值，這裡改成四邊都套用（原本 BottomSheet 只用在頂部）
         boxSizing:"border-box",
       }}>
-        <div style={{ fontSize:17, fontWeight:700, color:titleColor || C.text, marginBottom:10, textAlign:"center" }}>{title}</div>
-        <div style={{ fontSize:14, color:C.sub, marginBottom: warning ? 8 : 20, textAlign:"center", lineHeight:1.6 }}>{message}</div>
+        <div style={{ fontSize:fs(17), fontWeight:700, color:titleColor || C.text, marginBottom:10, textAlign:"center" }}>{title}</div>
+        <div style={{ fontSize:fs(14), color:C.sub, marginBottom: warning ? 8 : 20, textAlign:"center", lineHeight:1.6 }}>{message}</div>
         {warning && (
-          <div style={{ fontSize:13, color:C.red, marginBottom:20, textAlign:"center", lineHeight:1.6, background:`${C.red}10`, borderRadius:10, padding:"8px 12px" }}>
+          <div style={{ fontSize:fs(13), color:C.red, marginBottom:20, textAlign:"center", lineHeight:1.6, background:`${C.red}10`, borderRadius:10, padding:"8px 12px" }}>
             {warning}
           </div>
         )}

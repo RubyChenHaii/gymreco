@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { LangCtx, T } from "./data/i18n.js";
 import { INIT_LIBRARY, INIT_WORKOUTS, INIT_ROUTINES } from "./data/initialData.js";
-import { LIGHT, DARK, DarkCtx, CalendarGradientCtx } from "./theme.js";
+import { LIGHT, DARK, DarkCtx, CalendarGradientCtx, FONT_SCALES, FontScaleCtx, fs } from "./theme.js";
 import { lsGet, lsSet } from "./hooks/useStorage.js";
 import { clearLogDraft } from "./utils/logDraft.js";
 import { StatusBar, BottomNav } from "./components/ui.jsx";
@@ -53,6 +53,12 @@ export default function App() {
   const [calendarGradientMode, setCalendarGradientMode] = useState(() => lsGet("wt_calGradientMode", "animated")); // "animated" | "static" | "off"
   const [calendarGradientStyle, setCalendarGradientStyle] = useState(() => lsGet("wt_calGradientStyle", "linear")); // "linear" | "conic"
   const [calendarViewDate, setCalendarViewDate] = useState(new Date());
+  const [fontScaleKey, setFontScaleKey] = useState(() => {
+    const v = lsGet("wt_fontScale", "normal");
+    return FONT_SCALES[v] ? v : "normal";   // 防呆：存到不認得的值就退回預設
+  });
+  useEffect(() => { lsSet("wt_fontScale", fontScaleKey); }, [fontScaleKey]);
+
   const [toast,     setToast]     = useState(null);
   const [vvHeight, setVvHeight] = useState(null); // null = 鍵盤未開
   useEffect(() => {
@@ -242,8 +248,10 @@ const handleReset = () => {
   return (
     <DarkCtx.Provider value={darkMode}>
       <LangCtx.Provider value={lang}>
+        <FontScaleCtx.Provider value={FONT_SCALES[fontScaleKey]}>
         <CalendarGradientCtx.Provider value={{ ...monthColorStats, viewDate: calendarViewDate, setViewDate: setCalendarViewDate }}>
-          <div style={{ display:"flex", justifyContent:"center", alignItems: isMobile ? "flex-start" : "center", minHeight:"100dvh",
+          <div style={{ "--fs-scale": String(FONT_SCALES[fontScaleKey]),
+          display:"flex", justifyContent:"center", alignItems: isMobile ? "flex-start" : "center", minHeight:"100dvh",
           background: isMobile ? theme.bg : "#1C1C1E",
           fontFamily: "-apple-system,'SF Pro Text','Helvetica Neue',sans-serif" }}>
             <div style={isMobile ? {
@@ -259,10 +267,10 @@ const handleReset = () => {
               {!isMobile && <StatusBar />}
               {swUpdateAvailable && (
                 <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:10,
-                  padding:"10px 16px", background:theme.blue, color:"#fff", fontSize:13, fontWeight:600, flexShrink:0 }}>
+                  padding:"10px 16px", background:theme.blue, color:"#fff", fontSize:fs(13), fontWeight:600, flexShrink:0 }}>
                   <span>{T[lang].swUpdateMsg}</span>
                   <button onClick={() => window.location.reload()}
-                    style={{ background:"rgba(255,255,255,0.25)", border:"none", borderRadius:8, padding:"5px 12px", color:"#fff", fontSize:12, fontWeight:700, cursor:"pointer", flexShrink:0 }}>
+                    style={{ background:"rgba(255,255,255,0.25)", border:"none", borderRadius:8, padding:"5px 12px", color:"#fff", fontSize:fs(12), fontWeight:700, cursor:"pointer", flexShrink:0 }}>
                     {T[lang].swUpdateBtn}
                   </button>
                 </div>
@@ -270,7 +278,8 @@ const handleReset = () => {
               {toast && (
                 <div style={{ position:"absolute", top:60, left:"50%", transform:"translateX(-50%)",
                   background:"rgba(0,0,0,0.82)", color:"#fff", borderRadius:20, padding:"10px 20px",
-                  fontSize:14, fontWeight:500, zIndex:400, whiteSpace:"nowrap",
+                  fontSize:fs(14), fontWeight:500, zIndex:400,
+                  width:"max-content", maxWidth:"calc(100% - 32px)", textAlign:"center",
                   boxShadow:"0 4px 16px rgba(0,0,0,0.3)" }}>
                   {toast}
                 </div>
@@ -312,13 +321,14 @@ const handleReset = () => {
                     </SwipeBackView>
                 : tab === "about"
                   ? <AboutTab workouts={workouts} library={library} routines={routines} onImport={handleImport} onReset={handleReset} onClear={handleClear} calendarGradientMode={calendarGradientMode} setCalendarGradientMode={setCalendarGradientMode} calendarGradientStyle={calendarGradientStyle} setCalendarGradientStyle={setCalendarGradientStyle} />
-                : <HomeTab workouts={workouts} library={library} routines={routines} homeStatPeriod={homeStatPeriod} setTab={navigate} lang={lang} setLang={setLang} darkMode={darkMode} setDarkMode={setDarkMode} openDayDetail={openDayDetail} calendarGradientMode={calendarGradientMode} calendarGradientStyle={calendarGradientStyle} />
+                : <HomeTab workouts={workouts} library={library} routines={routines} homeStatPeriod={homeStatPeriod} setTab={navigate} lang={lang} setLang={setLang} darkMode={darkMode} setDarkMode={setDarkMode} openDayDetail={openDayDetail} calendarGradientMode={calendarGradientMode} calendarGradientStyle={calendarGradientStyle} fontScaleKey={fontScaleKey} setFontScaleKey={setFontScaleKey} />
                 }
               </div>
               {tab !== "detail" && tab !== "daydetail" && tab !== "routine" && !vvHeight && !inputFocused && <BottomNav tab={tab} setTab={switchTab} />}
             </div>
           </div>
         </CalendarGradientCtx.Provider>
+        </FontScaleCtx.Provider>
       </LangCtx.Provider>
     </DarkCtx.Provider>
   );

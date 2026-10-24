@@ -1,3 +1,4 @@
+import { fs } from "../theme.js";
 import { useC } from "../theme.js";
 import { useLang, T, MG_EN } from "../data/i18n.js";
 import { COLOR_OPTS, MG_OPTIONS, RECORDING_MODES } from "../data/constants.js";
@@ -8,8 +9,8 @@ import { Button } from "./Button.jsx";
 // 選項按鈕呼叫 Button 的 segment / segmentOutline variant，樣式統一由 Button.jsx 管理
 // size："md"（預設）｜"sm"（文字較長、需要塞 3 個選項時用，例：RoutineTab 比對條件）
 const SIZE_STYLES = {
-  md: { padding:"9px 10px", fontSize:13 },
-  sm: { padding:"9px 8px",  fontSize:12 },
+  md: { padding:"9px 10px", fontSize:fs(13) },
+  sm: { padding:"9px 8px",  fontSize:fs(12) },
 };
 
 export function SegmentedControl({ options, value, onChange, size = "md", disabled = false }) {
@@ -58,7 +59,7 @@ export function ChipGroup({ options, value, onChange }) {
         return (
           <button key={opt.value} onClick={() => onChange(opt.value)}
             style={{ background:active?C.blue:"none", border:`1px solid ${active?C.blue:C.sep}`,
-              borderRadius:20, padding:"5px 12px", fontSize:13, color:active?"#fff":C.sub, cursor:"pointer" }}>
+              borderRadius:20, padding:"5px 12px", fontSize:fs(13), color:active?"#fff":C.sub, cursor:"pointer" }}>
             {opt.label}
           </button>
         );
@@ -82,19 +83,19 @@ export function ExerciseFieldsGroup({
   return (
     <>
       <input value={name} onChange={e => onNameChange(e.target.value)} placeholder={t.addName}
-        style={{ width:"100%", background:C.f5, border:`1px solid ${C.sep}`, borderRadius:10, padding:"10px 12px", fontSize:15, color:C.text, boxSizing:"border-box", outline:"none", fontFamily:"inherit", marginBottom:14 }} />
+        style={{ width:"100%", background:C.f5, border:`1px solid ${C.sep}`, borderRadius:10, padding:"10px 12px", fontSize:fs(15), color:C.text, boxSizing:"border-box", outline:"none", fontFamily:"inherit", marginBottom:14 }} />
 
-      <div style={{ fontSize:11, fontWeight:650, color:C.label, letterSpacing:0.4, marginBottom:7 }}>{t.recModeLabel}</div>
+      <div style={{ fontSize:fs(11), fontWeight:650, color:C.label, letterSpacing:0.4, marginBottom:7 }}>{t.recModeLabel}</div>
       <SegmentedControl
         options={RECORDING_MODES.map(m => ({ value:m, label: m==="weight_sets" ? t.recModeWeightSets : t.recModeLengthPace }))}
         value={recMode} onChange={onRecModeChange} />
-      {recModeHint && <div style={{ fontSize:11, color:C.label, lineHeight:1.6, marginTop:5 }}>{recModeHint}</div>}
+      {recModeHint && <div style={{ fontSize:fs(11), color:C.label, lineHeight:1.6, marginTop:5 }}>{recModeHint}</div>}
       <div style={{ marginTop:15, marginBottom:15 }}>
-        <div style={{ fontSize:11, fontWeight:650, color:C.label, letterSpacing:0.4, marginBottom:6 }}>{t.addMuscle}</div>
+        <div style={{ fontSize:fs(11), fontWeight:650, color:C.label, letterSpacing:0.4, marginBottom:6 }}>{t.addMuscle}</div>
         <ChipGroup options={MG_OPTIONS.map(mg => ({ value:mg, label:mgLabel(mg) }))} value={muscleGroup} onChange={onMuscleGroupChange} />
       </div>
 
-      <div style={{ fontSize:11, fontWeight:650, color:C.label, letterSpacing:0.4, marginBottom:7 }}>{t.addColor}</div>
+      <div style={{ fontSize:fs(11), fontWeight:650, color:C.label, letterSpacing:0.4, marginBottom:7 }}>{t.addColor}</div>
       <ColorPicker value={color} onChange={onColorChange} />
     </>
   );

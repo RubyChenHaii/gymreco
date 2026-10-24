@@ -1,3 +1,4 @@
+import { fs } from "../theme.js";
 import { Button } from "../components/Button.jsx";
 import { useCalendarGradient } from "../theme.js";
 import { useLang, T, MG_EN } from "../data/i18n.js";
@@ -8,6 +9,8 @@ import { Div, Card, SLabel } from "../components/ui.jsx";
 import { isRoutineComplete } from "../utils/routineUtils.js";
 import { useState } from "react";
 import { hasLogDraft } from "../utils/logDraft.js";
+import { BottomSheet } from "../components/BottomSheet.jsx";
+import { SegmentedControl } from "../components/SelectionControls.jsx";
 
 function Calendar({ workouts, library, onDayClick, gradientMode, gradientStyle }) {
   const lang = useLang(); const t = T[lang]; const C = useC();
@@ -71,16 +74,16 @@ function Calendar({ workouts, library, onDayClick, gradientMode, gradientStyle }
         <div style={{ position:"relative", zIndex:1 }}>
           <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"14px 16px 10px" }}>
             {/* 月份切換列 */}
-            <button onClick={() => setViewDate(new Date(yr, mo - 1, 1))} style={{ background:"none", border:"none", cursor:"pointer", fontSize:20, color:C.blue, padding:"0 4px", lineHeight:1 }}>‹</button>
-            <span style={{ fontSize:15, fontWeight:700, color:C.text }}>
+            <button onClick={() => setViewDate(new Date(yr, mo - 1, 1))} style={{ background:"none", border:"none", cursor:"pointer", fontSize:fs(20), color:C.blue, padding:"0 4px", lineHeight:1 }}>‹</button>
+            <span style={{ fontSize:fs(15), fontWeight:700, color:C.text }}>
               {lang === "zh" ? `${yr} 年 ${mo + 1} 月` : `${MONTHS_EN[mo]} ${yr}`}
             </span>
-            <button onClick={() => setViewDate(new Date(yr, mo + 1, 1))} style={{ background:"none", border:"none", cursor:"pointer", fontSize:20, color:C.blue, padding:"0 4px", lineHeight:1 }}>›</button>
+            <button onClick={() => setViewDate(new Date(yr, mo + 1, 1))} style={{ background:"none", border:"none", cursor:"pointer", fontSize:fs(20), color:C.blue, padding:"0 4px", lineHeight:1 }}>›</button>
           </div>
           <div style={{ display:"grid", gridTemplateColumns:"repeat(7,1fr)", padding:"0 10px 6px" }}>
             {/* 星期列 */}
             {t.weekdays.map((d, i) => (
-              <div key={d} style={{ textAlign:"center", fontSize:11, fontWeight:600, color:i===0?C.red:i===6?`${C.blue}99`:C.label, padding:"2px 0" }}>{d}</div>
+              <div key={d} style={{ textAlign:"center", fontSize:fs(11), fontWeight:600, color:i===0?C.red:i===6?`${C.blue}99`:C.label, padding:"2px 0" }}>{d}</div>
             ))}
           </div>
           <div style={{ display:"grid", gridTemplateColumns:"repeat(7,1fr)", padding:"0 10px 14px", gap:"2px 0" }}>
@@ -94,7 +97,7 @@ function Calendar({ workouts, library, onDayClick, gradientMode, gradientStyle }
               return (
                 <div key={day} onClick={() => w && onDayClick(ds)}
                   style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:3, padding:"4px 2px", cursor:w?"pointer":"default", borderRadius:10 }}>
-                  <span style={{ fontSize:13, fontWeight:isToday?700:400, width:26, height:26, display:"flex", alignItems:"center", justifyContent:"center", borderRadius:"50%",
+                  <span style={{ fontSize:fs(13), fontWeight:isToday?700:400, width:26, height:26, display:"flex", alignItems:"center", justifyContent:"center", borderRadius:"50%",
                     background:isToday?C.blue:"transparent",
                     color:isToday?"#fff":dow===0?C.red:dow===6?`${C.blue}99`:C.text }}>
                     {day}
@@ -126,10 +129,11 @@ function Calendar({ workouts, library, onDayClick, gradientMode, gradientStyle }
   );
 }
 
-export function HomeTab({ workouts, library, routines, homeStatPeriod, setTab, lang, setLang, darkMode, setDarkMode, openDayDetail, calendarGradientMode, calendarGradientStyle }) {
+export function HomeTab({ workouts, library, routines, homeStatPeriod, setTab, lang, setLang, darkMode, setDarkMode, openDayDetail, calendarGradientMode, calendarGradientStyle, fontScaleKey, setFontScaleKey }) {
   const t = T[lang]; const C = useC();
   // 掛載時讀一次即可：每次從別的分頁回到首頁，HomeTab 都會重新掛載
   const [hasDraft] = useState(() => hasLogDraft(library));
+  const [showFontSheet, setShowFontSheet] = useState(false);
   const now = new Date();
   const thisMonthDays = new Set(
     workouts
@@ -162,53 +166,68 @@ export function HomeTab({ workouts, library, routines, homeStatPeriod, setTab, l
     <div style={{ flex:1, overflowY:"auto", background:C.bg }}>
       <div style={{ padding:"8px 20px 16px", background:C.card, borderBottom:`1px solid ${C.sep}`, display:"flex", justifyContent:"space-between", alignItems:"flex-end" }}>
         <div>
-          <div style={{ fontSize:13, color:C.label, marginBottom:2 }}>{t.homeSubtitle}</div>
-          <div style={{ fontSize:28, fontWeight:700, color:C.text, letterSpacing:-0.5 }}>{t.homeTitle}</div>
+          <div style={{ fontSize:fs(13), color:C.label, marginBottom:2 }}>{t.homeSubtitle}</div>
+          <div style={{ fontSize:fs(28), fontWeight:700, color:C.text, letterSpacing:-0.5 }}>{t.homeTitle}</div>
         </div>
         <div style={{ display:"flex", gap:8, marginBottom:4 }}>
           <button onClick={() => setDarkMode(d => !d)}
-            style={{ background:C.f5, border:`1px solid ${C.sep}`, borderRadius:20, padding:"5px 12px", fontSize:15, cursor:"pointer" }}>
+            style={{ background:C.f5, border:`1px solid ${C.sep}`, borderRadius:20, padding:"5px 12px", fontSize:fs(15), cursor:"pointer" }}>
             {darkMode ? "☀️" : "🌙"}
           </button>
+          <button onClick={() => setShowFontSheet(true)} aria-label={t.fontSizeTitle}
+            style={{ background:C.f5, border:`1px solid ${C.sep}`, borderRadius:20, padding:"5px 12px", fontSize:fs(13), fontWeight:700, color:C.sub, cursor:"pointer" }}>
+            Aa
+          </button>
           <button onClick={() => setLang(l => l === "zh" ? "en" : "zh")}
-            style={{ background:C.f5, border:`1px solid ${C.sep}`, borderRadius:20, padding:"5px 14px", fontSize:13, fontWeight:600, color:C.sub, cursor:"pointer", letterSpacing:0.3 }}>
+            style={{ background:C.f5, border:`1px solid ${C.sep}`, borderRadius:20, padding:"5px 14px", fontSize:fs(13), fontWeight:600, color:C.sub, cursor:"pointer", letterSpacing:0.3 }}>
             {t.langBtn}
           </button>
         </div>
       </div>
       <div style={{ padding:"16px" }}>
+        <BottomSheet open={showFontSheet} onClose={() => setShowFontSheet(false)} title={t.fontSizeTitle}>
+          <div style={{ padding:"16px 20px 32px" }}>
+            <SegmentedControl
+              options={[["normal",t.fontSizeNormal],["large",t.fontSizeLarge],["xlarge",t.fontSizeXLarge]].map(([v,l])=>({value:v,label:l}))}
+              value={fontScaleKey} onChange={setFontScaleKey} />
+            <div style={{ fontSize:fs(11), fontWeight:600, color:C.label, letterSpacing:0.4, margin:"18px 0 8px" }}>{t.fontSizePreview}</div>
+            <div style={{ fontSize:fs(13), lineHeight:1.7, color:C.sub, background:C.f3, border:`1px solid ${C.sep}`, borderRadius:10, padding:"10px 12px" }}>
+              {t.fontSizeSample}
+            </div>
+          </div>
+        </BottomSheet>
         <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, marginBottom:16 }}>
           <Card onClick={() => setTab("history")} style={{ padding:"14px 16px", cursor:"pointer" }}>
-            <div style={{ fontSize:26, fontWeight:700, color:C.text }}>{thisMonthDays}<span style={{ fontSize:13, fontWeight:500, color:C.label }}> {t.days}</span></div>
-            <div style={{ fontSize:12, color:C.label, marginTop:2 }}>{t.statMonthDays}</div>
+            <div style={{ fontSize:fs(26), fontWeight:700, color:C.text }}>{thisMonthDays}<span style={{ fontSize:fs(13), fontWeight:500, color:C.label }}> {t.days}</span></div>
+            <div style={{ fontSize:fs(12), color:C.label, marginTop:2 }}>{t.statMonthDays}</div>
           </Card>
           <Card onClick={() => setTab("routine")} style={{ padding:"14px 16px", cursor:"pointer" }}>
-            <div style={{ fontSize:26, fontWeight:700, color:C.text }}>{goalsMet}<span style={{ fontSize:13, fontWeight:500, color:C.label }}> {t.pieces}</span></div>
-            <div style={{ fontSize:12, color:C.label, marginTop:2 }}>{homeStatPeriod==="week" ? t.statWeeklyGoals : t.statMonthlyGoals}</div>
+            <div style={{ fontSize:fs(26), fontWeight:700, color:C.text }}>{goalsMet}<span style={{ fontSize:fs(13), fontWeight:500, color:C.label }}> {t.pieces}</span></div>
+            <div style={{ fontSize:fs(12), color:C.label, marginTop:2 }}>{homeStatPeriod==="week" ? t.statWeeklyGoals : t.statMonthlyGoals}</div>
           </Card>
         </div>
         <SLabel>{t.sectionCalendar}</SLabel>
         <Calendar workouts={workouts} library={library} onDayClick={date => openDayDetail(date)} gradientMode={calendarGradientMode} gradientStyle={calendarGradientStyle} />
         <SLabel>{t.sectionRecent}</SLabel>
         <Card style={{ marginBottom:16 }}>
-          {recentByDate.length === 0 && <div style={{ padding:"32px", textAlign:"center", color:C.label, fontSize:14 }}>{t.emptyRecent}</div>}
+          {recentByDate.length === 0 && <div style={{ padding:"32px", textAlign:"center", color:C.label, fontSize:fs(14) }}>{t.emptyRecent}</div>}
           {recentByDate.map((day, i) => (
             <div key={day.date}>
               {i > 0 && <Div left={20} />}
               <div onClick={() => openDayDetail(day.date)} style={{ padding:"14px 16px", cursor:"pointer", display:"flex", alignItems:"center", gap:12 }}>
                 <div style={{ flexShrink:0 }}>
-                  <div style={{ fontSize:11, fontWeight:600, color:C.blue, background:`${C.blue}15`, borderRadius:6, padding:"2px 8px" }}>
+                  <div style={{ fontSize:fs(11), fontWeight:600, color:C.blue, background:`${C.blue}15`, borderRadius:6, padding:"2px 8px" }}>
                     {lang === "zh" ? WEEKDAY_CN[WEEKDAYS.indexOf(day.weekday)] : day.weekday.slice(0, 3)}
                   </div>
                 </div>
                 <div style={{ flex:1, minWidth:0 }}>
                   <div style={{ display:"flex", justifyContent:"space-between", marginBottom:3 }}>
-                    <span style={{ fontSize:15, fontWeight:600, color:C.text }}>
+                    <span style={{ fontSize:fs(15), fontWeight:600, color:C.text }}>
                       {lang === "zh" ? day.allMGs.join("・") : day.allMGs.map(mg => MG_EN[mg] || mg).join(" · ")}
                     </span>
-                    <span style={{ fontSize:12, color:C.label }}>{fmtDate(day.date, lang)}</span>
+                    <span style={{ fontSize:fs(12), color:C.label }}>{fmtDate(day.date, lang)}</span>
                   </div>
-                  <div style={{ fontSize:12, color:C.label }}>
+                  <div style={{ fontSize:fs(12), color:C.label }}>
                     {day.allExercises.map(ex => { const it = library.find(l => l.id === ex.libId); return it ? it.name : (lang === "en" ? "(Deleted)" : "(已刪除)"); }).join(lang === "zh" ? "、" : ", ")}
                   </div>
                 </div>

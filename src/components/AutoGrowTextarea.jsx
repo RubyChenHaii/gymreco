@@ -1,3 +1,4 @@
+import { fs } from "../theme.js";
 import { useState, useRef, useLayoutEffect } from "react";
 import { useC } from "../theme.js";
 
@@ -17,7 +18,7 @@ const getScrollParent = (el) => {
 // tone："feeling"（預設，橘色淡底＋橘色細框，用於「當次感受」）｜"plain"（灰色淡底＋灰色細框，預留給器材、筆記等欄位）
 const boxStyle = (C, tone) => ({
   width:"100%", boxSizing:"border-box", borderRadius:10, padding:"10px 12px",
-  fontSize:13, lineHeight:1.7, color:C.sub, fontFamily:"inherit",
+  fontSize:fs(13), lineHeight:1.7, color:C.sub, fontFamily:"inherit",
   ...(tone === "plain"
     ? { background:C.f3, border:`1px solid ${C.sep}` }
     : { background:`${C.orange}08`, border:`1px solid ${C.orange}25` }),
@@ -85,7 +86,7 @@ export function CollapsibleText({ text, label, tone = "feeling", collapsedLines 
       {label && (
         <button onClick={toggle} aria-expanded={open} disabled={!overflowing}
           style={{ width:"100%", display:"flex", alignItems:"center", justifyContent:"space-between", background:"none", border:"none", padding:0, marginBottom:2, cursor:overflowing ? "pointer" : "default", textAlign:"left" }}>
-          <span style={{ fontSize:11, fontWeight:600, color:accent, letterSpacing:0.4 }}>{label}</span>
+          <span style={{ fontSize:fs(11), fontWeight:600, color:accent, letterSpacing:0.4 }}>{label}</span>
           {overflowing && (
             <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke={accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
               style={{ transform: open ? "rotate(180deg)" : "rotate(0deg)", transition:"transform 0.2s", flexShrink:0 }}>

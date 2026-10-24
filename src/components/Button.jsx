@@ -1,3 +1,4 @@
+import { fs } from "../theme.js";
 import { useC, RADIUS, FONT } from "../theme.js";
 
 const SIZE_STYLES = {
@@ -34,7 +35,7 @@ export function Button({ children, onClick, variant="primary", size="lg", disabl
         width: fullWidth ? "100%" : "auto",
         padding: s.padding,
         borderRadius: s.radius,
-        fontSize: s.fontSize,
+        fontSize: fs(s.fontSize),
         fontWeight: 600,
         cursor: disabled ? "not-allowed" : "pointer",
         boxSizing:"border-box",
@@ -80,7 +81,7 @@ export function CloseButton({ onClick, size=28, style={} }) {
         width: size, height: size, borderRadius: "50%",
         background: C.f5,
         border: "none", cursor: "pointer", 
-        color: C.label, fontSize: 16,
+        color: C.label, fontSize:fs(16),
         flexShrink: 0,
         ...style,
       }}>
@@ -95,7 +96,7 @@ export function BackButton({ onClick, children, style={} }) {
   return (
     <button onClick={onClick}
       style={{ background:"none", border:"none", cursor:"pointer", padding:"4px 0",
-        color:C.blue, fontSize:16, fontWeight:500, flexShrink:0, ...style }}>
+        color:C.blue, fontSize:fs(16), fontWeight:500, flexShrink:0, ...style }}>
       {children}
     </button>
   );

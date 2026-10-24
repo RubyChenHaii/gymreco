@@ -1,3 +1,4 @@
+import { fs } from "../theme.js";
 import { useC } from "../theme.js";
 import { useLang, T } from "../data/i18n.js";
 import { RepsPicker } from "./RepsPicker.jsx";
@@ -20,26 +21,26 @@ export function WeightSetEditor({ weightSets, onChange }) {
         <div key={wi} style={{ marginBottom:16 }}>
           <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:10 }}>
             <input value={ws.weight} onChange={e => upd(wi, "weight", e.target.value)} placeholder={t.weightPlaceholder}
-              style={{ flex:1, background:C.f5, border:"none", borderRadius:8, padding:"8px 10px", fontSize:14, fontWeight:600, color:C.text, outline:"none", fontFamily:"inherit" }} />
-            <button onClick={() => del(wi)} style={{ background:"none", border:"none", color:C.label, fontSize:20, cursor:"pointer", padding:"0 2px", lineHeight:1 }}>×</button>
+              style={{ flex:1, background:C.f5, border:"none", borderRadius:8, padding:"8px 10px", fontSize:fs(14), fontWeight:600, color:C.text, outline:"none", fontFamily:"inherit" }} />
+            <button onClick={() => del(wi)} style={{ background:"none", border:"none", color:C.label, fontSize:fs(20), cursor:"pointer", padding:"0 2px", lineHeight:1 }}>×</button>
           </div>
-          <div style={{ fontSize:12, color:C.label, marginBottom:8, paddingLeft:2 }}>{t.weSets}</div>
+          <div style={{ fontSize:fs(12), color:C.label, marginBottom:8, paddingLeft:2 }}>{t.weSets}</div>
           <div style={{ display:"flex", alignItems:"flex-end", flexWrap:"wrap", gap:8, paddingLeft:2 }}>
             {ws.reps.map((r, ri) => (
               <div key={ri} style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:4 }}>
                 <RepsPicker value={r} onChange={val => updRep(wi, ri, val)} />
                 {ws.reps.length > 1 && (
                   <button onClick={() => delRep(wi, ri)}
-                    style={{ width:20, height:20, borderRadius:"50%", background:C.label, border:"none", color:"#fff", fontSize:11, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", padding:0, lineHeight:1 }}>×</button>
+                    style={{ width:20, height:20, borderRadius:"50%", background:C.label, border:"none", color:"#fff", fontSize:fs(11), cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", padding:0, lineHeight:1 }}>×</button>
                 )}
               </div>
             ))}
             <button onClick={() => addRep(wi)}
-              style={{ width:52, height:36*5, background:"none", border:`1.5px dashed ${C.sep}`, borderRadius:10, color:C.blue, fontSize:22, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", alignSelf:"flex-start" }}>+</button>
+              style={{ width:52, height:36*5, background:"none", border:`1.5px dashed ${C.sep}`, borderRadius:10, color:C.blue, fontSize:fs(22), cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", alignSelf:"flex-start" }}>+</button>
           </div>
         </div>
       ))}
-      <button onClick={add} style={{ display:"flex", alignItems:"center", gap:4, background:"none", border:`1.5px dashed ${C.sep}`, borderRadius:10, padding:"8px 14px", color:C.blue, fontSize:13, fontWeight:600, cursor:"pointer", marginTop:4 }}>
+      <button onClick={add} style={{ display:"flex", alignItems:"center", gap:4, background:"none", border:`1.5px dashed ${C.sep}`, borderRadius:10, padding:"8px 14px", color:C.blue, fontSize:fs(13), fontWeight:600, cursor:"pointer", marginTop:4 }}>
         {t.weAddSet}
       </button>
     </div>

@@ -1,3 +1,4 @@
+import { fs } from "../theme.js";
 import { useState } from "react";
 import { useLang, T, MG_EN } from "../data/i18n.js";
 import { WEEKDAYS, WEEKDAY_CN } from "../data/constants.js";
@@ -62,17 +63,17 @@ function DetailTabInner({ workout, library, onBack, onOpenLibItem, onUpdateWorko
       <div style={{ padding:"8px 16px 14px", background:C.card, borderBottom:`1px solid ${C.sep}`, display:"flex", alignItems:"center", gap:8 }}>
         <BackButton onClick={onBack}>{t.detailBack}</BackButton>
         <div style={{ flex:1, textAlign:"center" }}>
-          <div style={{ fontSize:16, fontWeight:600, color:C.text }}>{d.getMonth() + 1}/{d.getDate()} {wdLabel}</div>
+          <div style={{ fontSize:fs(16), fontWeight:600, color:C.text }}>{d.getMonth() + 1}/{d.getDate()} {wdLabel}</div>
           <div style={{ display:"flex", justifyContent:"center", gap:6, marginTop:4, flexWrap:"wrap" }}>
             {workout.muscleGroups.map(mg => (
-              <span key={mg} style={{ fontSize:12, fontWeight:500, color:C.indigo, background:`${C.indigo}12`, borderRadius:6, padding:"2px 8px" }}>
+              <span key={mg} style={{ fontSize:fs(12), fontWeight:500, color:C.indigo, background:`${C.indigo}12`, borderRadius:6, padding:"2px 8px" }}>
                 {lang === "en" ? MG_EN[mg] || mg : mg}
               </span>
             ))}
           </div>
         </div>
         <Button variant="dangerOutline" size="sm" fullWidth={false} onClick={() => setConfirmDelete(true)}
-          style={{ padding:"5px 10px", fontSize:12, borderRadius:8, flexShrink:0 }}>
+          style={{ padding:"5px 10px", fontSize:fs(12), borderRadius:8, flexShrink:0 }}>
           {lang === "zh" ? "刪除" : "Delete"}
         </Button>
       </div>
@@ -84,7 +85,7 @@ function DetailTabInner({ workout, library, onBack, onOpenLibItem, onUpdateWorko
             <Card key={i} style={{ marginBottom:12 }}>
               <div style={{ padding:"14px 16px", display:"flex", alignItems:"center", gap:10 }}>
                 <div style={{ width:10, height:10, borderRadius:"50%", background:C.label, flexShrink:0 }} />
-                <span style={{ fontSize:15, color:C.label, fontStyle:"italic" }}>{lang === "en" ? "(Exercise deleted from library)" : "（此動作已從動作庫刪除）"}</span>
+                <span style={{ fontSize:fs(15), color:C.label, fontStyle:"italic" }}>{lang === "en" ? "(Exercise deleted from library)" : "（此動作已從動作庫刪除）"}</span>
               </div>
             </Card>
           );
@@ -93,17 +94,17 @@ function DetailTabInner({ workout, library, onBack, onOpenLibItem, onUpdateWorko
             <Card key={i} tint={{ color: it.color }} style={{ marginBottom:12 }}>
               <div style={{ display:"flex", alignItems:"center", gap:10, padding:"14px 16px 12px" }}>
                 <div style={{ width:10, height:10, borderRadius:"50%", background:it.color, flexShrink:0 }} />
-                <span style={{ flex:1, fontSize:16, fontWeight:700, color:C.text }}>{it.name}</span>
-                <button onClick={() => onOpenLibItem(it.id)} style={{ background:`${it.color}25`, border:"none", borderRadius:8, padding:"5px 12px", fontSize:12, fontWeight:600, color:it.color, cursor:"pointer" }}>{t.detailLibBtn}</button>
+                <span style={{ flex:1, fontSize:fs(16), fontWeight:700, color:C.text }}>{it.name}</span>
+                <button onClick={() => onOpenLibItem(it.id)} style={{ background:`${it.color}25`, border:"none", borderRadius:8, padding:"5px 12px", fontSize:fs(12), fontWeight:600, color:it.color, cursor:"pointer" }}>{t.detailLibBtn}</button>
               </div>
               <Div />
               <div style={{ padding:"12px 16px" }}>
-                <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:6 }}>{t.detailEquip}</div>
+                <div style={{ fontSize:fs(11), fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:6 }}>{t.detailEquip}</div>
                 <AutoGrowTextarea tone="plain" minHeight={54} value={row.equipment} onChange={e => updRow(i, { equipment: e.target.value })} placeholder={t.logEquipPlaceholder} />
               </div>
               <Div />
               <div style={{ padding:"12px 16px" }}>
-                <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:10 }}>
+                <div style={{ fontSize:fs(11), fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:10 }}>
                  {(row.mode || "weight_sets") === "length_pace" ? t.logLengthPaceLabel : t.detailSets}
                 </div>
                 {(row.mode || "weight_sets") === "length_pace"
@@ -112,14 +113,14 @@ function DetailTabInner({ workout, library, onBack, onOpenLibItem, onUpdateWorko
               </div>
               <Div />
               <div style={{ padding:"12px 16px" }}>
-                <div style={{ fontSize:11, fontWeight:600, color:C.orange, letterSpacing:0.4, marginBottom:2 }}>{t.detailFeeling}</div>
+                <div style={{ fontSize:fs(11), fontWeight:600, color:C.orange, letterSpacing:0.4, marginBottom:2 }}>{t.detailFeeling}</div>
                 <AutoGrowTextarea value={row.feeling || ""} onChange={e => updRow(i, { feeling: e.target.value })} placeholder={t.logFeelingPlaceholder} />
               </div>
             </Card>
           );
         })}
         <Button variant="primary" size="lg" onClick={save}
-          style={{ fontSize:15, marginTop:4, boxShadow:`0 4px 16px ${C.blue}40` }}>
+          style={{ fontSize:fs(15), marginTop:4, boxShadow:`0 4px 16px ${C.blue}40` }}>
           {t.detailSaveEdit}
         </Button>
       </div>
@@ -191,10 +192,10 @@ export function DayDetailTab({ dayWorkouts, library, onBack, onOpenLibItem, onEd
       <div style={{ padding:"8px 16px 14px", background:C.card, borderBottom:`1px solid ${C.sep}`, display:"flex", alignItems:"center", gap:8 }}>
         <BackButton onClick={onBack}>{t.detailBack}</BackButton>
         <div style={{ flex:1, textAlign:"center" }}>
-          <div style={{ fontSize:16, fontWeight:600, color:C.text }}>{d.getMonth() + 1}/{d.getDate()} {wdLabel}</div>
+          <div style={{ fontSize:fs(16), fontWeight:600, color:C.text }}>{d.getMonth() + 1}/{d.getDate()} {wdLabel}</div>
           <div style={{ display:"flex", justifyContent:"center", gap:6, marginTop:4, flexWrap:"wrap" }}>
             {allMGs.map(mg => (
-              <span key={mg} style={{ fontSize:12, fontWeight:500, color:C.indigo, background:`${C.indigo}12`, borderRadius:6, padding:"2px 8px" }}>
+              <span key={mg} style={{ fontSize:fs(12), fontWeight:500, color:C.indigo, background:`${C.indigo}12`, borderRadius:6, padding:"2px 8px" }}>
                 {lang === "en" ? MG_EN[mg] || mg : mg}
               </span>
             ))}
@@ -208,7 +209,7 @@ export function DayDetailTab({ dayWorkouts, library, onBack, onOpenLibItem, onEd
             {sorted.length > 1 && (
               <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:8, marginTop:wi > 0 ? 8 : 0 }}>
                 <div style={{ height:1, flex:1, background:C.sep }} />
-                <span style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4 }}>
+                <span style={{ fontSize:fs(11), fontWeight:600, color:C.label, letterSpacing:0.4 }}>
                   {lang === "zh" ? `第 ${wi + 1} 次訓練` : `Session ${wi + 1}`}
                 </span>
                 <div style={{ height:1, flex:1, background:C.sep }} />
@@ -220,7 +221,7 @@ export function DayDetailTab({ dayWorkouts, library, onBack, onOpenLibItem, onEd
                 <Card key={i} style={{ marginBottom:12 }}>
                   <div style={{ padding:"14px 16px", display:"flex", alignItems:"center", gap:10 }}>
                     <div style={{ width:10, height:10, borderRadius:"50%", background:C.label, flexShrink:0 }} />
-                    <span style={{ fontSize:15, color:C.label, fontStyle:"italic" }}>{lang === "en" ? "(Exercise deleted)" : "（此動作已從動作庫刪除）"}</span>
+                    <span style={{ fontSize:fs(15), color:C.label, fontStyle:"italic" }}>{lang === "en" ? "(Exercise deleted)" : "（此動作已從動作庫刪除）"}</span>
                   </div>
                 </Card>
               );
@@ -229,27 +230,27 @@ export function DayDetailTab({ dayWorkouts, library, onBack, onOpenLibItem, onEd
                 <Card key={i} tint={{ color: it.color, border:"left-right" }} style={{ marginBottom:15 }}>
                   <div style={{ display:"flex", alignItems:"center", gap:10, padding:"14px 16px 12px" }}>
                     <div style={{ width:10, height:10, borderRadius:"50%", background:it.color, flexShrink:0 }} />
-                    <span style={{ flex:1, fontSize:17, fontWeight:700, color:C.text }}>{it.name}</span>
-                    <button onClick={() => onOpenLibItem(it.id)} style={{ background:`${it.color}25`, border:"none", borderRadius:8, padding:"5px 12px", fontSize:12, fontWeight:600, color:it.color, cursor:"pointer" }}>{t.detailLibBtn}</button>
+                    <span style={{ flex:1, fontSize:fs(17), fontWeight:700, color:C.text }}>{it.name}</span>
+                    <button onClick={() => onOpenLibItem(it.id)} style={{ background:`${it.color}25`, border:"none", borderRadius:8, padding:"5px 12px", fontSize:fs(12), fontWeight:600, color:it.color, cursor:"pointer" }}>{t.detailLibBtn}</button>
                   </div>
-                  {ex.equipment && (<><Div /><div style={{ padding:"10px 16px" }}><div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:4 }}>{t.detailEquip}</div><div style={{ fontSize:13, color:C.sub, lineHeight:1.6, whiteSpace:"pre-wrap" }}>{ex.equipment}</div></div></>)}
+                  {ex.equipment && (<><Div /><div style={{ padding:"10px 16px" }}><div style={{ fontSize:fs(11), fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:4 }}>{t.detailEquip}</div><div style={{ fontSize:fs(13), color:C.sub, lineHeight:1.6, whiteSpace:"pre-wrap" }}>{ex.equipment}</div></div></>)}
                   <Div />
                   <div style={{ padding:"10px 16px" }}>
-                    <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:10 }}>
+                    <div style={{ fontSize:fs(11), fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:10 }}>
                       {(ex.mode || "weight_sets") === "length_pace" ? t.logLengthPaceLabel : t.detailSets}
                     </div>
                     {(ex.mode || "weight_sets") === "length_pace" ? (
                       <>
                         {(ex.lengthPace || []).map((seg, si) => (
                           <div key={si} style={{ marginBottom:8 }}>
-                            <span style={{ fontSize:13, fontWeight:700, color:C.text }}>{fmtDistance(seg.distance)} {seg.unit}</span>
-                            <span style={{ fontSize:12, color:C.label, marginLeft:8 }}>@ {fmtPace(seg.paceMin, seg.paceSec)}/{seg.unit}</span>
+                            <span style={{ fontSize:fs(13), fontWeight:700, color:C.text }}>{fmtDistance(seg.distance)} {seg.unit}</span>
+                            <span style={{ fontSize:fs(12), color:C.label, marginLeft:8 }}>@ {fmtPace(seg.paceMin, seg.paceSec)}/{seg.unit}</span>
                           </div>
                         ))}
                         {ex.lengthPace && calcOverallPace(ex.lengthPace) && (() => {
                           const overall = calcOverallPace(ex.lengthPace);
                           return (
-                            <div style={{ fontSize:12, color:C.blue, marginTop:4 }}>
+                            <div style={{ fontSize:fs(12), color:C.blue, marginTop:4 }}>
                               {t.lpOverallPace}：{fmtDistance(overall.totalDistance)} {overall.unit} · {fmtPace(overall.paceMin, overall.paceSec)}/{overall.unit}
                             </div>
                           );
@@ -258,10 +259,10 @@ export function DayDetailTab({ dayWorkouts, library, onBack, onOpenLibItem, onEd
                     ) : (
                       (ex.weightSets || []).map((ws, wi2) => (
                         <div key={wi2} style={{ marginBottom:10 }}>
-                          <div style={{ fontSize:13, fontWeight:700, color:C.text, marginBottom:5 }}>{ws.weight}</div>
+                          <div style={{ fontSize:fs(13), fontWeight:700, color:C.text, marginBottom:5 }}>{ws.weight}</div>
                           <div style={{ display:"flex", flexWrap:"wrap", gap:6, paddingLeft:4 }}>
-                            {ws.reps.map((r, ri) => (<div key={ri} style={{ background:C.f5, borderRadius:8, padding:"6px 14px", fontSize:15, fontWeight:600, color:C.text }}>{r}<span style={{ fontSize:10, color:C.label, marginLeft:4 }}>{t.repsUnit}</span></div>))}
-                            <div style={{ display:"flex", alignItems:"center", padding:"0 6px", fontSize:13, color:C.label }}>{t.totalReps} {ws.reps.reduce((a, b) => a + b, 0)} {t.repsUnit}</div>
+                            {ws.reps.map((r, ri) => (<div key={ri} style={{ background:C.f5, borderRadius:8, padding:"6px 14px", fontSize:fs(15), fontWeight:600, color:C.text }}>{r}<span style={{ fontSize:fs(10), color:C.label, marginLeft:4 }}>{t.repsUnit}</span></div>))}
+                            <div style={{ display:"flex", alignItems:"center", padding:"0 6px", fontSize:fs(13), color:C.label }}>{t.totalReps} {ws.reps.reduce((a, b) => a + b, 0)} {t.repsUnit}</div>
                           </div>
                         </div>
                       ))
@@ -279,10 +280,10 @@ export function DayDetailTab({ dayWorkouts, library, onBack, onOpenLibItem, onEd
                           <button onClick={() => toggleNote(noteKey)} aria-expanded={noteOpen}
                             style={{ width:"100%", display:"flex", alignItems:"center", justifyContent:"space-between", gap:10, background:"none", border:"none", padding:0, cursor:"pointer", textAlign:"left" }}>
                             <div style={{ flex:1, minWidth:0 }}>
-                              <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4 }}>{t.detailKnowledge}</div>
+                              <div style={{ fontSize:fs(11), fontWeight:600, color:C.label, letterSpacing:0.4 }}>{t.detailKnowledge}</div>
                               {noteOpen
-                                ? <div style={{ fontSize:10, color:C.label, marginTop:2 }}>{t.detailKnowledgeSub}</div>
-                                : <div style={{ fontSize:12, color:C.label, marginTop:3, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{notePreview}</div>}
+                                ? <div style={{ fontSize:fs(10), color:C.label, marginTop:2 }}>{t.detailKnowledgeSub}</div>
+                                : <div style={{ fontSize:fs(12), color:C.label, marginTop:3, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{notePreview}</div>}
                             </div>
                             <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke={C.label} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
                               style={{ transform: noteOpen ? "rotate(180deg)" : "rotate(0deg)", transition:"transform 0.2s", flexShrink:0 }}>
@@ -290,7 +291,7 @@ export function DayDetailTab({ dayWorkouts, library, onBack, onOpenLibItem, onEd
                             </svg>
                           </button>
                           {noteOpen && (
-                            <div style={{ fontSize:13, color:C.sub, lineHeight:1.7, whiteSpace:"pre-wrap", background:C.f3, borderRadius:10, padding:"10px 12px", marginTop:8 }}>
+                            <div style={{ fontSize:fs(13), color:C.sub, lineHeight:1.7, whiteSpace:"pre-wrap", background:C.f3, borderRadius:10, padding:"10px 12px", marginTop:8 }}>
                               {it.note}
                             </div>
                           )}
@@ -310,7 +311,7 @@ export function DayDetailTab({ dayWorkouts, library, onBack, onOpenLibItem, onEd
               );
             })}
             <Button variant="tinted" size="lg" onClick={() => onEditWorkout(workout.id)}
-              style={{ padding:"12px", fontSize:15, color:C.sub, marginBottom:15, boxShadow:`0 0px 3px ${C.Bshadow}` }}>
+              style={{ padding:"12px", fontSize:fs(15), color:C.sub, marginBottom:15, boxShadow:`0 0px 3px ${C.Bshadow}` }}>
               {lang === "zh" ? "編輯此訓練" : "Edit This Session"}
             </Button>
           </div>
@@ -322,7 +323,7 @@ export function DayDetailTab({ dayWorkouts, library, onBack, onOpenLibItem, onEd
             width:"100%", padding:"13px",
             background: copyDone ? `${C.green}15` : C.f5,
             border: `1px solid ${copyDone ? C.green : C.sep}`,
-            borderRadius:14, fontSize:14, fontWeight:600,
+            borderRadius:14, fontSize:fs(14), fontWeight:600,
             color: copyDone ? C.green : C.label,
             cursor:"pointer", marginTop:4,
             display:"flex", alignItems:"center", justifyContent:"center", gap:8,

@@ -141,6 +141,9 @@ export const T = {
     calGradientStyleLabel:"漸層形狀",
     calGradientLinear:"線性",
     calGradientConic:"放射狀",
+    // fontsize
+    fontSizeTitle:"文字大小", fontSizeNormal:"預設", fontSizeLarge:"大", fontSizeXLarge:"特大",
+    fontSizePreview:"預覽", fontSizeSample:"今天狀態不錯，最後一組也完成了。",
   },
   en: {
     // Nav
@@ -209,7 +212,7 @@ export const T = {
     routinePeriodLabel:"Period",
     routinePeriodWeek:"Weekly", routinePeriodMonth:"Monthly",
     routineMatchTypeLabel:"Match Type",
-    routineMatchExercise:"Specific Exercise", routineMatchColor:"Specific Color", routineMatchGroup:"Specific Muscle Group",
+    routineMatchExercise:"Exercise", routineMatchColor:"Color", routineMatchGroup:"Muscle Group",
     routinePickExercisePlaceholder:"Tap to select an exercise",
     routineSearchExercise:"Search exercise or muscle…",
     routineAddEntry:"Set weekly / monthly goals and stay active!", routineManage:"Manage ›",
@@ -274,6 +277,9 @@ export const T = {
     calGradientStyleLabel:"Gradient Shape",
     calGradientLinear:"Linear",
     calGradientConic:"Radial",
+    // fontsize
+    fontSizeTitle:"Text Size", fontSizeNormal:"Default", fontSizeLarge:"Large", fontSizeXLarge:"Extra Large",
+    fontSizePreview:"Preview", fontSizeSample:"Felt strong today and finished the last set.",
   },
 };
 

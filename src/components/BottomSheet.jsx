@@ -1,3 +1,4 @@
+import { fs } from "../theme.js";
 import { useState, useRef } from "react";
 import { useC, useGlass, GLASS_BLUR } from "../theme.js";
 
@@ -60,10 +61,10 @@ export function BottomSheet({ open, onClose, title, children, maxHeight = "75vh"
           {/* 下方區段爲標題列：包含 BottomSheet 左上角的 Title 及右上角的「關閉 X」按鈕 ，包在一個 div 中 */}
           {title && (
             <div style={{ padding:"3px 20px 20px", display:"flex", justifyContent:"space-between", alignItems:"center", borderBottom:`1px solid ${C.sep}` }}>
-              <span style={{ fontSize:17, fontWeight:700, color:C.text }}>{title}</span>
+              <span style={{ fontSize:fs(17), fontWeight:700, color:C.text }}>{title}</span>
               {/* 下方二行爲右上角的「關閉 X」按鈕樣式 */}
               <button onClick={onClose}
-                style={{ background:C.f5, border:"none", borderRadius:"50%", width:28, height:28, color:C.label, fontSize:16, cursor:"pointer", flexShrink:0 }}>×</button>
+                style={{ background:C.f5, border:"none", borderRadius:"50%", width:28, height:28, color:C.label, fontSize:fs(16), cursor:"pointer", flexShrink:0 }}>×</button>
             </div>
           )}
         </div>

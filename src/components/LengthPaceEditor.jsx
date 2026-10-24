@@ -1,3 +1,4 @@
+import { fs } from "../theme.js";
 import { useState } from "react";
 import { useC, fluidSize } from "../theme.js";
 import { useLang, T } from "../data/i18n.js";
@@ -71,18 +72,18 @@ export function LengthPaceEditor({ lengthPace, onChange }) {
   return (
     <div>
       <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:8, paddingLeft:2 }}>
-        <span style={{ fontSize:12, color:C.label }}>{t.lpSegments}</span>
+        <span style={{ fontSize:fs(12), color:C.label }}>{t.lpSegments}</span>
         <InfoButton size={18} onClick={() => setShowHint(v => !v)} />
       </div>
       {showHint && (
-        <div style={{ fontSize:11, color:C.blue, opacity:0.85, marginBottom:10, paddingLeft:2 }}>{t.lpFieldsHint}</div>
+        <div style={{ fontSize:fs(11), color:C.blue, opacity:0.85, marginBottom:10, paddingLeft:2 }}>{t.lpFieldsHint}</div>
       )}
 
       {/* 全域輸入模式切換：配速 ｜ 總時間（整組分段共用，不逐段重複） */}
       <div style={{ display:"flex", gap:6, marginBottom:12 }}>
         {[["pace", t.lpModePace], ["time", t.lpModeTime]].map(([m, label]) => (
           <button key={m} onClick={() => switchMode(m)}
-            style={{ padding:"5px 12px", borderRadius:8, fontSize:12, fontWeight:650, cursor:"pointer",
+            style={{ padding:"5px 12px", borderRadius:8, fontSize:fs(12), fontWeight:650, cursor:"pointer",
               background: mode === m ? C.blue : "none", color: mode === m ? "#fff" : C.sub,
               border:`1px solid ${mode === m ? C.blue : C.sep}` }}>
             {label}
@@ -100,12 +101,12 @@ export function LengthPaceEditor({ lengthPace, onChange }) {
               <div style={{ display:"flex", alignItems:"center", gap:5, flexShrink:0 }}>
                 <div style={{ display:"flex", alignItems:"center", gap:4 }}>
                   <NumberPicker value={intPart} onChange={v => updDistance(i, v, decPart)} min={DISTANCE_MIN} max={DISTANCE_MAX} width={DIGIT_W} />
-                  <span style={{ fontSize:16, color:C.label, fontWeight:700 }}>.</span>
+                  <span style={{ fontSize:fs(16), color:C.label, fontWeight:700 }}>.</span>
                   <NumberPicker value={decPart} onChange={v => updDistance(i, intPart, v)} min={0} max={9} width={DIGIT_W} />
                 </div>
                 <input value={seg.unit} onChange={e => updSeg(i, { unit: e.target.value })} placeholder={t.lpUnitPlaceholder}
                   style={{ width: fluidSize(30, 40), background:C.f5, border:"none", borderRadius:10, padding:"8px 4px", fontSize:12, fontWeight:600, color:C.text, outline:"none", fontFamily:"inherit", textAlign:"center" }} />
-                <span style={{ fontSize:13, color:C.label }}>@</span>
+                <span style={{ fontSize:fs(13), color:C.label }}>@</span>
               </div>
 
               {/* 群組二：依全域模式顯示「配速」或「總時間」滾輪＋刪除鈕 */}
@@ -113,31 +114,31 @@ export function LengthPaceEditor({ lengthPace, onChange }) {
                 <div style={{ display:"flex", alignItems:"center", gap:5, flexShrink:0 }}>
                   <div style={{ display:"flex", alignItems:"center", gap:4 }}>
                     <NumberPicker value={seg.paceMin} onChange={v => updSeg(i, { paceMin: v })} min={0} max={30} width={DIGIT_W} />
-                    <span style={{ fontSize:13, color:C.label }}>'</span>
+                    <span style={{ fontSize:fs(13), color:C.label }}>'</span>
                     <NumberPicker value={seg.paceSec} onChange={v => updSeg(i, { paceSec: v })} min={0} max={59} width={DIGIT_W} />
-                    <span style={{ fontSize:13, color:C.label }}>"</span>
+                    <span style={{ fontSize:fs(13), color:C.label }}>"</span>
                   </div>
                   {/* 明確標註這組滾輪是「每單位距離的配速」，不是總時間 */}
-                  <span style={{ fontSize:11, color:C.label, fontWeight:550 }}>/{seg.unit || "km"}</span>
-                  <button onClick={() => del(i)} style={{ background:"none", border:"none", color:C.label, fontSize:20, cursor:"pointer", padding:"0 1px", lineHeight:1 }}>×</button>
+                  <span style={{ fontSize:fs(11), color:C.label, fontWeight:550 }}>/{seg.unit || "km"}</span>
+                  <button onClick={() => del(i)} style={{ background:"none", border:"none", color:C.label, fontSize:fs(20), cursor:"pointer", padding:"0 1px", lineHeight:1 }}>×</button>
                 </div>
               ) : (
                 <div style={{ display:"flex", alignItems:"center", gap:6, flexShrink:0 }}>
                   <div style={{ display:"flex", alignItems:"center", gap:4 }}>
                     <NumberPicker value={tt.min} onChange={v => updTotalTime(i, "min", v)} min={0} max={TOTAL_MIN_MAX} width={DIGIT_W} />
-                    <span style={{ fontSize:13, color:C.label }}>'</span>
+                    <span style={{ fontSize:fs(13), color:C.label }}>'</span>
                     <NumberPicker value={tt.sec} onChange={v => updTotalTime(i, "sec", v)} min={0} max={59} width={DIGIT_W} />
-                    <span style={{ fontSize:13, color:C.label }}>"</span>
+                    <span style={{ fontSize:fs(13), color:C.label }}>"</span>
                   </div>
-                  <span style={{ fontSize:12, color:C.label }}>{t.lpTotalTimeSuffix}</span>
-                  <button onClick={() => del(i)} style={{ background:"none", border:"none", color:C.label, fontSize:20, cursor:"pointer", padding:"0 1px", lineHeight:1 }}>×</button>
+                  <span style={{ fontSize:fs(12), color:C.label }}>{t.lpTotalTimeSuffix}</span>
+                  <button onClick={() => del(i)} style={{ background:"none", border:"none", color:C.label, fontSize:fs(20), cursor:"pointer", padding:"0 1px", lineHeight:1 }}>×</button>
                 </div>
               )}
             </div>
 
             {/* 總時間模式：即時顯示換算後的配速，讓使用者確認換算結果 */}
             {mode === "time" && (
-              <div style={{ fontSize:11, color:C.blue, marginTop:6, paddingLeft:2 }}>
+              <div style={{ fontSize:fs(11), color:C.blue, marginTop:6, paddingLeft:2 }}>
                 {t.lpDerivedPace}：{fmtPace(seg.paceMin || 0, seg.paceSec || 0)}/{seg.unit || "km"}
               </div>
             )}
@@ -145,12 +146,12 @@ export function LengthPaceEditor({ lengthPace, onChange }) {
         );
       })}
 
-      <button onClick={add} style={{ display:"flex", alignItems:"center", gap:4, background:"none", border:`1.5px dashed ${C.sep}`, borderRadius:10, padding:"8px 14px", color:C.blue, fontSize:13, fontWeight:600, cursor:"pointer", marginTop:4, marginBottom:12 }}>
+      <button onClick={add} style={{ display:"flex", alignItems:"center", gap:4, background:"none", border:`1.5px dashed ${C.sep}`, borderRadius:10, padding:"8px 14px", color:C.blue, fontSize:fs(13), fontWeight:600, cursor:"pointer", marginTop:4, marginBottom:12 }}>
         {t.lpAddSegment}
       </button>
 
       {lengthPace.length > 0 && (
-        <div style={{ padding:"10px 12px", borderRadius:10, fontSize:13, fontWeight:600,
+        <div style={{ padding:"10px 12px", borderRadius:10, fontSize:fs(13), fontWeight:600,
           background: unitsMismatch ? `${C.red}10` : `${C.blue}10`,
           border: `1px solid ${unitsMismatch ? C.red : C.blue}30`,
           color: unitsMismatch ? C.red : C.blue }}>

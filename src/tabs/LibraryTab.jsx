@@ -1,3 +1,4 @@
+import { fs } from "../theme.js";
 import { useState, useRef, useEffect } from "react";
 import { useLang, T, MG_EN } from "../data/i18n.js";
 import { MG_OPTIONS, COLOR_OPTS, RECORDING_MODES } from "../data/constants.js";
@@ -67,11 +68,11 @@ function LibItemDetail({ item, onUpdate, onDelete, onBack }) {
         <BackButton onClick={onBack}>‹</BackButton>
         <div style={{ flex:1, display:"flex", alignItems:"center", gap:8 }}>
           <div style={{ width:12, height:12, borderRadius:"50%", background:editColor }} />
-          <span style={{ fontSize:17, fontWeight:700, color:C.text }}>{editName}</span>
-          <span style={{ fontSize:12, color:editColor, background:`${editColor}15`, borderRadius:6, padding:"2px 8px", fontWeight:600 }}>{mgLabel}</span>
+          <span style={{ fontSize:fs(17), fontWeight:700, color:C.text }}>{editName}</span>
+          <span style={{ fontSize:fs(12), color:editColor, background:`${editColor}15`, borderRadius:6, padding:"2px 8px", fontWeight:600 }}>{mgLabel}</span>
         </div>
         <Button variant={editingMeta ? "tinted" : "ghost"} size="sm" fullWidth={false} onClick={() => setEM(v => !v)}
-          style={{ padding:"6px 12px", fontSize:12, borderRadius:8, flexShrink:0 }}>
+          style={{ padding:"6px 12px", fontSize:fs(12), borderRadius:8, flexShrink:0 }}>
           {editingMeta ? t.libItemDone : t.libItemEdit}
         </Button>
       </div>
@@ -79,7 +80,7 @@ function LibItemDetail({ item, onUpdate, onDelete, onBack }) {
         {editingMeta && (
           <div style={{ padding:"16px 16px 0" }}>
           <Card style={{ marginBottom:16, padding:"16px" }}>
-            <div style={{ fontSize:13, fontWeight:700, color:C.text, marginBottom:14 }}>{t.libItemEditTitle}</div>
+            <div style={{ fontSize:fs(13), fontWeight:700, color:C.text, marginBottom:14 }}>{t.libItemEditTitle}</div>
             <ExerciseFieldsGroup
               name={editName} onNameChange={setEditName}
               recMode={editRecMode} onRecModeChange={setEditRecMode} recModeHint={t.recModeSwitchHint}
@@ -99,10 +100,10 @@ function LibItemDetail({ item, onUpdate, onDelete, onBack }) {
           <SLabel>{t.libLastEquip}</SLabel>
           <Card style={{ marginBottom:16 }}>
             <div style={{ padding:"14px 16px" }}>
-              <div style={{ fontSize:11, color:C.blue, marginBottom:8 }}>{t.libLastEquipSub}</div>
+              <div style={{ fontSize:fs(11), color:C.blue, marginBottom:8 }}>{t.libLastEquipSub}</div>
               {lastH?.equipment
-                ? <div style={{ fontSize:13, color:C.sub, lineHeight:1.6, whiteSpace:"pre-wrap" }}>{lastH.equipment}</div>
-                : <div style={{ fontSize:13, color:C.label, fontStyle:"italic" }}>{t.libLastEquipPlaceholder}</div>
+                ? <div style={{ fontSize:fs(13), color:C.sub, lineHeight:1.6, whiteSpace:"pre-wrap" }}>{lastH.equipment}</div>
+                : <div style={{ fontSize:fs(13), color:C.label, fontStyle:"italic" }}>{t.libLastEquipPlaceholder}</div>
               }
             </div>
           </Card>
@@ -110,13 +111,13 @@ function LibItemDetail({ item, onUpdate, onDelete, onBack }) {
           <SLabel>{lastMode === "length_pace" ? t.libLastLengthPace : t.libLastSets}</SLabel>
           <Card style={{ marginBottom:16 }}>
             <div style={{ padding:"14px 16px" }}>
-              <div style={{ fontSize:11, color:C.blue, marginBottom:10 }}>{t.libLastSetsSub}</div>
+              <div style={{ fontSize:fs(11), color:C.blue, marginBottom:10 }}>{t.libLastSetsSub}</div>
               {!lastH ? (
-              <div style={{ fontSize:13, color:C.label, fontStyle:"italic" }}>{t.libHistoryEmpty}</div>
+              <div style={{ fontSize:fs(13), color:C.label, fontStyle:"italic" }}>{t.libHistoryEmpty}</div>
             ) : lastMode === "length_pace" ? (
                <>
                  {(lastH.lengthPace || []).map((seg, si) => (
-                   <div key={si} style={{ marginBottom:6, fontSize:13, color:C.text }}>
+                   <div key={si} style={{ marginBottom:6, fontSize:fs(13), color:C.text }}>
                      <span style={{ fontWeight:700 }}>{fmtDistance(seg.distance)} {seg.unit}</span>
                     <span style={{ color:C.label, marginLeft:8 }}>@ {fmtPace(seg.paceMin, seg.paceSec)}/{seg.unit}</span>
                    </div>
@@ -124,7 +125,7 @@ function LibItemDetail({ item, onUpdate, onDelete, onBack }) {
                  {lastH.lengthPace && calcOverallPace(lastH.lengthPace) && (() => {
                   const overall = calcOverallPace(lastH.lengthPace);
                     return (
-                     <div style={{ fontSize:11, color:C.blue, marginTop:4 }}>
+                     <div style={{ fontSize:fs(11), color:C.blue, marginTop:4 }}>
                        {t.lpOverallPace}：{fmtDistance(overall.totalDistance)} {overall.unit} · {fmtPace(overall.paceMin, overall.paceSec)}/{overall.unit}
                      </div>
                     );
@@ -133,9 +134,9 @@ function LibItemDetail({ item, onUpdate, onDelete, onBack }) {
             ) : (
                (lastH.weightSets || []).map((ws, wi) => (
                  <div key={wi} style={{ marginBottom:8 }}>
-                   <span style={{ fontSize:13, fontWeight:700, color:C.text, marginRight:10 }}>{ws.weight}</span>
-                   <span style={{ fontSize:12, color:C.label }}>{ws.reps.join(" / ")} {t.repsUnit}</span>
-                   <span style={{ fontSize:11, color:C.label, marginLeft:8 }}>{t.totalReps} {ws.reps.reduce((a,b)=>a+b,0)} {t.repsUnit}</span>
+                   <span style={{ fontSize:fs(13), fontWeight:700, color:C.text, marginRight:10 }}>{ws.weight}</span>
+                   <span style={{ fontSize:fs(12), color:C.label }}>{ws.reps.join(" / ")} {t.repsUnit}</span>
+                   <span style={{ fontSize:fs(11), color:C.label, marginLeft:8 }}>{t.totalReps} {ws.reps.reduce((a,b)=>a+b,0)} {t.repsUnit}</span>
                  </div>
                ))
              )}
@@ -145,13 +146,13 @@ function LibItemDetail({ item, onUpdate, onDelete, onBack }) {
           <SLabel>{t.libNoteTitle}</SLabel>
           <Card style={{ marginBottom:16 }}>
             <div style={{ padding:"8px 16px" }}>
-              <div style={{ fontSize:10, lineHeight:1.5, color:C.label, marginBottom:8, whiteSpace:"pre-line" }}>{t.libNoteSub}</div>
+              <div style={{ fontSize:fs(10), lineHeight:1.5, color:C.label, marginBottom:8, whiteSpace:"pre-line" }}>{t.libNoteSub}</div>
               <textarea
                 ref={noteRef}
                 value={editNote}
                 onChange={e => setEditNote(e.target.value)}
                 placeholder={t.libNotePlaceholder}
-                style={{ width:"100%", background:"none", border:"none", marginBottom:5, fontSize:14,
+                style={{ width:"100%", background:"none", border:"none", marginBottom:5, fontSize:fs(14),
                   color:C.sub, resize:"none", boxSizing:"border-box", outline:"none",
                   fontFamily:"inherit", lineHeight:1.7, display:"block", overflow:"hidden" }}
               />
@@ -166,28 +167,28 @@ function LibItemDetail({ item, onUpdate, onDelete, onBack }) {
 
         <div style={{ padding:"16px" }}>
         <SLabel>{t.libHistoryTitle}（{item.history.length}）</SLabel>
-        {item.history.length === 0 && <Card style={{ marginBottom:16 }}><div style={{ padding:"32px", textAlign:"center", color:C.label, fontSize:14 }}>{t.libHistoryEmpty}</div></Card>}
+        {item.history.length === 0 && <Card style={{ marginBottom:16 }}><div style={{ padding:"32px", textAlign:"center", color:C.label, fontSize:fs(14) }}>{t.libHistoryEmpty}</div></Card>}
         {[...item.history].reverse().map((h, i) => (
           <Card key={i} style={{ marginBottom:10 }}>
             <div style={{ padding:"12px 16px 10px", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-              <span style={{ fontSize:14, fontWeight:700, color:C.text }}>{fmtDate(h.date, lang)}</span>
-              <span style={{ fontSize:12, color:C.label }}>{h.date}</span>
+              <span style={{ fontSize:fs(14), fontWeight:700, color:C.text }}>{fmtDate(h.date, lang)}</span>
+              <span style={{ fontSize:fs(12), color:C.label }}>{h.date}</span>
             </div>
-            {h.equipment && (<><Div /><div style={{ padding:"10px 16px" }}><div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:4 }}>{t.libEquip}</div><div style={{ fontSize:13, color:C.sub, lineHeight:1.6, whiteSpace:"pre-wrap" }}>{h.equipment}</div></div></>)}
+            {h.equipment && (<><Div /><div style={{ padding:"10px 16px" }}><div style={{ fontSize:fs(11), fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:4 }}>{t.libEquip}</div><div style={{ fontSize:fs(13), color:C.sub, lineHeight:1.6, whiteSpace:"pre-wrap" }}>{h.equipment}</div></div></>)}
             <Div />
             <div style={{ padding:"10px 16px" }}>
               {(h.mode || "weight_sets") === "length_pace" ? (
                <>
                  {(h.lengthPace || []).map((seg, si) => (
                    <div key={si} style={{ marginBottom:6 }}>
-                     <span style={{ fontSize:13, fontWeight:700, color:C.text }}>{fmtDistance(seg.distance)} {seg.unit}</span>
-                     <span style={{ fontSize:12, color:C.label, marginLeft:8 }}>@ {fmtPace(seg.paceMin, seg.paceSec)}/{seg.unit}</span>
+                     <span style={{ fontSize:fs(13), fontWeight:700, color:C.text }}>{fmtDistance(seg.distance)} {seg.unit}</span>
+                     <span style={{ fontSize:fs(12), color:C.label, marginLeft:8 }}>@ {fmtPace(seg.paceMin, seg.paceSec)}/{seg.unit}</span>
                    </div>
                  ))}
                  {h.lengthPace && calcOverallPace(h.lengthPace) && (() => {
                    const overall = calcOverallPace(h.lengthPace);
                    return (
-                     <div style={{ fontSize:11, color:C.blue, marginTop:2 }}>
+                     <div style={{ fontSize:fs(11), color:C.blue, marginTop:2 }}>
                        {t.lpOverallPace}：{fmtDistance(overall.totalDistance)} {overall.unit} · {fmtPace(overall.paceMin, overall.paceSec)}/{overall.unit}
                      </div>
                    );
@@ -196,9 +197,9 @@ function LibItemDetail({ item, onUpdate, onDelete, onBack }) {
              ) : (
                (h.weightSets || []).map((ws, wi) => (
                  <div key={wi} style={{ marginBottom:8 }}>
-                   <span style={{ fontSize:13, fontWeight:700, color:C.text, marginRight:10 }}>{ws.weight}</span>
-                   <span style={{ fontSize:12, color:C.label }}>{ws.reps.join(" / ")} {t.repsUnit}</span>
-                   <span style={{ fontSize:11, color:C.label, marginLeft:8 }}>{t.totalReps} {ws.reps.reduce((a, b) => a + b, 0)} {t.repsUnit}</span>
+                   <span style={{ fontSize:fs(13), fontWeight:700, color:C.text, marginRight:10 }}>{ws.weight}</span>
+                   <span style={{ fontSize:fs(12), color:C.label }}>{ws.reps.join(" / ")} {t.repsUnit}</span>
+                   <span style={{ fontSize:fs(11), color:C.label, marginLeft:8 }}>{t.totalReps} {ws.reps.reduce((a, b) => a + b, 0)} {t.repsUnit}</span>
                  </div>
                ))
              )}
@@ -254,9 +255,9 @@ export function LibraryTab({ library, setLibrary, openItemId, setOpenItemId }) {
     <div style={{ flex:1, overflowY:"auto", background:C.bg }}>
       <div style={{ padding:"8px 20px 16px", background:C.card, borderBottom:`1px solid ${C.sep}`, display:"flex", justifyContent:"space-between", alignItems:"flex-end" }}>
         <div>
-          <div style={{ fontSize:13, color:C.label, marginBottom:2 }}>{t.libSubtitle}</div>
+          <div style={{ fontSize:fs(13), color:C.label, marginBottom:2 }}>{t.libSubtitle}</div>
           <div style={{ display:"flex", alignItems:"center", gap:6 }}>
-            <div style={{ fontSize:28, fontWeight:700, color:C.text, letterSpacing:-0.5 }}>{t.libTitle}</div>
+            <div style={{ fontSize:fs(28), fontWeight:700, color:C.text, letterSpacing:-0.5 }}>{t.libTitle}</div>
             <InfoButton onClick={() => setShowDateColorHint(v => !v)} />
           </div>
         </div>
@@ -266,7 +267,7 @@ export function LibraryTab({ library, setLibrary, openItemId, setOpenItemId }) {
       <div style={{ padding:"16px" }}>
         {showAdd && (
           <Card style={{ marginBottom:16, padding:"16px" }}>
-            <div style={{ fontSize:14, fontWeight:700, color:C.text, marginBottom:14 }}>{t.addBtn}</div>
+            <div style={{ fontSize:fs(14), fontWeight:700, color:C.text, marginBottom:14 }}>{t.addBtn}</div>
             <ExerciseFieldsGroup
               name={newName} onNameChange={setNewName}
               recMode={newRecMode} onRecModeChange={setNewRecMode}
@@ -280,14 +281,14 @@ export function LibraryTab({ library, setLibrary, openItemId, setOpenItemId }) {
           </Card>
         )}
         {showDateColorHint && (
-          <div style={{ fontSize:12, color:`${C.blue}95`, lineHeight:1.6, marginBottom:12, padding:"10px 12px", background:C.f3, borderRadius:10, border:`1px solid ${C.blue}60` }}>
+          <div style={{ fontSize:fs(12), color:`${C.blue}95`, lineHeight:1.6, marginBottom:12, padding:"10px 12px", background:C.f3, borderRadius:10, border:`1px solid ${C.blue}60` }}>
             💡 {t.libCalendarHint}
           </div>
         )}
         <div style={{ position:"relative", marginBottom:16 }}>
-          <span style={{ position:"absolute", left:12, top:"50%", transform:"translateY(-50%)", color:C.label, fontSize:15 }}>🔍</span>
+          <span style={{ position:"absolute", left:12, top:"50%", transform:"translateY(-50%)", color:C.label, fontSize:fs(15) }}>🔍</span>
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder={t.libSearch}
-            style={{ width:"100%", background:C.card, border:`1px solid ${C.sep}`, borderRadius:12, padding:"10px 12px 10px 36px", fontSize:15, color:C.text, boxSizing:"border-box", outline:"none", fontFamily:"inherit", boxShadow:"0 1px 4px rgba(0,0,0,0.07)" }} />
+            style={{ width:"100%", background:C.card, border:`1px solid ${C.sep}`, borderRadius:12, padding:"10px 12px 10px 36px", fontSize:fs(15), color:C.text, boxSizing:"border-box", outline:"none", fontFamily:"inherit", boxShadow:"0 1px 4px rgba(0,0,0,0.07)" }} />
         </div>
         {Object.entries(grouped).map(([mg, items]) => (
           <div key={mg} style={{ marginBottom:16 }}>
@@ -299,12 +300,12 @@ export function LibraryTab({ library, setLibrary, openItemId, setOpenItemId }) {
                   <div onClick={() => setOpenItemId(item.id)} style={{ display:"flex", alignItems:"center", gap:12, padding:"14px 16px", cursor:"pointer" }}>
                     <div style={{ width:12, height:12, borderRadius:"50%", background:item.color, flexShrink:0 }} />
                     <div style={{ flex:1, minWidth:0 }}>
-                      <div style={{ fontSize:15, fontWeight:500, color:C.text, marginBottom:1 }}>{item.name}</div>
-                      <div style={{ fontSize:11, color:C.label }}>
+                      <div style={{ fontSize:fs(15), fontWeight:500, color:C.text, marginBottom:1 }}>{item.name}</div>
+                      <div style={{ fontSize:fs(11), color:C.label }}>
                         {item.history.length > 0 ? `${item.history.length} ${t.libRecords} ${fmtDate(item.history[item.history.length - 1].date, lang)}` : t.libNoHistory}
                       </div>
                     </div>
-                    {item.note && <span style={{ fontSize:11, color:C.blue, background:`${C.blue}10`, borderRadius:6, padding:"2px 8px", flexShrink:0 }}>{t.libHasNote}</span>}
+                    {item.note && <span style={{ fontSize:fs(11), color:C.blue, background:`${C.blue}10`, borderRadius:6, padding:"2px 8px", flexShrink:0 }}>{t.libHasNote}</span>}
                     <svg viewBox="0 0 24 24" fill={C.sep} width="14" height="14"><path d="M10 6l6 6-6 6V6z"/></svg>
                   </div>
                 </div>
@@ -312,7 +313,7 @@ export function LibraryTab({ library, setLibrary, openItemId, setOpenItemId }) {
             </Card>
           </div>
         ))}
-        {filtered.length === 0 && <div style={{ textAlign:"center", padding:"60px 0", color:C.label }}><div style={{ fontSize:36, marginBottom:10 }}>🗂️</div><div style={{ fontSize:15, fontWeight:500 }}>{t.libEmpty}</div></div>}
+        {filtered.length === 0 && <div style={{ textAlign:"center", padding:"60px 0", color:C.label }}><div style={{ fontSize:fs(36), marginBottom:10 }}>🗂️</div><div style={{ fontSize:fs(15), fontWeight:500 }}>{t.libEmpty}</div></div>}
       </div>
     </div>
   );

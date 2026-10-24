@@ -1,3 +1,4 @@
+import { fs } from "../theme.js";
 import { useState } from "react";
 import { useLang, T, MG_EN } from "../data/i18n.js";
 import { MG_OPTIONS, ROUTINE_PERIODS, ROUTINE_MATCH_TYPES } from "../data/constants.js";
@@ -83,25 +84,25 @@ export function RoutineTab({ routines, setRoutines, library, workouts, homeStatP
         <div onClick={() => startEdit(routine)} style={{ flex:1, minWidth:0, display:"flex", alignItems:"center", gap:10, cursor:"pointer" }}>
           {dotColor && <div style={{ width:11, height:11, borderRadius:"50%", background:dotColor, flexShrink:0 }} />}
           <div style={{ minWidth:0 }}>
-            <div style={{ fontSize:14, fontWeight:600, color:C.text, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>
+            <div style={{ fontSize:fs(14), fontWeight:600, color:C.text, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>
               {matchTypeLabel(routine.matchType)}{label ? `：${label}` : ""}
             </div>
-            <div style={{ fontSize:12, color:C.label, marginTop:2 }}>
+            <div style={{ fontSize:fs(12), color:C.label, marginTop:2 }}>
               {periodLabel(routine.period)} × {routine.targetCount} {t.routineTargetUnit}
             </div>
           </div>
         </div>
         <div style={{ flexShrink:0, textAlign:"right" }}>
           {result.deleted ? (
-            <span style={{ fontSize:11, fontWeight:600, color:C.label, fontStyle:"italic" }}>{t.routineDeletedTag}</span>
+            <span style={{ fontSize:fs(11), fontWeight:600, color:C.label, fontStyle:"italic" }}>{t.routineDeletedTag}</span>
           ) : (
-            <span style={{ fontSize:12, fontWeight:700, color: result.complete ? C.green : C.label }}>
+            <span style={{ fontSize:fs(12), fontWeight:700, color: result.complete ? C.green : C.label }}>
               {result.count}/{routine.targetCount} {result.complete ? "✓" : ""}
             </span>
           )}
         </div>
         <button onClick={() => setConfirmDeleteId(routine.id)}
-          style={{ background:"none", border:"none", color:C.label, fontSize:18, cursor:"pointer", padding:"0 2px", lineHeight:1, flexShrink:0 }}>×</button>
+          style={{ background:"none", border:"none", color:C.label, fontSize:fs(18), cursor:"pointer", padding:"0 2px", lineHeight:1, flexShrink:0 }}>×</button>
       </div>
     );
   };
@@ -125,19 +126,19 @@ export function RoutineTab({ routines, setRoutines, library, workouts, homeStatP
       <BottomSheet open={showExPicker} onClose={() => { setShowExPicker(false); setExSearch(""); }} title={t.routineMatchExercise}>
         <div style={{ padding:"12px 16px", borderBottom:`1px solid ${C.sep}` }}>
           <input value={exSearch} onChange={e => setExSearch(e.target.value)} placeholder={t.routineSearchExercise}
-            style={{ width:"100%", background:C.bg, border:`1px solid ${C.sep}`, borderRadius:10, padding:"10px 14px", fontSize:15, color:C.text, boxSizing:"border-box", outline:"none", fontFamily:"inherit" }} />
+            style={{ width:"100%", background:C.bg, border:`1px solid ${C.sep}`, borderRadius:10, padding:"10px 14px", fontSize:fs(15), color:C.text, boxSizing:"border-box", outline:"none", fontFamily:"inherit" }} />
         </div>
         <div style={{ overflowY:"auto", paddingBottom:20 }}>
               {Object.entries(groupedLib).map(([mg, items]) => (
                 <div key={mg}>
-                  <div style={{ padding:"12px 20px 6px", fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.5 }}>{groupLabel(mg)}</div>
+                  <div style={{ padding:"12px 20px 6px", fontSize:fs(11), fontWeight:600, color:C.label, letterSpacing:0.5 }}>{groupLabel(mg)}</div>
                   {items.map((it, i) => (
                     <div key={it.id}>
                       {i > 0 && <Div left={20} />}
                       <button onClick={() => { setForm(f => ({ ...f, matchValue: it.id })); setShowExPicker(false); setExSearch(""); }}
                         style={{ display:"flex", alignItems:"center", gap:12, width:"100%", padding:"13px 20px", background:"none", border:"none", cursor:"pointer", textAlign:"left" }}>
                         <div style={{ width:10, height:10, borderRadius:"50%", background:it.color, flexShrink:0 }} />
-                        <span style={{ flex:1, fontSize:16, color:C.text }}>{it.name}</span>
+                        <span style={{ flex:1, fontSize:fs(16), color:C.text }}>{it.name}</span>
                       </button>
                     </div>
                   ))}
@@ -149,13 +150,13 @@ export function RoutineTab({ routines, setRoutines, library, workouts, homeStatP
       <div style={{ padding:"8px 20px 14px", minHeight:SUBHEADER_MIN_HEIGHT, boxSizing:"border-box", background:C.card, borderBottom:`1px solid ${C.sep}`, display:"flex", alignItems:"center", gap:8 }}>
         <BackButton onClick={onBack}>{t.detailBack}</BackButton>
         <div style={{ flex:1, display:"flex", alignItems:"center", justifyContent:"center", gap:6 }}>
-          <span style={{ fontSize:20, fontWeight:700, color:C.text }}>{t.routineTitle}</span>
+          <span style={{ fontSize:fs(20), fontWeight:700, color:C.text }}>{t.routineTitle}</span>
           <InfoButton onClick={() => setShowDedupHint(v => !v)} />
         </div>
         <div style={{ width:25 }} />
       </div>
       {showDedupHint && (
-        <div style={{ fontSize:12, color:C.blue, opacity:0.85, textAlign:"center", padding:"12px 16px 12px", background:C.card, whiteSpace:"pre-line", lineHeight:1.8 }}>
+        <div style={{ fontSize:fs(12), color:C.blue, opacity:0.85, textAlign:"center", padding:"12px 16px 12px", background:C.card, whiteSpace:"pre-line", lineHeight:1.8 }}>
           {t.routineDedupHint}
         </div>
       )}
@@ -166,7 +167,7 @@ export function RoutineTab({ routines, setRoutines, library, workouts, homeStatP
           <SLabel>{t.routineWeekGroup}</SLabel>
           <Card style={{ marginBottom:15 }}>
             {weekRoutines.length === 0
-              ? <div style={{ padding:"24px", textAlign:"center", color:C.label, fontSize:13 }}>{t.routineEmpty}</div>
+              ? <div style={{ padding:"24px", textAlign:"center", color:C.label, fontSize:fs(13) }}>{t.routineEmpty}</div>
               : weekRoutines.map((r, i) => (<div key={r.id}>{i > 0 && <Div left={16} />}{renderRow(r)}</div>))}
           </Card>
 
@@ -174,23 +175,23 @@ export function RoutineTab({ routines, setRoutines, library, workouts, homeStatP
           <SLabel>{t.routineMonthGroup}</SLabel>
           <Card style={{ marginBottom:15 }}>
             {monthRoutines.length === 0
-              ? <div style={{ padding:"24px", textAlign:"center", color:C.label, fontSize:13 }}>{t.routineEmpty}</div>
+              ? <div style={{ padding:"24px", textAlign:"center", color:C.label, fontSize:fs(13) }}>{t.routineEmpty}</div>
               : monthRoutines.map((r, i) => (<div key={r.id}>{i > 0 && <Div left={16} />}{renderRow(r)}</div>))}
           </Card>
         </div>
 
         {/* 新增規律 */}
         <Card style={{ padding:"16px", marginBottom:20 }}>
-          <div style={{ fontSize:14, fontWeight:700, color:C.text, marginBottom:14 }}>
+          <div style={{ fontSize:fs(14), fontWeight:700, color:C.text, marginBottom:14 }}>
             {editingId ? t.routineEdit : t.routineNew}
           </div>
 
-          <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:8 }}>{t.routinePeriodLabel}</div>
+          <div style={{ fontSize:fs(11), fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:8 }}>{t.routinePeriodLabel}</div>
           <div style={{ marginBottom:16 }}>
             <SegmentedControl options={ROUTINE_PERIODS.map(p => ({ value:p, label:periodLabel(p) }))} value={form.period} onChange={p => setForm(f => ({ ...f, period:p }))} />
           </div>
 
-          <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:8 }}>{t.routineMatchTypeLabel}</div>
+          <div style={{ fontSize:fs(11), fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:8 }}>{t.routineMatchTypeLabel}</div>
           <div style={{ marginBottom:14 }}>
             <SegmentedControl options={ROUTINE_MATCH_TYPES.map(m => ({ value:m, label:matchTypeLabel(m) }))} value={form.matchType} onChange={setMatchType} size="sm" />
           </div>
@@ -199,9 +200,9 @@ export function RoutineTab({ routines, setRoutines, library, workouts, homeStatP
             <button onClick={() => setShowExPicker(true)}
               style={{ width:"100%", display:"flex", alignItems:"center", gap:10, background:C.f5, border:`1px solid ${C.sep}`, borderRadius:10, padding:"11px 12px", marginBottom:16, cursor:"pointer", boxSizing:"border-box" }}>
               {selectedExercise
-                ? <><div style={{ width:10, height:10, borderRadius:"50%", background:selectedExercise.color, flexShrink:0 }} /><span style={{ fontSize:14, fontWeight:600, color:C.text }}>{selectedExercise.name}</span></>
-                : <span style={{ fontSize:14, color:C.label }}>{t.routinePickExercisePlaceholder}</span>}
-              <span style={{ marginLeft:"auto", color:C.label, fontSize:14 }}>›</span>
+                ? <><div style={{ width:10, height:10, borderRadius:"50%", background:selectedExercise.color, flexShrink:0 }} /><span style={{ fontSize:fs(14), fontWeight:600, color:C.text }}>{selectedExercise.name}</span></>
+                : <span style={{ fontSize:fs(14), color:C.label }}>{t.routinePickExercisePlaceholder}</span>}
+              <span style={{ marginLeft:"auto", color:C.label, fontSize:fs(14) }}>›</span>
             </button>
           )}
 
@@ -217,13 +218,13 @@ export function RoutineTab({ routines, setRoutines, library, workouts, homeStatP
             </div>
           )}
 
-          <div style={{ fontSize:11, fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:8 }}>{t.routineTargetLabel}</div>
+          <div style={{ fontSize:fs(11), fontWeight:600, color:C.label, letterSpacing:0.4, marginBottom:8 }}>{t.routineTargetLabel}</div>
           <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:16 }}>
             <NumberPicker value={form.targetCount} onChange={v => setForm(f => ({ ...f, targetCount: v }))} min={1} max={30} width={52} />
-            <span style={{ fontSize:13, color:C.label }}>{t.routineTargetUnit}</span>
+            <span style={{ fontSize:fs(13), color:C.label }}>{t.routineTargetUnit}</span>
           </div>
 
-          {atMax && <div style={{ fontSize:12, color:C.orange, marginBottom:12, lineHeight:1.6 }}>{t.routineMaxReached}</div>}
+          {atMax && <div style={{ fontSize:fs(12), color:C.orange, marginBottom:12, lineHeight:1.6 }}>{t.routineMaxReached}</div>}
 
           <div style={{ display:"flex", gap:8 }}>
             <Button variant="primary" size="md" disabled={!canSave} onClick={save} style={{ flex:1 }}>
@@ -238,11 +239,11 @@ export function RoutineTab({ routines, setRoutines, library, workouts, homeStatP
         </Card>
 
         <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:showHomeStatHint?4:8, paddingLeft:2 }}>
-          <span style={{ fontSize:12, fontWeight:500, color:C.label, letterSpacing:0.4, textTransform:"uppercase" }}>{t.homeStatSectionTitle}</span>
+          <span style={{ fontSize:fs(12), fontWeight:500, color:C.label, letterSpacing:0.4, textTransform:"uppercase" }}>{t.homeStatSectionTitle}</span>
           <InfoButton size={18} onClick={() => setShowHomeStatHint(v => !v)} />
         </div>
         {showHomeStatHint && (
-          <div style={{ fontSize:11, color:C.blue, opacity:0.85, marginBottom:8, paddingLeft:2 }}>{t.homeStatSectionHint}</div>
+          <div style={{ fontSize:fs(11), color:C.blue, opacity:0.85, marginBottom:8, paddingLeft:2 }}>{t.homeStatSectionHint}</div>
         )}
         <div style={{ marginBottom:20 }}>
           <SegmentedControl options={ROUTINE_PERIODS.map(p => ({ value:p, label:periodLabel(p) }))} value={homeStatPeriod} onChange={setHomeStatPeriod} />
