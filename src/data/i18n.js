@@ -35,7 +35,7 @@ export const T = {
     historySubtitle:"查看紀錄", historyTitle:"訓練紀錄", historySearch:"搜尋動作或部位…",
     historyEmpty:"找不到相關紀錄",
     // Detail
-    detailEquip:"器材設定", detailSets:"重量與組次",
+    detailEquip:"器材設定", detailSets:"數據與組次",
     detailKnowledge:"動作知識筆記", detailKnowledgeSub:"長期積累・存於動作庫",
     detailFeeling:"當次感受", detailLibBtn:"動作庫 →",
     detailBack:"‹ 返回",
@@ -177,7 +177,7 @@ export const T = {
     logLastSeen:"Last",
     historySubtitle:"View Records", historyTitle:"Workout History", historySearch:"Search exercise or muscle…",
     historyEmpty:"No matching records",
-    detailEquip:"Equipment Setup", detailSets:"Weight & Sets",
+    detailEquip:"Equipment Setup", detailSets:"Numbers & Sets",
     detailKnowledge:"Knowledge Notes", detailKnowledgeSub:"Long-term · Stored in library",
     detailFeeling:"Session Feeling", detailLibBtn:"Library →",
     detailBack:"‹ Back",
