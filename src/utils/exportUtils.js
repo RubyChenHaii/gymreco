@@ -1,4 +1,5 @@
 import { fmtDistance, fmtPace, calcOverallPace } from "./paceUtils.js";
+import { coreText, noteText, kindOf } from "./setUtils.js";
 
 // ── GymReco 共用匯出工具 ─────────────────────────────────────
 // 供 AboutTab 呼叫，無第三方依賴
@@ -43,7 +44,7 @@ export const buildDaySection = (date, dayWorkouts, library, isZh) => {
         if (overall) lines.push(`- **${isZh ? "整體配速" : "Overall Pace"}**: ${fmtDistance(overall.totalDistance)} ${overall.unit} · ${fmtPace(overall.paceMin, overall.paceSec)}/${overall.unit}`);
       } else {
         (ex.weightSets || []).forEach((ws, si) => {
-          lines.push(`- **Set ${si+1}**: ${ws.weight} × ${ws.reps.join("/")} reps`);
+          lines.push(`- **Set ${si+1}**: ${coreText(ws)}${noteText(ws) ? ` (${noteText(ws)})` : ""} × ${ws.reps.join("/")} ${kindOf(ex) === "laps" ? (isZh ? "圈" : "laps") : "reps"}`);
         });
       }
       if (ex.feeling) lines.push(`- **${isZh ? "感受" : "Feeling"}**: ${ex.feeling}`);

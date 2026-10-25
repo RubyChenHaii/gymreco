@@ -21,7 +21,7 @@ export const T = {
     logSubtitle:"新增訓練", logMuscleLabel:"部位：",
     logCustomMuscle:"＋ 自訂部位", logCollapse:"收起",
     logEquipLabel:"器材設定", logEquipPlaceholder:"器材設定（如：臥推架高度5，保護槓最低格…）",
-    logSetsLabel:"重量與組次",
+    logSetsLabel:"數據與組次",
     logKnowledgeLabel:"動作知識筆記", logKnowledgeSub:"儲存後自動同步至動作庫",
     logKnowledgeDirty:"已修改・將同步",
     logKnowledgePlaceholder:"姿勢提醒、器材心得…（儲存後同步至動作庫）",
@@ -97,6 +97,10 @@ export const T = {
     // Weight editor
     weSets:"組次：", weAddSet:"+ 新增重量組",
     weightPlaceholder:"重量（如 15kg、自重）",
+    weKindWeight:"重量", weKindLaps:"圈數",
+    weKindHint:"重量：左側填數字並選擇重量單位（必填），右側可另外補充文字。\n圈數：左側填每圈的距離並選擇距離單位（必填），下方數字則是每組跑了幾圈。\n右側文字會存入紀錄，並顯示在訓練詳情與動作庫，但不會出現在歷史列表的預覽。",
+    weLapsCount:"圈數：", weNotePlaceholderWeight:"補充（如 左右各15kg）", weNotePlaceholderLaps:"補充（如 橡膠跑道）",
+    lapsUnit:"圈", weValueRequired:"每組的重量／距離數字為必填，請補上後再儲存。",
     // Pace_Segment editor 
     lpSegments:"配速分段：", lpAddSegment:"+ 新增分段",
     lpFieldsHint:"距離 (整數.小數) 單位 ＠ 分＇秒＂(配速 or 總時間)",
@@ -161,7 +165,7 @@ export const T = {
     logSubtitle:"New Workout", logMuscleLabel:"Muscle:",
     logCustomMuscle:"＋ Custom", logCollapse:"Collapse",
     logEquipLabel:"Equipment Setup", logEquipPlaceholder:"Equipment setup (e.g. bench height 5, safety bar at lowest…)",
-    logSetsLabel:"Weight & Sets",
+    logSetsLabel:"Record & Sets",
     logKnowledgeLabel:"Knowledge Notes", logKnowledgeSub:"Saved to library on submit",
     logKnowledgeDirty:"Modified · Will sync",
     logKnowledgePlaceholder:"Form cues, equipment tips… (synced to library on save)",
@@ -233,6 +237,10 @@ export const T = {
     // Weight editor
     weSets:"Sets:", weAddSet:"+ Add weight group",
     weightPlaceholder:"Weight (e.g. 15kg, bodyweight)",
+    weKindWeight:"Weight", weKindLaps:"Laps",
+    weKindHint:"Weight: enter a number and pick a weight unit on the left (required); add free text on the right if you like.\nLaps: enter the distance of one lap and pick a distance unit (required); the numbers below are how many laps each set covered.\nThe free text is saved with the record and shown in workout details and the library, but not in the History list preview.",
+    weLapsCount:"Laps:", weNotePlaceholderWeight:"Note (e.g. 15kg each side)", weNotePlaceholderLaps:"Note (e.g. rubber track)",
+    lapsUnit:"laps", weValueRequired:"Every set needs a weight / distance number before saving.",
     // Pace_Segment editor
     lpSegments:"Segments:", lpAddSegment:"+ Add Segment",
     lpFieldsHint:"Distance (int.dec) unit @ min'sec\" (Pace or Total Time)",

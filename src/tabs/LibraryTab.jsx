@@ -12,6 +12,7 @@ import { Button, BackButton, InfoButton } from "../components/Button.jsx";
 import { ExerciseFieldsGroup } from "../components/SelectionControls.jsx";
 import { SwipeBackView } from "../components/SwipeBackView.jsx";
 import { CollapsibleText } from "../components/AutoGrowTextarea.jsx";
+import { coreText, noteText, kindOf, repUnitLabel } from "../utils/setUtils.js";
 
 
 function LibItemDetail({ item, onUpdate, onDelete, onBack }) {
@@ -134,9 +135,10 @@ function LibItemDetail({ item, onUpdate, onDelete, onBack }) {
             ) : (
                (lastH.weightSets || []).map((ws, wi) => (
                  <div key={wi} style={{ marginBottom:8 }}>
-                   <span style={{ fontSize:fs(13), fontWeight:700, color:C.text, marginRight:10 }}>{ws.weight}</span>
-                   <span style={{ fontSize:fs(12), color:C.label }}>{ws.reps.join(" / ")} {t.repsUnit}</span>
-                   <span style={{ fontSize:fs(11), color:C.label, marginLeft:8 }}>{t.totalReps} {ws.reps.reduce((a,b)=>a+b,0)} {t.repsUnit}</span>
+                   <span style={{ fontSize:fs(13), fontWeight:700, color:C.text, marginRight:10 }}>{coreText(ws)}</span>
+                   <span style={{ fontSize:fs(12), color:C.label }}>{ws.reps.join(" / ")} {repUnitLabel(kindOf(lastH), t)}</span>
+                   <span style={{ fontSize:fs(11), color:C.label, marginLeft:8 }}>{t.totalReps} {ws.reps.reduce((a,b)=>a+b,0)} {repUnitLabel(kindOf(lastH), t)}</span>
+                   {noteText(ws) && <span style={{ fontSize:fs(11), color:C.label, marginLeft:14, paddingLeft:10, borderLeft:`1px solid ${C.sep}` }}>{noteText(ws)}</span>}
                  </div>
                ))
              )}
@@ -197,9 +199,10 @@ function LibItemDetail({ item, onUpdate, onDelete, onBack }) {
              ) : (
                (h.weightSets || []).map((ws, wi) => (
                  <div key={wi} style={{ marginBottom:8 }}>
-                   <span style={{ fontSize:fs(13), fontWeight:700, color:C.text, marginRight:10 }}>{ws.weight}</span>
-                   <span style={{ fontSize:fs(12), color:C.label }}>{ws.reps.join(" / ")} {t.repsUnit}</span>
-                   <span style={{ fontSize:fs(11), color:C.label, marginLeft:8 }}>{t.totalReps} {ws.reps.reduce((a, b) => a + b, 0)} {t.repsUnit}</span>
+                   <span style={{ fontSize:fs(13), fontWeight:700, color:C.text, marginRight:10 }}>{coreText(ws)}</span>
+                   <span style={{ fontSize:fs(12), color:C.label }}>{ws.reps.join(" / ")} {repUnitLabel(kindOf(h), t)}</span>
+                   <span style={{ fontSize:fs(11), color:C.label, marginLeft:8 }}>{t.totalReps} {ws.reps.reduce((a, b) => a + b, 0)} {repUnitLabel(kindOf(h), t)}</span>
+                   {noteText(ws) && <span style={{ fontSize:fs(11), color:C.label, marginLeft:14, paddingLeft:10, borderLeft:`1px solid ${C.sep}` }}>{noteText(ws)}</span>}
                  </div>
                ))
              )}

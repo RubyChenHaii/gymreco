@@ -1,4 +1,4 @@
-// ⚠️ 本檔由 scripts/export-initial-data.js 依備份 JSON（backup.json）轉換產生
+// ⚠️ 本檔由 scripts/export-initial-data.js 依備份 JSON（gymreco-backup-2026-10-25-2.migrated.json）轉換產生
 
 export const INIT_LIBRARY = [
   {
@@ -14,7 +14,9 @@ export const INIT_LIBRARY = [
         equipment: "Incline angle 5, plate held against chest",
         weightSets: [
           {
-            weight: "15kg",
+            value: 15,
+            unit: "kg",
+            note: "",
             reps: [
               10,
               5,
@@ -22,7 +24,9 @@ export const INIT_LIBRARY = [
             ]
           },
           {
-            weight: "10kg",
+            value: 10,
+            unit: "kg",
+            note: "",
             reps: [
               5,
               5
@@ -30,7 +34,8 @@ export const INIT_LIBRARY = [
           }
         ],
         feeling: "I want a perfect soul\n-\nFelt solid today. First few sets at 15kg were clean, dropped off toward the end — switched to 10kg to finish.",
-        mode: "weight_sets"
+        mode: "weight_sets",
+        setKind: "weight"
       },
       {
         date: "2026-06-15",
@@ -39,7 +44,9 @@ export const INIT_LIBRARY = [
         equipment: "Incline angle 5, plate held against chest",
         weightSets: [
           {
-            weight: "15kg",
+            value: 15,
+            unit: "kg",
+            note: "",
             reps: [
               10,
               5,
@@ -47,14 +54,17 @@ export const INIT_LIBRARY = [
             ]
           },
           {
-            weight: "10kg",
+            value: 10,
+            unit: "kg",
+            note: "",
             reps: [
               5,
               5
             ]
           }
         ],
-        feeling: "Your skin makes me cry"
+        feeling: "Your skin makes me cry",
+        setKind: "weight"
       },
       {
         date: "2026-09-30",
@@ -63,7 +73,9 @@ export const INIT_LIBRARY = [
         equipment: "Incline angle 5, plate held against chest",
         weightSets: [
           {
-            weight: "15kg",
+            value: 15,
+            unit: "kg",
+            note: "",
             reps: [
               10,
               5,
@@ -71,14 +83,17 @@ export const INIT_LIBRARY = [
             ]
           },
           {
-            weight: "10kg",
+            value: 10,
+            unit: "kg",
+            note: "",
             reps: [
               5,
               5
             ]
           }
         ],
-        feeling: "This is a sample data. Feel free to clear it!\nStart Fresh (available in the About Page), remove all these sample data, and start from day one!"
+        feeling: "This is a sample data. Feel free to clear it!\nStart Fresh (available in the About Page), remove all these sample data, and start from day one!",
+        setKind: "weight"
       },
       {
         date: "2026-10-02",
@@ -87,7 +102,9 @@ export const INIT_LIBRARY = [
         equipment: "Incline angle 5, plate held against chest",
         weightSets: [
           {
-            weight: "15kg",
+            value: 15,
+            unit: "kg",
+            note: "",
             reps: [
               10,
               5,
@@ -95,14 +112,17 @@ export const INIT_LIBRARY = [
             ]
           },
           {
-            weight: "10kg",
+            value: 10,
+            unit: "kg",
+            note: "",
             reps: [
               5,
               5
             ]
           }
         ],
-        feeling: "This is a sample data. Feel free to clear it!\nStart Fresh (available in the About Page), remove all these sample data, and start from day one!"
+        feeling: "This is a sample data. Feel free to clear it!\nStart Fresh (available in the About Page), remove all these sample data, and start from day one!",
+        setKind: "weight"
       }
     ]
   },
@@ -120,7 +140,9 @@ export const INIT_LIBRARY = [
         equipment: "Rack height: pin 5 (top). Safety bars at lowest effective pin.\nAdjustable bench: angle 1–2",
         weightSets: [
           {
-            weight: "15kg",
+            value: 15,
+            unit: "kg",
+            note: "",
             reps: [
               4,
               3,
@@ -128,7 +150,9 @@ export const INIT_LIBRARY = [
             ]
           },
           {
-            weight: "10kg",
+            value: 10,
+            unit: "kg",
+            note: "",
             reps: [
               5,
               4,
@@ -136,7 +160,8 @@ export const INIT_LIBRARY = [
             ]
           }
         ],
-        feeling: "I don't belong here\n-\nThis is a sample data. Feel free to clear it!\nStart Fresh (available in the About Page), remove all these sample data, and start from day one!"
+        feeling: "I don't belong here\n-\nThis is a sample data. Feel free to clear it!\nStart Fresh (available in the About Page), remove all these sample data, and start from day one!",
+        setKind: "weight"
       },
       {
         date: "2026-03-09",
@@ -144,7 +169,9 @@ export const INIT_LIBRARY = [
         equipment: "Rack height: pin 5 (top). Safety bars at lowest effective pin.\nAdjustable bench: angle 1–2",
         weightSets: [
           {
-            weight: "15kg",
+            value: 15,
+            unit: "kg",
+            note: "",
             reps: [
               4,
               3,
@@ -152,7 +179,9 @@ export const INIT_LIBRARY = [
             ]
           },
           {
-            weight: "10kg",
+            value: 10,
+            unit: "kg",
+            note: "",
             reps: [
               5,
               4,
@@ -161,7 +190,8 @@ export const INIT_LIBRARY = [
           }
         ],
         feeling: "I WANT A PERFECT BODY\n-\nJoints felt tight today. Realised it's a mobility issue, not a strength issue. Will try shoulder warm-ups next time.",
-        mode: "weight_sets"
+        mode: "weight_sets",
+        setKind: "weight"
       },
       {
         date: "2026-05-23",
@@ -170,7 +200,9 @@ export const INIT_LIBRARY = [
         equipment: "Rack height: pin 5 (top). Safety bars at lowest effective pin.\nAdjustable bench: angle 1–2",
         weightSets: [
           {
-            weight: "15kg",
+            value: 15,
+            unit: "kg",
+            note: "",
             reps: [
               4,
               3,
@@ -178,7 +210,9 @@ export const INIT_LIBRARY = [
             ]
           },
           {
-            weight: "10kg",
+            value: 10,
+            unit: "kg",
+            note: "",
             reps: [
               5,
               4,
@@ -186,7 +220,8 @@ export const INIT_LIBRARY = [
             ]
           }
         ],
-        feeling: "You're so fuckin' special"
+        feeling: "You're so fuckin' special",
+        setKind: "weight"
       },
       {
         date: "2026-09-30",
@@ -195,7 +230,9 @@ export const INIT_LIBRARY = [
         equipment: "Rack height: pin 5 (top). Safety bars at lowest effective pin.\nAdjustable bench: angle 1–2",
         weightSets: [
           {
-            weight: "15kg",
+            value: 15,
+            unit: "kg",
+            note: "",
             reps: [
               4,
               3,
@@ -203,7 +240,9 @@ export const INIT_LIBRARY = [
             ]
           },
           {
-            weight: "10kg",
+            value: 10,
+            unit: "kg",
+            note: "",
             reps: [
               5,
               4,
@@ -211,7 +250,8 @@ export const INIT_LIBRARY = [
             ]
           }
         ],
-        feeling: "This is a sample data. Feel free to clear it!\nStart Fresh (available in the About Page), remove all these sample data, and start from day one!"
+        feeling: "This is a sample data. Feel free to clear it!\nStart Fresh (available in the About Page), remove all these sample data, and start from day one!",
+        setKind: "weight"
       }
     ]
   },
@@ -228,7 +268,9 @@ export const INIT_LIBRARY = [
         equipment: "Bodyweight",
         weightSets: [
           {
-            weight: "BW",
+            value: 0,
+            unit: "kg",
+            note: "BW",
             reps: [
               8,
               7,
@@ -237,7 +279,8 @@ export const INIT_LIBRARY = [
           }
         ],
         feeling: "When I'm not around\n-\nFelt noticeably easier than last week. Progress is showing.",
-        mode: "weight_sets"
+        mode: "weight_sets",
+        setKind: "weight"
       }
     ]
   },
@@ -254,7 +297,9 @@ export const INIT_LIBRARY = [
         equipment: "Olympic barbell (20kg bar)",
         weightSets: [
           {
-            weight: "60kg",
+            value: 60,
+            unit: "kg",
+            note: "",
             reps: [
               5,
               5,
@@ -262,7 +307,9 @@ export const INIT_LIBRARY = [
             ]
           },
           {
-            weight: "80kg",
+            value: 80,
+            unit: "kg",
+            note: "",
             reps: [
               3,
               3
@@ -270,7 +317,8 @@ export const INIT_LIBRARY = [
           }
         ],
         feeling: "I want you to notice\n-\nLast rep at 80kg had a slight lower-back rounding. Watch that next time. Overall decent session.",
-        mode: "weight_sets"
+        mode: "weight_sets",
+        setKind: "weight"
       },
       {
         date: "2026-09-10",
@@ -279,7 +327,9 @@ export const INIT_LIBRARY = [
         equipment: "Olympic barbell (20kg bar)",
         weightSets: [
           {
-            weight: "60kg",
+            value: 60,
+            unit: "kg",
+            note: "",
             reps: [
               5,
               5,
@@ -287,14 +337,17 @@ export const INIT_LIBRARY = [
             ]
           },
           {
-            weight: "80kg",
+            value: 80,
+            unit: "kg",
+            note: "",
             reps: [
               3,
               3
             ]
           }
         ],
-        feeling: "This is a sample data. Feel free to clear it!\nStart Fresh (available in the About Page), remove all these sample data, and start from day one!"
+        feeling: "This is a sample data. Feel free to clear it!\nStart Fresh (available in the About Page), remove all these sample data, and start from day one!",
+        setKind: "weight"
       }
     ]
   },
@@ -311,14 +364,18 @@ export const INIT_LIBRARY = [
         equipment: "Lat pulldown / cable row machine",
         weightSets: [
           {
-            weight: "48kg",
+            value: 48,
+            unit: "kg",
+            note: "",
             reps: [
               5,
               5
             ]
           },
           {
-            weight: "41kg",
+            value: 41,
+            unit: "kg",
+            note: "",
             reps: [
               5,
               5,
@@ -327,7 +384,8 @@ export const INIT_LIBRARY = [
           }
         ],
         feeling: "I'm a weirdo\n-\n48kg felt heavy but hit the target sets. 41kg felt smooth.",
-        mode: "weight_sets"
+        mode: "weight_sets",
+        setKind: "weight"
       },
       {
         date: "2026-05-18",
@@ -336,14 +394,18 @@ export const INIT_LIBRARY = [
         equipment: "Lat pulldown / cable row machine",
         weightSets: [
           {
-            weight: "48kg",
+            value: 48,
+            unit: "kg",
+            note: "",
             reps: [
               5,
               5
             ]
           },
           {
-            weight: "41kg",
+            value: 41,
+            unit: "kg",
+            note: "",
             reps: [
               5,
               5,
@@ -351,7 +413,8 @@ export const INIT_LIBRARY = [
             ]
           }
         ],
-        feeling: "But I'm a creep"
+        feeling: "But I'm a creep",
+        setKind: "weight"
       },
       {
         date: "2026-08-10",
@@ -360,7 +423,9 @@ export const INIT_LIBRARY = [
         equipment: "Lat pulldown / cable row machine",
         weightSets: [
           {
-            weight: "48kg",
+            value: 48,
+            unit: "kg",
+            note: "",
             reps: [
               5,
               5,
@@ -369,7 +434,9 @@ export const INIT_LIBRARY = [
             ]
           },
           {
-            weight: "41kg",
+            value: 41,
+            unit: "kg",
+            note: "",
             reps: [
               9,
               5,
@@ -377,7 +444,8 @@ export const INIT_LIBRARY = [
             ]
           }
         ],
-        feeling: "This is a sample data. Feel free to clear it!\nStart Fresh (available in the About Page), remove all these sample data, and start from day one!\n-\nFelt more lats today. \nThis prolly means I've improved. "
+        feeling: "This is a sample data. Feel free to clear it!\nStart Fresh (available in the About Page), remove all these sample data, and start from day one!\n-\nFelt more lats today. \nThis prolly means I've improved. ",
+        setKind: "weight"
       }
     ]
   },
@@ -394,7 +462,9 @@ export const INIT_LIBRARY = [
         equipment: "Squat rack, pin height 4. Bar weighs 20kg.",
         weightSets: [
           {
-            weight: "40kg",
+            value: 40,
+            unit: "kg",
+            note: "",
             reps: [
               8,
               8,
@@ -402,7 +472,9 @@ export const INIT_LIBRARY = [
             ]
           },
           {
-            weight: "50kg",
+            value: 50,
+            unit: "kg",
+            note: "",
             reps: [
               5,
               5
@@ -410,7 +482,8 @@ export const INIT_LIBRARY = [
           }
         ],
         feeling: "I wish I was special\n-\n50kg felt shaky going down — need to work on core stability under load.",
-        mode: "weight_sets"
+        mode: "weight_sets",
+        setKind: "weight"
       },
       {
         date: "2026-08-10",
@@ -419,7 +492,9 @@ export const INIT_LIBRARY = [
         equipment: "Squat rack, pin height 4. Bar weighs 20kg.",
         weightSets: [
           {
-            weight: "40kg",
+            value: 40,
+            unit: "kg",
+            note: "",
             reps: [
               8,
               8,
@@ -427,14 +502,17 @@ export const INIT_LIBRARY = [
             ]
           },
           {
-            weight: "50kg",
+            value: 50,
+            unit: "kg",
+            note: "",
             reps: [
               5,
               5
             ]
           }
         ],
-        feeling: "This is a sample data. Feel free to clear it!\nStart Fresh (available in the About Page), remove all these sample data, and start from day one!\n-\nGive me gorgeous butt pleasssssse"
+        feeling: "This is a sample data. Feel free to clear it!\nStart Fresh (available in the About Page), remove all these sample data, and start from day one!\n-\nGive me gorgeous butt pleasssssse",
+        setKind: "weight"
       }
     ]
   },
@@ -451,7 +529,9 @@ export const INIT_LIBRARY = [
         equipment: "Leg press machine, shoulder-width foot placement",
         weightSets: [
           {
-            weight: "80kg",
+            value: 80,
+            unit: "kg",
+            note: "",
             reps: [
               12,
               10,
@@ -460,7 +540,8 @@ export const INIT_LIBRARY = [
           }
         ],
         feeling: "You're so fuckin' special\n-\nFelt manageable. Can probably go heavier next session.",
-        mode: "weight_sets"
+        mode: "weight_sets",
+        setKind: "weight"
       },
       {
         date: "2026-07-20",
@@ -469,7 +550,9 @@ export const INIT_LIBRARY = [
         equipment: "Leg press machine, shoulder-width foot placement",
         weightSets: [
           {
-            weight: "80kg",
+            value: 80,
+            unit: "kg",
+            note: "",
             reps: [
               12,
               10,
@@ -477,7 +560,8 @@ export const INIT_LIBRARY = [
             ]
           }
         ],
-        feeling: "Couldn't look you in the eye"
+        feeling: "Couldn't look you in the eye",
+        setKind: "weight"
       }
     ]
   },
@@ -494,7 +578,9 @@ export const INIT_LIBRARY = [
         equipment: "Dumbbells, standing",
         weightSets: [
           {
-            weight: "12kg",
+            value: 12,
+            unit: "kg",
+            note: "",
             reps: [
               10,
               8,
@@ -503,7 +589,8 @@ export const INIT_LIBRARY = [
           }
         ],
         feeling: "But I'm a creep\n-\nLast few reps were tough but kept form intact throughout.",
-        mode: "weight_sets"
+        mode: "weight_sets",
+        setKind: "weight"
       },
       {
         date: "2026-06-04",
@@ -512,7 +599,9 @@ export const INIT_LIBRARY = [
         equipment: "Dumbbells, standing",
         weightSets: [
           {
-            weight: "12kg",
+            value: 12,
+            unit: "kg",
+            note: "",
             reps: [
               10,
               8,
@@ -520,7 +609,8 @@ export const INIT_LIBRARY = [
             ]
           }
         ],
-        feeling: "You float like a feather"
+        feeling: "You float like a feather",
+        setKind: "weight"
       }
     ]
   },
@@ -655,7 +745,9 @@ export const INIT_LIBRARY = [
         equipment: "Selfweight Dips",
         weightSets: [
           {
-            weight: "BW",
+            value: 0,
+            unit: "kg",
+            note: "BW",
             reps: [
               6,
               5,
@@ -663,7 +755,8 @@ export const INIT_LIBRARY = [
             ]
           }
         ],
-        feeling: "In a beautiful world\n-\ndid good today, stable and slow. \nthe last 2-3 reps done dirty. "
+        feeling: "In a beautiful world\n-\ndid good today, stable and slow. \nthe last 2-3 reps done dirty. ",
+        setKind: "weight"
       }
     ],
     recordingMode: "weight_sets"
@@ -682,7 +775,9 @@ export const INIT_LIBRARY = [
         equipment: "Seat height: 3",
         weightSets: [
           {
-            weight: "70 lbs",
+            value: 70,
+            unit: "lb",
+            note: "",
             reps: [
               7,
               6,
@@ -690,7 +785,8 @@ export const INIT_LIBRARY = [
             ]
           }
         ],
-        feeling: "I don't belong here"
+        feeling: "I don't belong here",
+        setKind: "weight"
       },
       {
         date: "2026-07-03",
@@ -699,7 +795,9 @@ export const INIT_LIBRARY = [
         equipment: "Seat height: 3",
         weightSets: [
           {
-            weight: "70 lbs",
+            value: 70,
+            unit: "lb",
+            note: "",
             reps: [
               7,
               5,
@@ -707,7 +805,8 @@ export const INIT_LIBRARY = [
             ]
           }
         ],
-        feeling: "You're just like an angel"
+        feeling: "You're just like an angel",
+        setKind: "weight"
       },
       {
         date: "2026-10-10",
@@ -716,7 +815,9 @@ export const INIT_LIBRARY = [
         equipment: "Seat height: 3",
         weightSets: [
           {
-            weight: "70 lbs",
+            value: 70,
+            unit: "lb",
+            note: "",
             reps: [
               7,
               5,
@@ -724,7 +825,8 @@ export const INIT_LIBRARY = [
             ]
           }
         ],
-        feeling: "This is a sample data. Feel free to clear it!\nStart Fresh (available in the About Page), remove all these sample data, and start from day one!"
+        feeling: "This is a sample data. Feel free to clear it!\nStart Fresh (available in the About Page), remove all these sample data, and start from day one!",
+        setKind: "weight"
       }
     ],
     recordingMode: "weight_sets"
@@ -806,14 +908,17 @@ export const INIT_LIBRARY = [
         equipment: "Pool (25m length)",
         weightSets: [
           {
-            weight: "BW",
+            value: 25,
+            unit: "m",
+            note: "BW",
             reps: [
               1
             ]
           }
         ],
         feeling: "I don't care if it hurts\n-\n2-hour session. Felt strong — completed at least one unbroken length each way.",
-        mode: "weight_sets"
+        mode: "weight_sets",
+        setKind: "laps"
       },
       {
         date: "2026-05-27",
@@ -822,13 +927,16 @@ export const INIT_LIBRARY = [
         equipment: "Pool (25m length)",
         weightSets: [
           {
-            weight: "BW",
+            value: 25,
+            unit: "m",
+            note: "BW",
             reps: [
               2
             ]
           }
         ],
-        feeling: "I wish I was special"
+        feeling: "I wish I was special",
+        setKind: "laps"
       },
       {
         date: "2026-09-23",
@@ -837,13 +945,16 @@ export const INIT_LIBRARY = [
         equipment: "Pool (25m length)",
         weightSets: [
           {
-            weight: "BW",
+            value: 25,
+            unit: "m",
+            note: "BW",
             reps: [
               2
             ]
           }
         ],
-        feeling: "This is a sample data. Feel free to clear it!\nStart Fresh (available in the About Page), remove all these sample data, and start from day one!\n-\nFelt like staying longer in the pool.\nHad a relaxed 2 hour session."
+        feeling: "This is a sample data. Feel free to clear it!\nStart Fresh (available in the About Page), remove all these sample data, and start from day one!\n-\nFelt like staying longer in the pool.\nHad a relaxed 2 hour session.",
+        setKind: "laps"
       }
     ]
   }
@@ -864,7 +975,9 @@ export const INIT_WORKOUTS = [
         equipment: "Seat height: 3",
         weightSets: [
           {
-            weight: "70 lbs",
+            value: 70,
+            unit: "lb",
+            note: "",
             reps: [
               7,
               5,
@@ -872,7 +985,8 @@ export const INIT_WORKOUTS = [
             ]
           }
         ],
-        feeling: "This is a sample data. Feel free to clear it!\nStart Fresh (available in the About Page), remove all these sample data, and start from day one!"
+        feeling: "This is a sample data. Feel free to clear it!\nStart Fresh (available in the About Page), remove all these sample data, and start from day one!",
+        setKind: "weight"
       }
     ]
   },
@@ -890,7 +1004,9 @@ export const INIT_WORKOUTS = [
         equipment: "Incline angle 5, plate held against chest",
         weightSets: [
           {
-            weight: "15kg",
+            value: 15,
+            unit: "kg",
+            note: "",
             reps: [
               10,
               5,
@@ -898,14 +1014,17 @@ export const INIT_WORKOUTS = [
             ]
           },
           {
-            weight: "10kg",
+            value: 10,
+            unit: "kg",
+            note: "",
             reps: [
               5,
               5
             ]
           }
         ],
-        feeling: "This is a sample data. Feel free to clear it!\nStart Fresh (available in the About Page), remove all these sample data, and start from day one!"
+        feeling: "This is a sample data. Feel free to clear it!\nStart Fresh (available in the About Page), remove all these sample data, and start from day one!",
+        setKind: "weight"
       }
     ]
   },
@@ -923,7 +1042,9 @@ export const INIT_WORKOUTS = [
         equipment: "Incline angle 5, plate held against chest",
         weightSets: [
           {
-            weight: "15kg",
+            value: 15,
+            unit: "kg",
+            note: "",
             reps: [
               10,
               5,
@@ -931,14 +1052,17 @@ export const INIT_WORKOUTS = [
             ]
           },
           {
-            weight: "10kg",
+            value: 10,
+            unit: "kg",
+            note: "",
             reps: [
               5,
               5
             ]
           }
         ],
-        feeling: "This is a sample data. Feel free to clear it!\nStart Fresh (available in the About Page), remove all these sample data, and start from day one!"
+        feeling: "This is a sample data. Feel free to clear it!\nStart Fresh (available in the About Page), remove all these sample data, and start from day one!",
+        setKind: "weight"
       }
     ]
   },
@@ -956,7 +1080,9 @@ export const INIT_WORKOUTS = [
         equipment: "Rack height: pin 5 (top). Safety bars at lowest effective pin.\nAdjustable bench: angle 1–2",
         weightSets: [
           {
-            weight: "15kg",
+            value: 15,
+            unit: "kg",
+            note: "",
             reps: [
               4,
               3,
@@ -964,7 +1090,9 @@ export const INIT_WORKOUTS = [
             ]
           },
           {
-            weight: "10kg",
+            value: 10,
+            unit: "kg",
+            note: "",
             reps: [
               5,
               4,
@@ -972,7 +1100,8 @@ export const INIT_WORKOUTS = [
             ]
           }
         ],
-        feeling: "This is a sample data. Feel free to clear it!\nStart Fresh (available in the About Page), remove all these sample data, and start from day one!"
+        feeling: "This is a sample data. Feel free to clear it!\nStart Fresh (available in the About Page), remove all these sample data, and start from day one!",
+        setKind: "weight"
       }
     ]
   },
@@ -990,13 +1119,16 @@ export const INIT_WORKOUTS = [
         equipment: "Pool (25m length)",
         weightSets: [
           {
-            weight: "BW",
+            value: 25,
+            unit: "m",
+            note: "BW",
             reps: [
               2
             ]
           }
         ],
-        feeling: "This is a sample data. Feel free to clear it!\nStart Fresh (available in the About Page), remove all these sample data, and start from day one!\n-\nFelt like staying longer in the pool.\nHad a relaxed 2 hour session."
+        feeling: "This is a sample data. Feel free to clear it!\nStart Fresh (available in the About Page), remove all these sample data, and start from day one!\n-\nFelt like staying longer in the pool.\nHad a relaxed 2 hour session.",
+        setKind: "laps"
       }
     ]
   },
@@ -1014,7 +1146,9 @@ export const INIT_WORKOUTS = [
         equipment: "Olympic barbell (20kg bar)",
         weightSets: [
           {
-            weight: "60kg",
+            value: 60,
+            unit: "kg",
+            note: "",
             reps: [
               5,
               5,
@@ -1022,14 +1156,17 @@ export const INIT_WORKOUTS = [
             ]
           },
           {
-            weight: "80kg",
+            value: 80,
+            unit: "kg",
+            note: "",
             reps: [
               3,
               3
             ]
           }
         ],
-        feeling: "This is a sample data. Feel free to clear it!\nStart Fresh (available in the About Page), remove all these sample data, and start from day one!"
+        feeling: "This is a sample data. Feel free to clear it!\nStart Fresh (available in the About Page), remove all these sample data, and start from day one!",
+        setKind: "weight"
       }
     ]
   },
@@ -1101,7 +1238,9 @@ export const INIT_WORKOUTS = [
         equipment: "Squat rack, pin height 4. Bar weighs 20kg.",
         weightSets: [
           {
-            weight: "40kg",
+            value: 40,
+            unit: "kg",
+            note: "",
             reps: [
               8,
               8,
@@ -1109,14 +1248,17 @@ export const INIT_WORKOUTS = [
             ]
           },
           {
-            weight: "50kg",
+            value: 50,
+            unit: "kg",
+            note: "",
             reps: [
               5,
               5
             ]
           }
         ],
-        feeling: "This is a sample data. Feel free to clear it!\nStart Fresh (available in the About Page), remove all these sample data, and start from day one!\n-\nGive me gorgeous butt pleasssssse"
+        feeling: "This is a sample data. Feel free to clear it!\nStart Fresh (available in the About Page), remove all these sample data, and start from day one!\n-\nGive me gorgeous butt pleasssssse",
+        setKind: "weight"
       }
     ]
   },
@@ -1134,7 +1276,9 @@ export const INIT_WORKOUTS = [
         equipment: "Lat pulldown / cable row machine",
         weightSets: [
           {
-            weight: "48kg",
+            value: 48,
+            unit: "kg",
+            note: "",
             reps: [
               5,
               5,
@@ -1143,7 +1287,9 @@ export const INIT_WORKOUTS = [
             ]
           },
           {
-            weight: "41kg",
+            value: 41,
+            unit: "kg",
+            note: "",
             reps: [
               9,
               5,
@@ -1151,7 +1297,8 @@ export const INIT_WORKOUTS = [
             ]
           }
         ],
-        feeling: "This is a sample data. Feel free to clear it!\nStart Fresh (available in the About Page), remove all these sample data, and start from day one!\n-\nFelt more lats today. \nThis prolly means I've improved. "
+        feeling: "This is a sample data. Feel free to clear it!\nStart Fresh (available in the About Page), remove all these sample data, and start from day one!\n-\nFelt more lats today. \nThis prolly means I've improved. ",
+        setKind: "weight"
       }
     ]
   },
@@ -1193,7 +1340,9 @@ export const INIT_WORKOUTS = [
         equipment: "Leg press machine, shoulder-width foot placement",
         weightSets: [
           {
-            weight: "80kg",
+            value: 80,
+            unit: "kg",
+            note: "",
             reps: [
               12,
               10,
@@ -1201,7 +1350,8 @@ export const INIT_WORKOUTS = [
             ]
           }
         ],
-        feeling: "Couldn't look you in the eye"
+        feeling: "Couldn't look you in the eye",
+        setKind: "weight"
       }
     ]
   },
@@ -1219,7 +1369,9 @@ export const INIT_WORKOUTS = [
         equipment: "Seat height: 3",
         weightSets: [
           {
-            weight: "70 lbs",
+            value: 70,
+            unit: "lb",
+            note: "",
             reps: [
               7,
               5,
@@ -1227,7 +1379,8 @@ export const INIT_WORKOUTS = [
             ]
           }
         ],
-        feeling: "You're just like an angel"
+        feeling: "You're just like an angel",
+        setKind: "weight"
       }
     ]
   },
@@ -1245,7 +1398,9 @@ export const INIT_WORKOUTS = [
         equipment: "Incline angle 5, plate held against chest",
         weightSets: [
           {
-            weight: "15kg",
+            value: 15,
+            unit: "kg",
+            note: "",
             reps: [
               10,
               5,
@@ -1253,14 +1408,17 @@ export const INIT_WORKOUTS = [
             ]
           },
           {
-            weight: "10kg",
+            value: 10,
+            unit: "kg",
+            note: "",
             reps: [
               5,
               5
             ]
           }
         ],
-        feeling: "Your skin makes me cry"
+        feeling: "Your skin makes me cry",
+        setKind: "weight"
       }
     ]
   },
@@ -1278,7 +1436,9 @@ export const INIT_WORKOUTS = [
         equipment: "Dumbbells, standing",
         weightSets: [
           {
-            weight: "12kg",
+            value: 12,
+            unit: "kg",
+            note: "",
             reps: [
               10,
               8,
@@ -1286,7 +1446,8 @@ export const INIT_WORKOUTS = [
             ]
           }
         ],
-        feeling: "You float like a feather"
+        feeling: "You float like a feather",
+        setKind: "weight"
       }
     ]
   },
@@ -1304,7 +1465,9 @@ export const INIT_WORKOUTS = [
         equipment: "Selfweight Dips",
         weightSets: [
           {
-            weight: "BW",
+            value: 0,
+            unit: "kg",
+            note: "BW",
             reps: [
               6,
               5,
@@ -1312,7 +1475,8 @@ export const INIT_WORKOUTS = [
             ]
           }
         ],
-        feeling: "In a beautiful world\n-\ndid good today, stable and slow. \nthe last 2-3 reps done dirty. "
+        feeling: "In a beautiful world\n-\ndid good today, stable and slow. \nthe last 2-3 reps done dirty. ",
+        setKind: "weight"
       }
     ]
   },
@@ -1330,13 +1494,16 @@ export const INIT_WORKOUTS = [
         equipment: "Pool (25m length)",
         weightSets: [
           {
-            weight: "BW",
+            value: 25,
+            unit: "m",
+            note: "BW",
             reps: [
               2
             ]
           }
         ],
-        feeling: "I wish I was special"
+        feeling: "I wish I was special",
+        setKind: "laps"
       }
     ]
   },
@@ -1354,7 +1521,9 @@ export const INIT_WORKOUTS = [
         equipment: "Rack height: pin 5 (top). Safety bars at lowest effective pin.\nAdjustable bench: angle 1–2",
         weightSets: [
           {
-            weight: "15kg",
+            value: 15,
+            unit: "kg",
+            note: "",
             reps: [
               4,
               3,
@@ -1362,7 +1531,9 @@ export const INIT_WORKOUTS = [
             ]
           },
           {
-            weight: "10kg",
+            value: 10,
+            unit: "kg",
+            note: "",
             reps: [
               5,
               4,
@@ -1370,7 +1541,8 @@ export const INIT_WORKOUTS = [
             ]
           }
         ],
-        feeling: "You're so fuckin' special"
+        feeling: "You're so fuckin' special",
+        setKind: "weight"
       }
     ]
   },
@@ -1388,14 +1560,18 @@ export const INIT_WORKOUTS = [
         equipment: "Lat pulldown / cable row machine",
         weightSets: [
           {
-            weight: "48kg",
+            value: 48,
+            unit: "kg",
+            note: "",
             reps: [
               5,
               5
             ]
           },
           {
-            weight: "41kg",
+            value: 41,
+            unit: "kg",
+            note: "",
             reps: [
               5,
               5,
@@ -1403,7 +1579,8 @@ export const INIT_WORKOUTS = [
             ]
           }
         ],
-        feeling: "But I'm a creep"
+        feeling: "But I'm a creep",
+        setKind: "weight"
       }
     ]
   },
@@ -1481,7 +1658,9 @@ export const INIT_WORKOUTS = [
         equipment: "Seat height: 3",
         weightSets: [
           {
-            weight: "70 lbs",
+            value: 70,
+            unit: "lb",
+            note: "",
             reps: [
               7,
               6,
@@ -1489,7 +1668,8 @@ export const INIT_WORKOUTS = [
             ]
           }
         ],
-        feeling: "I don't belong here"
+        feeling: "I don't belong here",
+        setKind: "weight"
       }
     ]
   },
@@ -1545,13 +1725,16 @@ export const INIT_WORKOUTS = [
         equipment: "Pool (25m length)",
         weightSets: [
           {
-            weight: "BW",
+            value: 25,
+            unit: "m",
+            note: "BW",
             reps: [
               1
             ]
           }
         ],
-        feeling: "I don't care if it hurts\n-\n2-hour session. Felt strong — completed at least one unbroken length each way."
+        feeling: "I don't care if it hurts\n-\n2-hour session. Felt strong — completed at least one unbroken length each way.",
+        setKind: "laps"
       }
     ]
   },
@@ -1570,7 +1753,9 @@ export const INIT_WORKOUTS = [
         equipment: "Incline angle 5, plate held against chest",
         weightSets: [
           {
-            weight: "15kg",
+            value: 15,
+            unit: "kg",
+            note: "",
             reps: [
               10,
               5,
@@ -1578,14 +1763,17 @@ export const INIT_WORKOUTS = [
             ]
           },
           {
-            weight: "10kg",
+            value: 10,
+            unit: "kg",
+            note: "",
             reps: [
               5,
               5
             ]
           }
         ],
-        feeling: "I want a perfect soul\n-\nFelt solid today. First few sets at 15kg were clean, dropped off toward the end — switched to 10kg to finish."
+        feeling: "I want a perfect soul\n-\nFelt solid today. First few sets at 15kg were clean, dropped off toward the end — switched to 10kg to finish.",
+        setKind: "weight"
       },
       {
         libId: "lib2",
@@ -1593,7 +1781,9 @@ export const INIT_WORKOUTS = [
         equipment: "Rack height: pin 5 (top). Safety bars at lowest effective pin.\nAdjustable bench: angle 1–2",
         weightSets: [
           {
-            weight: "15kg",
+            value: 15,
+            unit: "kg",
+            note: "",
             reps: [
               4,
               3,
@@ -1601,7 +1791,9 @@ export const INIT_WORKOUTS = [
             ]
           },
           {
-            weight: "10kg",
+            value: 10,
+            unit: "kg",
+            note: "",
             reps: [
               5,
               4,
@@ -1609,7 +1801,8 @@ export const INIT_WORKOUTS = [
             ]
           }
         ],
-        feeling: "I WANT A PERFECT BODY\n-\nJoints felt tight today. Realised it's a mobility issue, not a strength issue. Will try shoulder warm-ups next time."
+        feeling: "I WANT A PERFECT BODY\n-\nJoints felt tight today. Realised it's a mobility issue, not a strength issue. Will try shoulder warm-ups next time.",
+        setKind: "weight"
       }
     ]
   },
@@ -1627,7 +1820,9 @@ export const INIT_WORKOUTS = [
         equipment: "Bodyweight",
         weightSets: [
           {
-            weight: "BW",
+            value: 0,
+            unit: "kg",
+            note: "BW",
             reps: [
               8,
               7,
@@ -1635,7 +1830,8 @@ export const INIT_WORKOUTS = [
             ]
           }
         ],
-        feeling: "When I'm not around\n-\nFelt noticeably easier than last week. Progress is showing."
+        feeling: "When I'm not around\n-\nFelt noticeably easier than last week. Progress is showing.",
+        setKind: "weight"
       },
       {
         libId: "lib4",
@@ -1643,7 +1839,9 @@ export const INIT_WORKOUTS = [
         equipment: "Olympic barbell (20kg bar)",
         weightSets: [
           {
-            weight: "60kg",
+            value: 60,
+            unit: "kg",
+            note: "",
             reps: [
               5,
               5,
@@ -1651,14 +1849,17 @@ export const INIT_WORKOUTS = [
             ]
           },
           {
-            weight: "80kg",
+            value: 80,
+            unit: "kg",
+            note: "",
             reps: [
               3,
               3
             ]
           }
         ],
-        feeling: "I want you to notice\n-\nLast rep at 80kg had a slight lower-back rounding. Watch that next time. Overall decent session."
+        feeling: "I want you to notice\n-\nLast rep at 80kg had a slight lower-back rounding. Watch that next time. Overall decent session.",
+        setKind: "weight"
       }
     ]
   },
@@ -1676,7 +1877,9 @@ export const INIT_WORKOUTS = [
         equipment: "Squat rack, pin height 4. Bar weighs 20kg.",
         weightSets: [
           {
-            weight: "40kg",
+            value: 40,
+            unit: "kg",
+            note: "",
             reps: [
               8,
               8,
@@ -1684,14 +1887,17 @@ export const INIT_WORKOUTS = [
             ]
           },
           {
-            weight: "50kg",
+            value: 50,
+            unit: "kg",
+            note: "",
             reps: [
               5,
               5
             ]
           }
         ],
-        feeling: "I wish I was special\n-\n50kg felt shaky going down — need to work on core stability under load."
+        feeling: "I wish I was special\n-\n50kg felt shaky going down — need to work on core stability under load.",
+        setKind: "weight"
       },
       {
         libId: "lib7",
@@ -1699,7 +1905,9 @@ export const INIT_WORKOUTS = [
         equipment: "Leg press machine, shoulder-width foot placement",
         weightSets: [
           {
-            weight: "80kg",
+            value: 80,
+            unit: "kg",
+            note: "",
             reps: [
               12,
               10,
@@ -1707,7 +1915,8 @@ export const INIT_WORKOUTS = [
             ]
           }
         ],
-        feeling: "You're so fuckin' special\n-\nFelt manageable. Can probably go heavier next session."
+        feeling: "You're so fuckin' special\n-\nFelt manageable. Can probably go heavier next session.",
+        setKind: "weight"
       }
     ]
   },
@@ -1725,7 +1934,9 @@ export const INIT_WORKOUTS = [
         equipment: "Dumbbells, standing",
         weightSets: [
           {
-            weight: "12kg",
+            value: 12,
+            unit: "kg",
+            note: "",
             reps: [
               10,
               8,
@@ -1733,7 +1944,8 @@ export const INIT_WORKOUTS = [
             ]
           }
         ],
-        feeling: "But I'm a creep\n-\nLast few reps were tough but kept form intact throughout."
+        feeling: "But I'm a creep\n-\nLast few reps were tough but kept form intact throughout.",
+        setKind: "weight"
       }
     ]
   },
@@ -1772,14 +1984,18 @@ export const INIT_WORKOUTS = [
         equipment: "Lat pulldown / cable row machine",
         weightSets: [
           {
-            weight: "48kg",
+            value: 48,
+            unit: "kg",
+            note: "",
             reps: [
               5,
               5
             ]
           },
           {
-            weight: "41kg",
+            value: 41,
+            unit: "kg",
+            note: "",
             reps: [
               5,
               5,
@@ -1787,7 +2003,8 @@ export const INIT_WORKOUTS = [
             ]
           }
         ],
-        feeling: "I'm a weirdo\n-\n48kg felt heavy but hit the target sets. 41kg felt smooth."
+        feeling: "I'm a weirdo\n-\n48kg felt heavy but hit the target sets. 41kg felt smooth.",
+        setKind: "weight"
       }
     ]
   },
@@ -1805,7 +2022,9 @@ export const INIT_WORKOUTS = [
         equipment: "Rack height: pin 5 (top). Safety bars at lowest effective pin.\nAdjustable bench: angle 1–2",
         weightSets: [
           {
-            weight: "15kg",
+            value: 15,
+            unit: "kg",
+            note: "",
             reps: [
               4,
               3,
@@ -1813,7 +2032,9 @@ export const INIT_WORKOUTS = [
             ]
           },
           {
-            weight: "10kg",
+            value: 10,
+            unit: "kg",
+            note: "",
             reps: [
               5,
               4,
@@ -1821,7 +2042,8 @@ export const INIT_WORKOUTS = [
             ]
           }
         ],
-        feeling: "I don't belong here\n-\nThis is a sample data. Feel free to clear it!\nStart Fresh (available in the About Page), remove all these sample data, and start from day one!"
+        feeling: "I don't belong here\n-\nThis is a sample data. Feel free to clear it!\nStart Fresh (available in the About Page), remove all these sample data, and start from day one!",
+        setKind: "weight"
       }
     ]
   }

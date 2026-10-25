@@ -11,6 +11,16 @@ import { calcOverallPace, fmtDistance, fmtPace } from "../utils/paceUtils.js";
 import { ConfirmDialog } from "../components/ConfirmDialog.jsx";
 import { Button, BackButton } from "../components/Button.jsx";
 import { AutoGrowTextarea, CollapsibleText } from "../components/AutoGrowTextarea.jsx";
+import { upgradeWeightSets, hasEmptyCore, coreText, noteText, kindOf, repUnitLabel } from "../utils/setUtils.js";
+
+// 載入編輯用的資料：weight_sets 動作的組次升級為新結構（舊版 weight 字串盡力轉換），其餘原樣深拷貝
+const upgradedSets = (ex) => {
+  if (!ex.weightSets) return { weightSets: undefined };
+  const copy = JSON.parse(JSON.stringify(ex.weightSets));
+  if ((ex.mode || "weight_sets") !== "weight_sets") return { weightSets: copy };
+  const up = upgradeWeightSets(copy, ex.setKind);
+  return { weightSets: up.weightSets, setKind: up.setKind };
+};
 
 //下方為DetailTab，呼叫DetailTabInner，主要負責顯示「單次」訓練紀錄。
 //DayDetailTab則是呼叫DetailTab，負責逐條列出當日的每條訓練紀錄。
@@ -25,7 +35,7 @@ function DetailTabInner({ workout, library, onBack, onOpenLibItem, onUpdateWorko
   const [rows, setRows] = useState(() =>
     workout.exercises.map(ex => ({
      ...ex,
-     weightSets: ex.weightSets ? JSON.parse(JSON.stringify(ex.weightSets)) : undefined,
+     ...upgradedSets(ex),
      lengthPace: ex.lengthPace ? JSON.parse(JSON.stringify(ex.lengthPace)) : undefined,
     }))
   );
@@ -38,7 +48,7 @@ function DetailTabInner({ workout, library, onBack, onOpenLibItem, onUpdateWorko
      libId: r.libId,
      mode: r.mode || "weight_sets",
      equipment: r.equipment,
-     ...((r.mode || "weight_sets") === "length_pace" ? { lengthPace: r.lengthPace } : { weightSets: r.weightSets }),
+     ...((r.mode || "weight_sets") === "length_pace" ? { lengthPace: r.lengthPace } : { weightSets: r.weightSets, setKind: r.setKind || "weight" }),
      feeling: r.feeling,
    }));
    onUpdateWorkout({ ...workout, exercises: cleaned });
@@ -109,7 +119,7 @@ function DetailTabInner({ workout, library, onBack, onOpenLibItem, onUpdateWorko
                 </div>
                 {(row.mode || "weight_sets") === "length_pace"
                  ? <LengthPaceEditor lengthPace={row.lengthPace || []} onChange={lp => updRow(i, { lengthPace: lp })} />
-                 : <WeightSetEditor weightSets={row.weightSets || []} onChange={ws => updRow(i, { weightSets: ws })} />}
+                 : <WeightSetEditor weightSets={row.weightSets || []} kind={row.setKind || "weight"} onKindChange={k => updRow(i, { setKind: k })} onChange={ws => updRow(i, { weightSets: ws })} />}
               </div>
               <Div />
               <div style={{ padding:"12px 16px" }}>
@@ -119,7 +129,7 @@ function DetailTabInner({ workout, library, onBack, onOpenLibItem, onUpdateWorko
             </Card>
           );
         })}
-        <Button variant="primary" size="lg" onClick={save}
+        <Button variant="primary" size="lg" disabled={hasEmptyCore(rows)} onClick={save}
           style={{ fontSize:fs(15), marginTop:4, boxShadow:`0 4px 16px ${C.blue}40` }}>
           {t.detailSaveEdit}
         </Button>
@@ -174,7 +184,7 @@ export function DayDetailTab({ dayWorkouts, library, onBack, onOpenLibItem, onEd
           if (overall) lines.push(`  ${isZh ? "整體配速" : "Overall Pace"}: ${fmtDistance(overall.totalDistance)} ${overall.unit} · ${fmtPace(overall.paceMin, overall.paceSec)}/${overall.unit}`);
         } else {
           (ex.weightSets || []).forEach((ws, i) => {
-            lines.push(`  Set ${i+1}: ${ws.weight} × ${ws.reps.join("/")}`);
+            lines.push(`  Set ${i+1}: ${coreText(ws)}${noteText(ws) ? ` (${noteText(ws)})` : ""} × ${ws.reps.join("/")}${kindOf(ex) === "laps" ? ` ${isZh ? "圈" : "laps"}` : ""}`);
           });
         }
         if (ex.feeling) lines.push(`  ${isZh ? "感受" : "Feeling"}: ${ex.feeling}`);
@@ -259,10 +269,13 @@ export function DayDetailTab({ dayWorkouts, library, onBack, onOpenLibItem, onEd
                     ) : (
                       (ex.weightSets || []).map((ws, wi2) => (
                         <div key={wi2} style={{ marginBottom:10 }}>
-                          <div style={{ fontSize:fs(13), fontWeight:700, color:C.text, marginBottom:5 }}>{ws.weight}</div>
+                          <div style={{ display:"flex", alignItems:"baseline", marginBottom:5 }}>
+                            <span style={{ fontSize:fs(13), fontWeight:700, color:C.text, flexShrink:0 }}>{coreText(ws)}</span>
+                            {noteText(ws) && (<><span style={{ width:1, alignSelf:"stretch", background:C.sep, margin:"0 12px", flexShrink:0 }} /><span style={{ fontSize:fs(12), color:C.label, minWidth:0 }}>{noteText(ws)}</span></>)}
+                          </div>
                           <div style={{ display:"flex", flexWrap:"wrap", gap:6, paddingLeft:4 }}>
-                            {ws.reps.map((r, ri) => (<div key={ri} style={{ background:C.f5, borderRadius:8, padding:"6px 14px", fontSize:fs(15), fontWeight:600, color:C.text }}>{r}<span style={{ fontSize:fs(10), color:C.label, marginLeft:4 }}>{t.repsUnit}</span></div>))}
-                            <div style={{ display:"flex", alignItems:"center", padding:"0 6px", fontSize:fs(13), color:C.label }}>{t.totalReps} {ws.reps.reduce((a, b) => a + b, 0)} {t.repsUnit}</div>
+                            {ws.reps.map((r, ri) => (<div key={ri} style={{ background:C.f5, borderRadius:8, padding:"6px 14px", fontSize:fs(15), fontWeight:600, color:C.text }}>{r}<span style={{ fontSize:fs(10), color:C.label, marginLeft:4 }}>{repUnitLabel(kindOf(ex), t)}</span></div>))}
+                            <div style={{ display:"flex", alignItems:"center", padding:"0 6px", fontSize:fs(13), color:C.label }}>{t.totalReps} {ws.reps.reduce((a, b) => a + b, 0)} {repUnitLabel(kindOf(ex), t)}</div>
                           </div>
                         </div>
                       ))

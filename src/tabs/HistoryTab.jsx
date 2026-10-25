@@ -6,6 +6,7 @@ import { useC } from "../theme.js";
 import { localDate } from "../utils/date.js";
 import { Card } from "../components/ui.jsx";
 import { fmtDistance, fmtPace } from "../utils/paceUtils.js";
+import { coreText, kindOf, repUnitLabel } from "../utils/setUtils.js";
 
 // 格式化單天所有訓練為純文字
 
@@ -208,7 +209,7 @@ export function HistoryTab({ workouts, library, onOpenDay }) {
                                     const it = library.find(l => l.id === ex.libId);
                                     const summary = (ex.mode || "weight_sets") === "length_pace"
                                      ? (ex.lengthPace || []).map(seg => `${fmtDistance(seg.distance)}${seg.unit} @${fmtPace(seg.paceMin, seg.paceSec)}`).join("  ")
-                                     : (ex.weightSets || []).map(ws => `${ws.weight} ×${ws.reps.join("/")}${t.repsUnit}`).join("  ");
+                                     : (ex.weightSets || []).map(ws => `${coreText(ws)} ×${ws.reps.join("/")}${repUnitLabel(kindOf(ex), t)}`).join("  ");
                                     return (
                                       <div key={i} style={{ display:"flex", alignItems:"baseline", gap:7, marginBottom:2 }}>
                                         {it && <div style={{ width:6, height:6, borderRadius:"50%", background:it.color, flexShrink:0 }} />}

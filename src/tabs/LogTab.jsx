@@ -14,6 +14,7 @@ import { Button } from "../components/Button.jsx";
 import { ExerciseFieldsGroup } from "../components/SelectionControls.jsx";
 import { loadLogDraft, saveLogDraft, clearLogDraft } from "../utils/logDraft.js";
 import { AutoGrowTextarea } from "../components/AutoGrowTextarea.jsx";
+import { upgradeWeightSets, hasEmptyCore } from "../utils/setUtils.js";
 
 // LogTab 內嵌的規則總覽區塊：週/月分組顯示已建立規則的達標進度，並提供「+ 新增規則」入口
 // 點擊任一規則列或「+ 新增規則」都會導向 RoutineTab 全螢幕畫面進行實際管理（新增/編輯/刪除）
@@ -125,13 +126,16 @@ export function LogTab({ library, routines, workouts, onSave, onAddToLibrary, sh
     // equipment 是兩種 mode 共用的欄位（跟資料結構無關），永遠沿用最近一次紀錄；
     // 只有 weightSets/lengthPace 這種「跟 mode 綁定」的資料，才需要比對 mode 是否一致才帶入
     const modeMatches = lastH && (lastH.mode || "weight_sets") === mode;
+    // 沿用上次的重量/圈數模式與數值；舊版紀錄（weight 字串）盡力轉成新結構
+    const lastSets = mode === "weight_sets" && modeMatches && lastH.weightSets
+      ? upgradeWeightSets(JSON.parse(JSON.stringify(lastH.weightSets)), lastH.setKind)
+      : { setKind:"weight", weightSets:[{ value:"", unit:"kg", note:"", reps:[10,10,10] }] };
     setRows(p => [...p, {
       libId,
       mode,
       equipment:  lastH?.equipment || "",
-      weightSets: mode === "weight_sets"
-        ? (modeMatches && lastH.weightSets ? JSON.parse(JSON.stringify(lastH.weightSets)) : [{ weight:"", reps:[10,10,10] }])
-        : [{ weight:"", reps:[10,10,10] }],   // 保留預設值以防之後切換模式時欄位不存在
+      setKind:    lastSets.setKind,
+      weightSets: lastSets.weightSets,   // length_pace 動作也帶預設值，以防之後切換模式時欄位不存在
       lengthPace: mode === "length_pace"
         ? (modeMatches && lastH.lengthPace ? JSON.parse(JSON.stringify(lastH.lengthPace)) : [{ distance:0, unit:"km", paceMin:0, paceSec:0 }])
         : [{ distance:0, unit:"km", paceMin:0, paceSec:0 }],
@@ -151,7 +155,8 @@ export function LogTab({ library, routines, workouts, onSave, onAddToLibrary, sh
       libId: newItem.id,
       mode: newRecMode,
       equipment: "",
-      weightSets: [{ weight:"", reps:[10,10,10] }],
+      setKind: "weight",
+      weightSets: [{ value:"", unit:"kg", note:"", reps:[10,10,10] }],
       lengthPace: [{ distance:0, unit:"km", paceMin:0, paceSec:0 }],
       feeling: "",
       noteLocal: "",
@@ -169,6 +174,7 @@ export function LogTab({ library, routines, workouts, onSave, onAddToLibrary, sh
 
   const handleSave = () => {
     if (rows.length === 0) { showToast(t.atLeastOne); return; }
+    if (hasEmptyCore(rows)) { showToast(t.weValueRequired); return; }
     const sd = localDate(selectedDate);
     const workout = {
       id: uid(), date: selectedDate, weekday: WEEKDAYS[sd.getDay()],
@@ -177,7 +183,7 @@ export function LogTab({ library, routines, workouts, onSave, onAddToLibrary, sh
        libId: r.libId,
        mode: r.mode,
        equipment: r.equipment,
-       ...(r.mode === "length_pace" ? { lengthPace: r.lengthPace } : { weightSets: r.weightSets }),
+       ...(r.mode === "length_pace" ? { lengthPace: r.lengthPace } : { weightSets: r.weightSets, setKind: r.setKind || "weight" }),
        feeling: r.feeling,
      })),
     };
@@ -276,11 +282,11 @@ export function LogTab({ library, routines, workouts, onSave, onAddToLibrary, sh
                   </div>
                   {row.mode === "length_pace"
                     ? (row.lengthPace || []).some(lp => lp.distance) && <div style={{ fontSize:fs(10), color:C.blue, background:`${C.blue}10`, borderRadius:6, padding:"2px 8px" }}>{t.logSetsHint}</div>
-                    : (row.weightSets || []).some(ws => ws.weight) && <div style={{ fontSize:fs(10), color:C.blue, background:`${C.blue}10`, borderRadius:6, padding:"2px 8px" }}>{t.logSetsHint}</div>}
+                    : (row.weightSets || []).some(ws => ws.value !== "" && ws.value != null) && <div style={{ fontSize:fs(10), color:C.blue, background:`${C.blue}10`, borderRadius:6, padding:"2px 8px" }}>{t.logSetsHint}</div>}
                 </div>
                 {row.mode === "length_pace"
                   ? <LengthPaceEditor lengthPace={row.lengthPace} onChange={lp => upd(i, { lengthPace: lp })} />
-                  : <WeightSetEditor weightSets={row.weightSets} onChange={ws => upd(i, { weightSets: ws })} />}
+                  : <WeightSetEditor weightSets={row.weightSets} kind={row.setKind || "weight"} onKindChange={k => upd(i, { setKind: k })} onChange={ws => upd(i, { weightSets: ws })} />}
               </div>
               <Div />
               <div style={{ padding:"12px 16px" }}>
@@ -307,7 +313,10 @@ export function LogTab({ library, routines, workouts, onSave, onAddToLibrary, sh
           style={{ padding:"15px", fontSize:fs(15), marginBottom:12 }}>
           {t.logAddExercise}
         </Button>
-        <Button variant="primary" size="lg" disabled={rows.length === 0} onClick={handleSave}
+        {rows.length > 0 && hasEmptyCore(rows) && (
+          <div style={{ fontSize:fs(12), color:C.red, textAlign:"center", marginBottom:8, lineHeight:1.6 }}>{t.weValueRequired}</div>
+        )}
+        <Button variant="primary" size="lg" disabled={rows.length === 0 || hasEmptyCore(rows)} onClick={handleSave}
           style={{ fontSize:fs(17), boxShadow: rows.length > 0 ? "0 4px 16px rgba(0,122,255,0.3)" : "none" }}>
           {t.logSave}
         </Button>

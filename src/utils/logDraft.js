@@ -6,6 +6,7 @@
 // lsSet 會延後一個 tick 才寫入，若「完成訓練」同步清除草稿後，才輪到先前排隊的寫入，草稿會被寫回去。
 // 草稿只有幾 KB，同步寫入不會卡畫面。
 import { todayStr, localDate } from "./date.js";
+import { upgradeWeightSets } from "./setUtils.js";
 
 const DRAFT_KEY = "wt_logDraft";
 export const LOG_DRAFT_TTL_MS = 3 * 60 * 60 * 1000; // 草稿保存期限：從「最後一次修改」起算 3 小時
@@ -58,8 +59,11 @@ export const loadLogDraft = (library, now = Date.now()) => {
     .map(r => {
       const item  = library.find(l => l.id === r.libId);
       const dirty = !!r.noteDirty;
+      const up    = upgradeWeightSets(r.weightSets, r.setKind); // 舊版草稿（weight 字串）盡力轉成新結構
       return {
         ...r,
+        setKind: up.setKind,
+        weightSets: up.weightSets,
         mode: r.mode === "length_pace" ? "length_pace" : "weight_sets",
         equipment: r.equipment || "",
         feeling: r.feeling || "",
