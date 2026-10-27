@@ -9,7 +9,7 @@
 // 已經是新結構的組別（有 unit 欄位）會原樣保留，所以重複執行是安全的。
 //
 // 用法：
-//   node scripts/migrate-weightsets.js <備份.json> [選項]
+//   node scripts/migrate-data.js <備份.json> [選項]
 //
 // 選項：
 //   --out <路徑>        輸出位置（預設：<備份>.migrated.json，不會覆蓋原檔）
@@ -33,16 +33,19 @@
 // 答案檔（--answers）：JSON 物件，key 為提示中顯示的代號，例如
 //   { "kind:lib14": "laps", "lib14|BW": "25 m | 泳池每趟25m" }
 //
-// ⚠️ 解析規則與 src/utils/setUtils.js 的 parseLegacyWeight 保持一致（本檔為 CommonJS，無法直接 import ESM）
+// 另外也會把「距離 / 配速」紀錄（length_pace）每段的 unit 統一成固定代碼 m / km / mi：
+//   "KM"、"公里"、"miles"… 依別名表自動轉換；認不得的字串會詢問（代號 "unit:<原字串>"），同一種字串只問一次
+//
+// ⚠️ 解析規則與 src/utils/setUtils.js 的 parseLegacyWeight、DISTANCE_ALIASES 保持一致（本檔為 CommonJS，無法直接 import ESM）
 const fs = require("fs");
 const path = require("path");
 
 const WEIGHT_UNITS = ["kg", "lb"];
 const DISTANCE_UNITS = ["m", "km", "mi"];
-const USAGE = "用法：node scripts/migrate-weightsets.js <備份.json> [--out 路徑] [--write] [--answers 答案.json]";
+const USAGE = "用法：node scripts/migrate-data.js <備份.json> [--out 路徑] [--write] [--answers 答案.json]";
 
 function fail(msg) {
-  console.error(`\n❌ migrate-weightsets 失敗：${msg}\n`);
+  console.error(`\n❌ migrate-data 失敗：${msg}\n`);
   process.exit(1);
 }
 
@@ -52,6 +55,12 @@ const UNIT_ALIASES = {
   kg: "kg", kgs: "kg", "公斤": "kg", lb: "lb", lbs: "lb", "磅": "lb",
   m: "m", "公尺": "m", "米": "m", km: "km", "公里": "km", mi: "mi", mile: "mi", miles: "mi",
 };
+const DISTANCE_ALIASES = {
+  m: "m", meter: "m", meters: "m", metre: "m", metres: "m", "公尺": "m", "米": "m",
+  km: "km", kms: "km", kilometer: "km", kilometers: "km", kilometre: "km", kilometres: "km", "公里": "km", "千米": "km",
+  mi: "mi", mile: "mi", miles: "mi", "英里": "mi",
+};
+const normDistanceUnit = (raw) => DISTANCE_ALIASES[String(raw ?? "").trim().toLowerCase().replace(/\.$/, "")] || null;
 const LEGACY_RE = /^(\d+(?:\.\d+)?)\s*(kgs|kg|lbs|lb|miles|mile|mi|km|m|公斤|公里|公尺|磅|米)(?![a-zA-Z])(.*)$/i;
 const unitsOf = (kind) => (kind === "laps" ? DISTANCE_UNITS : WEIGHT_UNITS);
 const normUnit = (u) => UNIT_ALIASES[u.toLowerCase()] || UNIT_ALIASES[u];
@@ -147,7 +156,8 @@ async function ask(key, prompt, validate) {
 const kindByLib = new Map();
 const groupAnswers = new Map(); // `${libId}|${raw}` -> { value, unit, note } | "skip"
 const log = [];                 // 摘要用
-const asked = new Set();        // 實際問過使用者（或由答案檔回答）的 key，用來輸出可重複使用的答案檔
+const asked = new Set();
+const unitAnswers = new Map();  // `unit:<原字串>` -> 代碼 | "skip"        // 實際問過使用者（或由答案檔回答）的 key，用來輸出可重複使用的答案檔
 
 (async () => {
   // 2a. 每個動作的模式
@@ -226,12 +236,48 @@ const asked = new Set();        // 實際問過使用者（或由答案檔回答
   targets.forEach((t) => {
     if (!t.entry.setKind && t.entry.weightSets.length && t.entry.weightSets.every(isNew)) t.entry.setKind = kindByLib.get(t.libId) && kindByLib.get(t.libId) !== "skip" ? kindByLib.get(t.libId) : "weight";
   });
+  // 2d. 距離 / 配速紀錄：單位統一成固定代碼
+  const lpSegs = [];
+  data.workouts.forEach((w) => (w.exercises || []).forEach((ex) => {
+    if (ex.mode === "length_pace" && Array.isArray(ex.lengthPace)) ex.lengthPace.forEach((seg) => lpSegs.push(seg));
+  }));
+  data.library.forEach((item) => (item.history || []).forEach((h) => {
+    if (h.mode === "length_pace" && Array.isArray(h.lengthPace)) h.lengthPace.forEach((seg) => lpSegs.push(seg));
+  }));
+  let unitFixed = 0, unitSkipped = 0;
+  for (const seg of lpSegs) {
+    const raw = String(seg.unit ?? "");
+    if (DISTANCE_UNITS.includes(raw)) continue;                 // 已是代碼
+    let code = normDistanceUnit(raw);
+    if (!code) {
+      const key = `unit:${raw}`;
+      if (!unitAnswers.has(key)) {
+        console.log(`\n❓ 無法辨識的距離單位 "${raw}"（距離 / 配速紀錄）`);
+        const ans = await ask(key, `   請輸入單位 [1] km  [2] mi  [3] m  [s] 略過 > `, (a) => {
+          const v = a.trim().toLowerCase();
+          if (v === "1" || v === "km") return { ok: true, value: "km" };
+          if (v === "2" || v === "mi") return { ok: true, value: "mi" };
+          if (v === "3" || v === "m") return { ok: true, value: "m" };
+          if (v === "s") return { ok: true, value: "skip" };
+          return { ok: false, err: "請輸入 1、2、3 或 s" };
+        });
+        unitAnswers.set(key, ans);
+        log.push(`${key} → ${ans}`);
+      }
+      code = unitAnswers.get(key);
+      if (code === "skip") { unitSkipped++; continue; }
+    }
+    seg.unit = code;
+    unitFixed++;
+  }
+
   if (rl) rl.close();
 
   // ── 摘要 ─────────────────────────────────────────────────
   console.log(`\n📦 共 ${targets.length} 筆重量組次紀錄，其中 ${legacyTargets.length} 筆含舊格式`);
   console.log(`✅ 已轉換 ${convertedEntries} 筆紀錄（${convertedGroups} 組）`);
   if (skippedGroups > 0) console.log(`⚠️  ${skippedGroups} 組被略過，維持舊格式（App 仍可顯示，開啟編輯時會盡力轉換）`);
+  if (lpSegs.length > 0) console.log(`📏 距離 / 配速：共 ${lpSegs.length} 段，統一單位 ${unitFixed} 段${unitSkipped ? `，略過 ${unitSkipped} 段（維持原字串）` : ""}`);
   if (legacyTargets.length === 0) console.log("ℹ️  沒有需要轉換的舊資料");
   if (log.length) {
     console.log("\n你的選擇（可存成 --answers 答案檔重複使用）：");
@@ -239,6 +285,7 @@ const asked = new Set();        // 實際問過使用者（或由答案檔回答
     log.forEach((l) => console.log("   " + l));
     kindByLib.forEach((v, id) => { if (votes.get(id)?.size !== 1) ans[`kind:${id}`] = v; });
     groupAnswers.forEach((v, k) => { if (asked.has(k)) ans[k] = v === "skip" ? "s" : `${v.value} ${v.unit} | ${v.note}`; });
+    unitAnswers.forEach((v, k) => { ans[k] = v === "skip" ? "s" : v; });
     console.log("\n" + JSON.stringify(ans, null, 2));
   }
 

@@ -5,6 +5,7 @@ import { useLang, T } from "../data/i18n.js";
 import { NumberPicker } from "./NumberPicker.jsx";
 import { calcOverallPace, fmtDistance, fmtPace, splitDistance, joinDistance, timeToPace, paceToTime } from "../utils/paceUtils.js";
 import { InfoButton } from "./Button.jsx";
+import { DISTANCE_UNITS } from "../utils/setUtils.js";
 
 const DISTANCE_MIN = 0;     // 每段（整數位）距離下限
 const DISTANCE_MAX = 10;    // 每段（整數位）距離上限；總距離已在下方「整體配速」加總顯示
@@ -104,8 +105,11 @@ export function LengthPaceEditor({ lengthPace, onChange }) {
                   <span style={{ fontSize:fs(16), color:C.label, fontWeight:700 }}>.</span>
                   <NumberPicker value={decPart} onChange={v => updDistance(i, intPart, v)} min={0} max={9} width={DIGIT_W} />
                 </div>
-                <input value={seg.unit} onChange={e => updSeg(i, { unit: e.target.value })} placeholder={t.lpUnitPlaceholder}
-                  style={{ width: fluidSize(30, 40), background:C.f5, border:"none", borderRadius:10, padding:"8px 4px", fontSize:12, fontWeight:600, color:C.text, outline:"none", fontFamily:"inherit", textAlign:"center" }} />
+                {/* 單位為固定選項（與「圈數」模式共用 DISTANCE_UNITS）；舊資料若帶有清單以外的字串，保底多列一個選項以免遺失 */}
+                <select value={seg.unit || "km"} onChange={e => updSeg(i, { unit: e.target.value })}
+                  style={{ width: fluidSize(30, 40), appearance:"none", WebkitAppearance:"none", background:C.f5, border:"none", borderRadius:10, padding:"8px 4px", fontSize:12, fontWeight:600, color:C.text, outline:"none", fontFamily:"inherit", textAlign:"center", textAlignLast:"center" }}>
+                  {(DISTANCE_UNITS.includes(seg.unit) || !seg.unit ? DISTANCE_UNITS : [...DISTANCE_UNITS, seg.unit]).map(u => <option key={u} value={u}>{u}</option>)}
+                </select>
                 <span style={{ fontSize:fs(13), color:C.label }}>@</span>
               </div>
 

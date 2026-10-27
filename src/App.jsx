@@ -4,6 +4,7 @@ import { INIT_LIBRARY, INIT_WORKOUTS, INIT_ROUTINES } from "./data/initialData.j
 import { LIGHT, DARK, DarkCtx, CalendarGradientCtx, FONT_SCALES, FontScaleCtx, fs } from "./theme.js";
 import { lsGet, lsSet } from "./hooks/useStorage.js";
 import { clearLogDraft } from "./utils/logDraft.js";
+import { migrateData } from "./utils/migrateData.js";
 import { StatusBar, BottomNav } from "./components/ui.jsx";
 import { SwipeBackView } from "./components/SwipeBackView.jsx";
 import { HomeTab }    from "./tabs/HomeTab.jsx";
@@ -41,8 +42,10 @@ export default function App() {
     setTab(newTab);
   };
 
-  const [workouts,  setWorkouts]  = useState(() => lsGet("wt_workouts", INIT_WORKOUTS));
-  const [library,   setLibrary]   = useState(() => lsGet("wt_library",  INIT_LIBRARY));
+  // 載入時一次轉換舊格式（唯一入口；轉換後的結果會由下方的持久化 effect 寫回 localStorage）
+  const [loaded] = useState(() => migrateData({ workouts: lsGet("wt_workouts", INIT_WORKOUTS), library: lsGet("wt_library", INIT_LIBRARY) }));
+  const [workouts,  setWorkouts]  = useState(loaded.workouts);
+  const [library,   setLibrary]   = useState(loaded.library);
   const [routines,  setRoutines]  = useState(() => lsGet("wt_routines", INIT_ROUTINES));
   const [detailId,  setDetailId]  = useState(null);
   const [detailDate,setDetailDate]= useState(null);
@@ -128,8 +131,20 @@ export default function App() {
     setTimeout(() => setToast(null), 2500);
   };
 
+  // 資料契約（GymStats）：每個 exercise 另存當下的 muscleGroup 與 color（取自動作庫現值）。
+  // 動作已從動作庫刪除時，沿用原本的快照；history 與 weightSets / lengthPace 的形狀不受影響
+  const stampExercises = (exercises, prevExercises = []) => exercises.map((ex, i) => {
+    const it = library.find(l => l.id === ex.libId);
+    const { libId, muscleGroup: _mg, color: _col, ...rest } = ex;
+    if (it) return { libId, muscleGroup: it.muscleGroup, color: it.color, ...rest };
+    const prev = prevExercises[i];
+    return prev && prev.libId === libId && prev.muscleGroup !== undefined
+      ? { libId, muscleGroup: prev.muscleGroup, color: prev.color, ...rest }
+      : ex;
+  });
+
   const handleSave = (workout, noteUpdates) => {
-    setWorkouts(p => [workout, ...p]);
+    setWorkouts(p => [{ ...workout, exercises: stampExercises(workout.exercises) }, ...p]);
     setLibrary(p => p.map(item => {
       const noteUpd = noteUpdates.find(u => u.libId === item.id);
       const usedEx  = workout.exercises.find(ex => ex.libId === item.id);
@@ -166,7 +181,7 @@ export default function App() {
   };
   const handleAddToLibrary  = (newItem) => setLibrary(p => [...p, newItem]);
   const handleUpdateWorkout = (updated) => {
-    setWorkouts(p => p.map(w => w.id === updated.id ? updated : w));
+    setWorkouts(p => p.map(w => w.id === updated.id ? { ...updated, exercises: stampExercises(updated.exercises, w.exercises) } : w));
     // 延遲到下一個 tick，避免兩個 setState 同時觸發阻塞主執行緒
     setTimeout(() => {
       setLibrary(p => p.map(item => ({
@@ -195,8 +210,9 @@ export default function App() {
   const handleEditWorkout   = (id) => { setDetailId(id); navigate("detail"); };
   const handleImport        = (newWorkouts, newLibrary, newRoutines) => {
     clearLogDraft();
-    setWorkouts(newWorkouts);
-    setLibrary(newLibrary);
+    const m = migrateData({ workouts: newWorkouts, library: newLibrary }); // 匯入舊版備份時，同樣經過唯一的轉換入口
+    setWorkouts(m.workouts);
+    setLibrary(m.library);
     setRoutines(newRoutines || []);
     showToast(lang === "zh" ? "✅ 資料已成功匯入！" : "✅ Data imported successfully!");
   };

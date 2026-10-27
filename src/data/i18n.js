@@ -57,7 +57,7 @@ export const T = {
     libNoteSave:"儲存筆記",
     libHistoryTitle:"訓練歷史", libHistoryEmpty:"尚無訓練紀錄",
     libEquip:"器材設定", libHistoryFeeling:"當次感受",
-    libLastEquip:"上次器材設定", libLastSets:"上次重量組次",
+    libLastEquip:"上次器材設定", libLastSets:"上次數據與組次",
     libLastLengthPace:"上次距離配速",
     libLastEquipSub:"下次訓練時將自動代入", libLastSetsSub:"下次訓練時將自動代入",
     libLastEquipPlaceholder:"尚無器材設定紀錄",
@@ -65,9 +65,9 @@ export const T = {
     // Add item form
     addName:"動作名稱", addMuscle:"訓練部位", addColor:"顏色",
     addBtn:"新增動作", addCancel:"取消",
-     // Recording mode
+    // Recording mode
     recModeLabel:"紀錄模式",
-    recModeWeightSets:"重量 / 組數", recModeLengthPace:"距離 / 配速",
+    recModeWeightSets:"數據 / 組數", recModeLengthPace:"距離 / 配速",
     recModeSwitchHint:"切換後，新的訓練紀錄將以新模式記錄，過去的紀錄不會被修改。",
     logLengthPaceLabel:"距離與配速",
     // Routines
@@ -95,12 +95,12 @@ export const T = {
     routineDeleteConfirmTitle:"刪除規律？",
     routineDeleteConfirmMsg:"此規律將被永久刪除，此動作無法復原。",
     // Weight editor
-    weSets:"組次：", weAddSet:"+ 新增重量組",
-    weightPlaceholder:"重量（如 15kg、自重）",
+    weSets:"組次：", weAddSet:"+ 新增數據組",
+    weightPlaceholder:"數據（如 15kg、自重）",
     weKindWeight:"重量", weKindLaps:"圈數",
     weKindHint:"重量：左側填數字並選擇重量單位（必填），右側可另外補充文字。\n圈數：左側填每圈的距離並選擇距離單位（必填），下方數字則是每組跑了幾圈。\n右側文字會存入紀錄，並顯示在訓練詳情與動作庫，但不會出現在歷史列表的預覽。",
     weLapsCount:"圈數：", weNotePlaceholderWeight:"補充（如 左右各15kg）", weNotePlaceholderLaps:"補充（如 橡膠跑道）",
-    lapsUnit:"圈", weValueRequired:"每組的重量／距離數字為必填，請補上後再儲存。",
+    lapsUnit:"圈", weValueRequired:"每組的數據／距離數字為必填，請補上後再儲存。",
     // Pace_Segment editor 
     lpSegments:"配速分段：", lpAddSegment:"+ 新增分段",
     lpFieldsHint:"距離 (整數.小數) 單位 ＠ 分＇秒＂(配速 or 總時間)",
@@ -177,7 +177,7 @@ export const T = {
     logLastSeen:"Last",
     historySubtitle:"View Records", historyTitle:"Workout History", historySearch:"Search exercise or muscle…",
     historyEmpty:"No matching records",
-    detailEquip:"Equipment Setup", detailSets:"Numbers & Sets",
+    detailEquip:"Equipment Setup", detailSets:"Data & Sets",
     detailKnowledge:"Knowledge Notes", detailKnowledgeSub:"Long-term · Stored in library",
     detailFeeling:"Session Feeling", detailLibBtn:"Library →",
     detailBack:"‹ Back",
@@ -198,7 +198,7 @@ export const T = {
     libNoteSave:"Save Notes",
     libHistoryTitle:"Training History", libHistoryEmpty:"No workout history yet",
     libEquip:"Equipment Setup", libHistoryFeeling:"Session Feeling",
-    libLastEquip:"Last Equipment Setup", libLastSets:"Last Weight & Sets",
+    libLastEquip:"Last Equipment Setup", libLastSets:"Last Data & Sets",
     libLastLengthPace:"Last Length & Pace",
     libLastEquipSub:"Will be pre-filled next session", libLastSetsSub:"Will be pre-filled next session",
     libLastEquipPlaceholder:"No equipment record yet",

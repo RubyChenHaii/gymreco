@@ -14,7 +14,7 @@ import { Button } from "../components/Button.jsx";
 import { ExerciseFieldsGroup } from "../components/SelectionControls.jsx";
 import { loadLogDraft, saveLogDraft, clearLogDraft } from "../utils/logDraft.js";
 import { AutoGrowTextarea } from "../components/AutoGrowTextarea.jsx";
-import { upgradeWeightSets, hasEmptyCore } from "../utils/setUtils.js";
+import { upgradeWeightSets, upgradeLengthPace, hasEmptyCore } from "../utils/setUtils.js";
 
 // LogTab 內嵌的規則總覽區塊：週/月分組顯示已建立規則的達標進度，並提供「+ 新增規則」入口
 // 點擊任一規則列或「+ 新增規則」都會導向 RoutineTab 全螢幕畫面進行實際管理（新增/編輯/刪除）
@@ -137,7 +137,7 @@ export function LogTab({ library, routines, workouts, onSave, onAddToLibrary, sh
       setKind:    lastSets.setKind,
       weightSets: lastSets.weightSets,   // length_pace 動作也帶預設值，以防之後切換模式時欄位不存在
       lengthPace: mode === "length_pace"
-        ? (modeMatches && lastH.lengthPace ? JSON.parse(JSON.stringify(lastH.lengthPace)) : [{ distance:0, unit:"km", paceMin:0, paceSec:0 }])
+        ? (modeMatches && lastH.lengthPace ? upgradeLengthPace(JSON.parse(JSON.stringify(lastH.lengthPace))) : [{ distance:0, unit:"km", paceMin:0, paceSec:0 }])
         : [{ distance:0, unit:"km", paceMin:0, paceSec:0 }],
       feeling:    "",
       noteLocal:  item?.note || "",

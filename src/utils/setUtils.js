@@ -10,8 +10,8 @@
 //
 // 舊版資料結構：weightSets: [{ weight:"15kg", reps:[...] }]
 //   App 讀到舊資料時，用 upgradeWeightSets() 做「盡力轉換」，讓編輯器永遠拿到新結構；
-//   顯示用途則用 coreText() 直接相容舊資料。要一次性轉換整份備份請用 scripts/migrate-weightsets.js
-//   ⚠️ parseLegacyWeight 的規則與 scripts/migrate-weightsets.js 內的版本必須保持一致（腳本是 CommonJS，無法直接 import 此檔）
+//   顯示用途則用 coreText() 直接相容舊資料。要一次性轉換整份備份請用 scripts/migrate-data.js
+//   ⚠️ parseLegacyWeight 的規則與 scripts/migrate-data.js 內的版本必須保持一致（腳本是 CommonJS，無法直接 import 此檔）
 
 export const SET_KINDS      = ["weight", "laps"];
 export const WEIGHT_UNITS   = ["kg", "lb"];
@@ -91,3 +91,21 @@ export const repUnitLabel = (kind, t) => kind === "laps" ? t.lapsUnit : t.repsUn
 export const hasEmptyCore = (rows) =>
   rows.some(r => (r.mode || "weight_sets") === "weight_sets" &&
     (r.weightSets || []).some(ws => ws.value === "" || ws.value == null));
+
+// ── 距離單位（LengthPaceEditor 與「圈數」模式共用同一份代碼清單）────────
+// 儲存用代碼固定為 DISTANCE_UNITS（"m" / "km" / "mi"）。舊資料裡的自由字串用別名表對應；
+// 對不上的回傳 null（App 內保留原字串並仍可顯示，轉換腳本則會詢問）
+// ⚠️ 別名表與 scripts/migrate-data.js 內的 DISTANCE_ALIASES 必須保持一致
+const DISTANCE_ALIASES = {
+  m:"m", meter:"m", meters:"m", metre:"m", metres:"m", "公尺":"m", "米":"m",
+  km:"km", kms:"km", kilometer:"km", kilometers:"km", kilometre:"km", kilometres:"km", "公里":"km", "千米":"km",
+  mi:"mi", mile:"mi", miles:"mi", "英里":"mi",
+};
+export const normalizeDistanceUnit = (raw) => {
+  const s = String(raw ?? "").trim().toLowerCase().replace(/\.$/, "");
+  return DISTANCE_ALIASES[s] || null;
+};
+
+// 把距離/配速分段的單位換成標準代碼；認得的別名轉成代碼，認不得的原樣保留（不會遺失資料）
+export const upgradeLengthPace = (lengthPace) =>
+  (lengthPace || []).map(seg => ({ ...seg, unit: normalizeDistanceUnit(seg.unit) || seg.unit }));
