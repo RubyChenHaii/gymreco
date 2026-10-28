@@ -131,16 +131,19 @@ export default function App() {
     setTimeout(() => setToast(null), 2500);
   };
 
-  // 資料契約（GymStats）：每個 exercise 另存當下的 muscleGroup 與 color（取自動作庫現值）。
-  // 動作已從動作庫刪除時，沿用原本的快照；history 與 weightSets / lengthPace 的形狀不受影響
+  // 資料契約（GymStats）：每個 exercise 另存「紀錄當下」的 muscleGroup 與 color，之後不再隨動作庫變動。
+  // - 新訓練：取動作庫現值
+  // - 編輯既有訓練：沿用原本的快照（DetailTab 存檔時會丟掉這兩個欄位，所以要從原 exercise 帶回來）；
+  //   原本沒有快照才用動作庫現值補
+  // - 動作已從動作庫刪除、又沒有快照：維持原樣
+  // history 與 weightSets / lengthPace 的形狀不受影響
   const stampExercises = (exercises, prevExercises = []) => exercises.map((ex, i) => {
-    const it = library.find(l => l.id === ex.libId);
     const { libId, muscleGroup: _mg, color: _col, ...rest } = ex;
-    if (it) return { libId, muscleGroup: it.muscleGroup, color: it.color, ...rest };
     const prev = prevExercises[i];
-    return prev && prev.libId === libId && prev.muscleGroup !== undefined
-      ? { libId, muscleGroup: prev.muscleGroup, color: prev.color, ...rest }
-      : ex;
+    if (prev && prev.libId === libId && prev.muscleGroup !== undefined)
+      return { libId, muscleGroup: prev.muscleGroup, color: prev.color, ...rest };
+    const it = library.find(l => l.id === libId);
+    return it ? { libId, muscleGroup: it.muscleGroup, color: it.color, ...rest } : ex;
   });
 
   const handleSave = (workout, noteUpdates) => {

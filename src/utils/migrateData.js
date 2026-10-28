@@ -8,6 +8,8 @@
 // - 轉換內容：
 //     1. weight_sets：{ weight:"15kg", reps } → { value, unit, note, reps }，並補上 setKind
 //     2. length_pace：每段 unit 的別名（KM、公里、miles…）統一成 m / km / mi；認不得的字串原樣保留
+//     3. 補存快照：workouts 裡缺少 muscleGroup / color 的 exercise，用動作庫「現值」補上一次（資料契約，供 GymStats 使用）；
+//        動作已從動作庫刪除的找不到來源，維持原樣。之後快照不再隨動作庫變動，也不寫進各動作的 history
 // ⚠️ 解析規則集中在 setUtils.js（parseLegacyWeight / normalizeDistanceUnit），本檔不重複定義
 import { parseLegacyWeight, normalizeDistanceUnit } from "./setUtils.js";
 
@@ -39,6 +41,14 @@ const migrateWeightEntry = (entry, isCardio) => {
   };
 };
 
+const fillSnapshot = (ex, libById) => {
+  if (ex.muscleGroup !== undefined && ex.color !== undefined) return ex;
+  const it = libById.get(String(ex.libId));
+  if (!it) return ex;
+  const { libId, muscleGroup, color, ...rest } = ex;
+  return { libId, muscleGroup: muscleGroup ?? it.muscleGroup, color: color ?? it.color, ...rest };
+};
+
 const migrateLengthPaceEntry = (entry) => {
   if (entry.mode !== "length_pace" || !Array.isArray(entry.lengthPace)) return entry;
   let changed = false;
@@ -52,6 +62,7 @@ const migrateLengthPaceEntry = (entry) => {
 };
 
 export const migrateData = ({ workouts, library }) => {
+  const libById = new Map((library || []).map((l) => [String(l.id), l]));
   const cardioById = new Map((library || []).map((l) => [String(l.id), CARDIO_GROUPS.includes(l.muscleGroup)]));
   let changed = false;
 
@@ -68,8 +79,10 @@ export const migrateData = ({ workouts, library }) => {
   };
 
   const newWorkouts = (workouts || []).map((w) => {
-    const exercises = (w.exercises || []).map((ex) => mapEntries([ex], ex.libId)[0]);
-    return exercises.some((ex, i) => ex !== w.exercises[i]) ? { ...w, exercises } : w;
+    const exercises = (w.exercises || []).map((ex) => fillSnapshot(mapEntries([ex], ex.libId)[0], libById));
+    if (!exercises.some((ex, i) => ex !== w.exercises[i])) return w;
+    changed = true;
+    return { ...w, exercises };
   });
   const newLibrary = (library || []).map((item) => {
     const history = mapEntries(item.history, item.id);
