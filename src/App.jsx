@@ -136,7 +136,7 @@ export default function App() {
   // - 編輯既有訓練：沿用原本的快照（DetailTab 存檔時會丟掉這兩個欄位，所以要從原 exercise 帶回來）；
   //   原本沒有快照才用動作庫現值補
   // - 動作已從動作庫刪除、又沒有快照：維持原樣
-  // history 與 weightSets / lengthPace 的形狀不受影響
+  // weightSets / lengthPace 的形狀不受影響
   const stampExercises = (exercises, prevExercises = []) => exercises.map((ex, i) => {
     const { libId, muscleGroup: _mg, color: _col, ...rest } = ex;
     const prev = prevExercises[i];
@@ -148,19 +148,13 @@ export default function App() {
 
   const handleSave = (workout, noteUpdates) => {
     setWorkouts(p => [{ ...workout, exercises: stampExercises(workout.exercises) }, ...p]);
-    setLibrary(p => p.map(item => {
-      const noteUpd = noteUpdates.find(u => u.libId === item.id);
-      const usedEx  = workout.exercises.find(ex => ex.libId === item.id);
-      if (!usedEx && !noteUpd) return item;
-      const { libId, ...exData } = usedEx || {};
-      return {
-        ...item,
-        note: noteUpd ? noteUpd.note : item.note,
-        history: usedEx
-          ? [...item.history, { date:workout.date, workoutId:workout.id, ...exData }]
-          : item.history,
-      };
-    }));
+    // 訓練歷史不再另存於動作庫，這裡只同步「動作知識筆記」
+    if (noteUpdates.length > 0) {
+      setLibrary(p => p.map(item => {
+        const noteUpd = noteUpdates.find(u => u.libId === item.id);
+        return noteUpd ? { ...item, note: noteUpd.note } : item;
+      }));
+    }
     setTimeout(() => {
       setTab("home");
       showToast(T[lang].savedAlert);
@@ -185,28 +179,9 @@ export default function App() {
   const handleAddToLibrary  = (newItem) => setLibrary(p => [...p, newItem]);
   const handleUpdateWorkout = (updated) => {
     setWorkouts(p => p.map(w => w.id === updated.id ? { ...updated, exercises: stampExercises(updated.exercises, w.exercises) } : w));
-    // 延遲到下一個 tick，避免兩個 setState 同時觸發阻塞主執行緒
-    setTimeout(() => {
-      setLibrary(p => p.map(item => ({
-        ...item,
-        history: item.history.map(h => {
-          if (h.workoutId !== updated.id) return h;
-          const updatedEx = updated.exercises.find(ex => ex.libId === item.id);
-          if (!updatedEx) return h;
-          const { libId, ...exData } = updatedEx;
-          return { ...h, ...exData };
-        }),
-      })));
-    }, 0);
   };
   const handleDeleteWorkout = (id) => {
     setWorkouts(p => p.filter(w => w.id !== id));
-    setTimeout(() => {
-      setLibrary(p => p.map(item => ({
-        ...item,
-        history: item.history.filter(h => h.workoutId !== id),
-      })));
-    }, 0);
   };
   const openDayDetail       = (date) => { setDetailDate(date); navigate("daydetail"); };
   const openRoutines        = () => navigate("routine");
@@ -221,8 +196,9 @@ export default function App() {
   };
 const handleReset = () => {
     clearLogDraft();  
-    setWorkouts(INIT_WORKOUTS);
-    setLibrary(INIT_LIBRARY);
+    const m = migrateData({ workouts: INIT_WORKOUTS, library: INIT_LIBRARY }); // 範例資料同樣經過唯一的轉換入口
+    setWorkouts(m.workouts);
+    setLibrary(m.library);
     setRoutines(INIT_ROUTINES);
     showToast(lang === "zh" ? "✅ 已還原為預設範例資料" : "✅ Restored to default sample data");
   };
@@ -263,6 +239,21 @@ const handleReset = () => {
     const colorTotal = topColors.reduce((sum, [, count]) => sum + count, 0);
     return { topColors, colorTotal };
   }, [workouts, library, calYr, calMo, calDim]);
+
+  // 每個動作的訓練歷史：由 workouts 現算，不另存（workouts 是唯一的訓練資料來源）。
+  // 依日期由舊到新排序，同日依存檔順序；最後一筆就是「上次」。格式同舊版 history：{ date, workoutId, ...exercise 內容 }
+  const historyByLib = useMemo(() => {
+    const map = new Map();
+    [...workouts].reverse().forEach(w => {            // workouts 為新→舊，reverse 後是存檔順序
+      w.exercises.forEach(ex => {
+        const { libId, muscleGroup: _mg, color: _col, ...exData } = ex;
+        if (!map.has(libId)) map.set(libId, []);
+        map.get(libId).push({ date: w.date, workoutId: w.id, ...exData });
+      });
+    });
+    map.forEach(list => list.sort((a, b) => a.date.localeCompare(b.date)));   // 穩定排序
+    return map;
+  }, [workouts]);
 
   return (
     <DarkCtx.Provider value={darkMode}>
@@ -329,11 +320,11 @@ const handleReset = () => {
                         onEditWorkout={handleEditWorkout} />
                     </SwipeBackView>
                 : tab === "log"
-                  ? <LogTab library={library} routines={routines} workouts={workouts} onSave={handleSave} onAddToLibrary={handleAddToLibrary} showToast={showToast} onOpenRoutines={openRoutines} />
+                  ? <LogTab library={library} routines={routines} workouts={workouts} historyByLib={historyByLib} onSave={handleSave} onAddToLibrary={handleAddToLibrary} showToast={showToast} onOpenRoutines={openRoutines} />
                 : tab === "history"
                   ? <HistoryTab workouts={workouts} library={library} onOpenDay={openDayDetail} />
                 : tab === "library"
-                  ? <LibraryTab library={library} setLibrary={setLibrary} openItemId={libItemId} setOpenItemId={handleSetLibItem} />
+                  ? <LibraryTab library={library} setLibrary={setLibrary} historyByLib={historyByLib} openItemId={libItemId} setOpenItemId={handleSetLibItem} />
                 : tab === "routine"
                   ? <SwipeBackView key="routine" onBack={() => goBack()}>
                       <RoutineTab routines={routines} setRoutines={setRoutines} library={library} workouts={workouts} homeStatPeriod={homeStatPeriod} setHomeStatPeriod={setHomeStatPeriod} onBack={() => goBack()} />

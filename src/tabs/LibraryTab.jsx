@@ -15,9 +15,9 @@ import { CollapsibleText } from "../components/AutoGrowTextarea.jsx";
 import { coreText, noteText, kindOf, repUnitLabel } from "../utils/setUtils.js";
 
 
-function LibItemDetail({ item, onUpdate, onDelete, onBack }) {
+function LibItemDetail({ item, history = [], onUpdate, onDelete, onBack }) {
   const lang = useLang(); const t = T[lang]; const C = useC();
-  const lastH = item.history.length > 0 ? item.history[item.history.length - 1] : null;
+  const lastH = history.length > 0 ? history[history.length - 1] : null;   // history 由 App 依 workouts 現算（舊→新）
   const lastMode = lastH?.mode || item.recordingMode || "weight_sets";
   // 優先順序: 上一筆紀錄自己的 mode (尊重歷史紀錄的真實記錄方式) > 沒有歷史紀錄時，改看這個動作目前設定的 recordingMode (反映使用者建立/切換時的意圖) > 兩者都沒有(最舊資料):保底視為 weight_sets
   const [editNote,    setEditNote]    = useState(item.note);
@@ -168,9 +168,9 @@ function LibItemDetail({ item, onUpdate, onDelete, onBack }) {
         </div>
 
         <div style={{ padding:"16px" }}>
-        <SLabel>{t.libHistoryTitle}（{item.history.length}）</SLabel>
-        {item.history.length === 0 && <Card style={{ marginBottom:16 }}><div style={{ padding:"32px", textAlign:"center", color:C.label, fontSize:fs(14) }}>{t.libHistoryEmpty}</div></Card>}
-        {[...item.history].reverse().map((h, i) => (
+        <SLabel>{t.libHistoryTitle}（{history.length}）</SLabel>
+        {history.length === 0 && <Card style={{ marginBottom:16 }}><div style={{ padding:"32px", textAlign:"center", color:C.label, fontSize:fs(14) }}>{t.libHistoryEmpty}</div></Card>}
+        {[...history].reverse().map((h, i) => (
           <Card key={i} style={{ marginBottom:10 }}>
             <div style={{ padding:"12px 16px 10px", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
               <span style={{ fontSize:fs(14), fontWeight:700, color:C.text }}>{fmtDate(h.date, lang)}</span>
@@ -223,7 +223,7 @@ function LibItemDetail({ item, onUpdate, onDelete, onBack }) {
   );
 }
 
-export function LibraryTab({ library, setLibrary, openItemId, setOpenItemId }) {
+export function LibraryTab({ library, setLibrary, historyByLib, openItemId, setOpenItemId }) {
   const lang = useLang(); const t = T[lang]; const C = useC();
   const [showAdd,  setShowAdd]  = useState(false);
   const [newName,  setNewName]  = useState("");
@@ -235,7 +235,7 @@ export function LibraryTab({ library, setLibrary, openItemId, setOpenItemId }) {
 
   const addItem = () => {
     if (!newName.trim()) return;
-    setLibrary(p => [...p, { id: uid(), name: newName.trim(), muscleGroup: newMG, color: newColor, recordingMode: newRecMode, note:"", history:[] }]);
+    setLibrary(p => [...p, { id: uid(), name: newName.trim(), muscleGroup: newMG, color: newColor, recordingMode: newRecMode, note:"" }]);
     setNewName(""); setNewRecMode(RECORDING_MODES[0]); setShowAdd(false);
   };
 
@@ -243,7 +243,7 @@ export function LibraryTab({ library, setLibrary, openItemId, setOpenItemId }) {
     const item = library.find(l => l.id === openItemId);
     if (item) return (
       <SwipeBackView key="libitem" onBack={() => setOpenItemId(null)}>
-        <LibItemDetail item={item}
+        <LibItemDetail item={item} history={historyByLib.get(item.id) || []}
           onUpdate={updated => setLibrary(p => p.map(l => l.id === updated.id ? updated : l))}
           onDelete={() => { setLibrary(p => p.filter(l => l.id !== openItemId)); setOpenItemId(null); }}
           onBack={() => setOpenItemId(null)} />
@@ -305,7 +305,7 @@ export function LibraryTab({ library, setLibrary, openItemId, setOpenItemId }) {
                     <div style={{ flex:1, minWidth:0 }}>
                       <div style={{ fontSize:fs(15), fontWeight:500, color:C.text, marginBottom:1 }}>{item.name}</div>
                       <div style={{ fontSize:fs(11), color:C.label }}>
-                        {item.history.length > 0 ? `${item.history.length} ${t.libRecords} ${fmtDate(item.history[item.history.length - 1].date, lang)}` : t.libNoHistory}
+                        {(() => { const h = historyByLib.get(item.id) || []; return h.length > 0 ? `${h.length} ${t.libRecords} ${fmtDate(h[h.length - 1].date, lang)}` : t.libNoHistory; })()}
                       </div>
                     </div>
                     {item.note && <span style={{ fontSize:fs(11), color:C.blue, background:`${C.blue}10`, borderRadius:6, padding:"2px 8px", flexShrink:0 }}>{t.libHasNote}</span>}

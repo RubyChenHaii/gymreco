@@ -5,13 +5,14 @@ import { useC } from "../theme.js";
 import { Card, SLabel } from "../components/ui.jsx";
 import { todayStr } from "../utils/date.js";
 import { exportMDByScope } from "../utils/exportUtils.js";
+import { SCHEMA_VERSION } from "../data/constants.js";
 import { BottomSheet } from "../components/BottomSheet.jsx";
 import { ConfirmDialog } from "../components/ConfirmDialog.jsx";
 import { SegmentedControl } from "../components/SelectionControls.jsx";
 import { Button } from "../components/Button.jsx";
 
 // ── 版本號：每次發布只需改這一行 ──────────────────────────────
-const APP_VERSION = "2.3.0_b2";
+const APP_VERSION = "2.4.0_b";
 
 // 「標題＋副標題在左、箭頭在右」的整列按鈕共用版型（匯出/匯入/重設/清除）
 const rowStyle = { marginBottom:10, textAlign:"left", display:"flex", justifyContent:"space-between", alignItems:"center" };
@@ -56,7 +57,7 @@ export function AboutTab({ workouts, library, routines, onImport, onReset, onCle
   };
 
   const exportJSON = () => {
-    const data = { version: APP_VERSION, exportedAt: new Date().toISOString(), workouts, library, routines };
+    const data = { version: APP_VERSION, schemaVersion: SCHEMA_VERSION, exportedAt: new Date().toISOString(), workouts, library, routines };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type:"application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a"); a.href = url;
@@ -72,6 +73,15 @@ export function AboutTab({ workouts, library, routines, onImport, onReset, onCle
     reader.onload = (ev) => {
       try {
         const parsed = JSON.parse(ev.target.result);
+
+        // schemaVersion（選填）：沒有＝舊版備份，載入時會由 migrateData 轉換；比目前 App 認得的更新，就無法保證讀得正確，直接拒絕
+        if (parsed.schemaVersion !== undefined) {
+          if (!Number.isInteger(parsed.schemaVersion) || parsed.schemaVersion < 1) throw new Error("invalid");
+          if (parsed.schemaVersion > SCHEMA_VERSION) {
+            setImportError(isZh ? "此備份由較新版本的 GymReco 匯出，請先更新 App 再匯入。" : "This backup was exported by a newer version of GymReco. Please update the app before importing.");
+            return;
+          }
+        }
 
         // 第一層：基本結構檢查
         if (!parsed.workouts || !parsed.library ||
@@ -91,7 +101,7 @@ export function AboutTab({ workouts, library, routines, onImport, onReset, onCle
         for (const l of parsed.library) {
           if (typeof l.id !== "string" && typeof l.id !== "number") throw new Error("invalid");
           if (typeof l.name !== "string") throw new Error("invalid");
-          if (!Array.isArray(l.history)) throw new Error("invalid");
+          // library[].history 已不再使用（訓練歷史由 workouts 現算）；舊備份帶有此欄位時，載入時會由 migrateData 丟棄
         }
 
         // 第四層：routines 為選填欄位（舊版備份沒有這個欄位時，向下相容，預設空陣列，不可讓匯入失敗）

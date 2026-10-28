@@ -5,7 +5,12 @@
 //   新：setKind: "weight" | "laps"
 //       weightSets: [{ value: 15, unit: "kg", note: "", reps: [10, 5, 5] }]
 //
-// 處理範圍：workouts[].exercises[] 與 library[].history[] 裡 mode 為 weight_sets 的紀錄。
+// 處理範圍：workouts[].exercises[] 裡 mode 為 weight_sets 的紀錄。
+// 另外會補存 exercise 的 muscleGroup / color 快照（缺少時用動作庫現值補上；與 App 載入時的 migrateData 規則相同），
+// 並在輸出的備份加上 schemaVersion，讓腳本輸出與 App 匯出的備份結構一致。
+// 另外會移除 library[].history（訓練歷史不再另存，一律由 workouts 現算）。移除前會先做「孤兒檢查」：
+//   找出 history 裡在 workouts 中找不到對應訓練（workoutId 不存在，或該訓練沒有這個動作）的紀錄。
+//   這些紀錄移除後就無法由 workouts 還原，所以預覽時會列出；有孤兒時，--write 必須搭配 --drop-orphans 才會輸出。
 // 已經是新結構的組別（有 unit 欄位）會原樣保留，所以重複執行是安全的。
 //
 // 用法：
@@ -14,6 +19,7 @@
 // 選項：
 //   --out <路徑>        輸出位置（預設：<備份>.migrated.json，不會覆蓋原檔）
 //   --write             真的寫入檔案；未加此選項時只預覽，不會動到任何檔案
+//   --drop-orphans      確認接受孤兒紀錄被丟棄（有孤兒時，--write 需要這個選項）
 //   --answers <檔.json> 預先給定答案（略過互動提問；格式見下方「答案檔」）
 //   --help, -h          顯示說明
 //
@@ -40,9 +46,11 @@
 const fs = require("fs");
 const path = require("path");
 
+// ⚠️ 與 src/data/constants.js 的 SCHEMA_VERSION 必須保持一致（本檔為 CommonJS，無法直接 import ESM）
+const SCHEMA_VERSION = 1;
 const WEIGHT_UNITS = ["kg", "lb"];
 const DISTANCE_UNITS = ["m", "km", "mi"];
-const USAGE = "用法：node scripts/migrate-data.js <備份.json> [--out 路徑] [--write] [--answers 答案.json]";
+const USAGE = "用法：node scripts/migrate-data.js <備份.json> [--out 路徑] [--write] [--drop-orphans] [--answers 答案.json]";
 
 function fail(msg) {
   console.error(`\n❌ migrate-data 失敗：${msg}\n`);
@@ -78,13 +86,14 @@ function parseLegacyWeight(raw) {
 }
 
 // ── 參數 ───────────────────────────────────────────────────
-const opts = { input: null, out: null, write: false, answers: null };
+const opts = { input: null, out: null, write: false, answers: null, dropOrphans: false };
 const argv = process.argv.slice(2);
 for (let i = 0; i < argv.length; i++) {
   const a = argv[i];
   if (a === "--help" || a === "-h") { console.log(USAGE); process.exit(0); }
   else if (a === "--out") opts.out = path.resolve(argv[++i] || fail("--out 後面需要路徑"));
   else if (a === "--write") opts.write = true;
+  else if (a === "--drop-orphans") opts.dropOrphans = true;
   else if (a === "--answers") opts.answers = argv[++i] || fail("--answers 後面需要檔案路徑");
   else if (a.startsWith("-")) fail(`不認得的選項 ${a}\n${USAGE}`);
   else if (!opts.input) opts.input = a;
@@ -97,6 +106,7 @@ let data;
 try { data = JSON.parse(fs.readFileSync(opts.input, "utf8")); }
 catch (e) { fail(`讀取或解析 ${opts.input} 失敗：${e.message}`); }
 if (!Array.isArray(data.workouts) || !Array.isArray(data.library)) fail("備份檔結構不正確（需要 workouts、library 陣列）");
+if (data.schemaVersion !== undefined && (!Number.isInteger(data.schemaVersion) || data.schemaVersion > SCHEMA_VERSION)) fail(`備份的 schemaVersion（${data.schemaVersion}）比本腳本認得的（${SCHEMA_VERSION}）新或格式不正確，請先更新腳本`);
 
 let presetAnswers = {};
 if (opts.answers) {
@@ -113,9 +123,6 @@ const isCardio = (id) => libById.get(String(id))?.muscleGroup === "有氧";
 const targets = [];
 data.workouts.forEach((w) => (w.exercises || []).forEach((ex) => {
   if ((ex.mode || "weight_sets") === "weight_sets" && Array.isArray(ex.weightSets)) targets.push({ entry: ex, libId: String(ex.libId), where: `訓練 ${w.date}` });
-}));
-data.library.forEach((item) => (item.history || []).forEach((h) => {
-  if ((h.mode || "weight_sets") === "weight_sets" && Array.isArray(h.weightSets)) targets.push({ entry: h, libId: String(item.id), where: `動作庫歷史 ${h.date}` });
 }));
 const isNew = (g) => g.unit !== undefined;
 const legacyTargets = targets.filter((t) => t.entry.weightSets.some((g) => !isNew(g)));
@@ -241,9 +248,6 @@ const unitAnswers = new Map();  // `unit:<原字串>` -> 代碼 | "skip"        
   data.workouts.forEach((w) => (w.exercises || []).forEach((ex) => {
     if (ex.mode === "length_pace" && Array.isArray(ex.lengthPace)) ex.lengthPace.forEach((seg) => lpSegs.push(seg));
   }));
-  data.library.forEach((item) => (item.history || []).forEach((h) => {
-    if (h.mode === "length_pace" && Array.isArray(h.lengthPace)) h.lengthPace.forEach((seg) => lpSegs.push(seg));
-  }));
   let unitFixed = 0, unitSkipped = 0;
   for (const seg of lpSegs) {
     const raw = String(seg.unit ?? "");
@@ -271,6 +275,34 @@ const unitAnswers = new Map();  // `unit:<原字串>` -> 代碼 | "skip"        
     unitFixed++;
   }
 
+  // 2f. 補存快照：缺少 muscleGroup / color 的 exercise，用動作庫現值補一次（規則同 src/utils/migrateData.js 的 fillSnapshot）
+  const libByIdAll = new Map(data.library.map((l) => [String(l.id), l]));
+  let snapFilled = 0, snapMissing = 0;
+  data.workouts.forEach((w) => {
+    w.exercises = (w.exercises || []).map((ex) => {
+      if (ex.muscleGroup !== undefined && ex.color !== undefined) return ex;
+      const it = libByIdAll.get(String(ex.libId));
+      if (!it) { snapMissing++; return ex; }
+      const { libId, muscleGroup, color, ...rest } = ex;
+      snapFilled++;
+      return { libId, muscleGroup: muscleGroup ?? it.muscleGroup, color: color ?? it.color, ...rest };
+    });
+  });
+
+  // 2e. 孤兒檢查 + 移除 library[].history（訓練歷史由 workouts 現算，不再另存）
+  const workoutById = new Map(data.workouts.map((w) => [String(w.id), w]));
+  const orphans = [];
+  let historyTotal = 0;
+  data.library.forEach((item) => {
+    (item.history || []).forEach((h) => {
+      historyTotal++;
+      const w = workoutById.get(String(h.workoutId));
+      if (!w) orphans.push({ name: item.name, date: h.date, why: `找不到 workoutId=${h.workoutId} 的訓練` });
+      else if (!(w.exercises || []).some((ex) => String(ex.libId) === String(item.id))) orphans.push({ name: item.name, date: h.date, why: `訓練 ${w.date} 裡沒有這個動作` });
+    });
+    delete item.history;
+  });
+
   if (rl) rl.close();
 
   // ── 摘要 ─────────────────────────────────────────────────
@@ -279,6 +311,16 @@ const unitAnswers = new Map();  // `unit:<原字串>` -> 代碼 | "skip"        
   if (skippedGroups > 0) console.log(`⚠️  ${skippedGroups} 組被略過，維持舊格式（App 仍可顯示，開啟編輯時會盡力轉換）`);
   if (lpSegs.length > 0) console.log(`📏 距離 / 配速：共 ${lpSegs.length} 段，統一單位 ${unitFixed} 段${unitSkipped ? `，略過 ${unitSkipped} 段（維持原字串）` : ""}`);
   if (legacyTargets.length === 0) console.log("ℹ️  沒有需要轉換的舊資料");
+  if (snapFilled + snapMissing > 0) console.log(`📌 快照：補上 muscleGroup / color ${snapFilled} 筆${snapMissing ? `；${snapMissing} 筆的動作已從動作庫刪除，無法補上（維持原樣）` : ""}`);
+  if (historyTotal > 0) {
+    console.log(`🗂️  將移除 library[].history 共 ${historyTotal} 筆（訓練歷史改由 workouts 現算）`);
+    if (orphans.length === 0) console.log("✅ 孤兒檢查：每一筆 history 都能在 workouts 找到對應的訓練，不會遺失資料");
+    else {
+      console.log(`⚠️  孤兒檢查：有 ${orphans.length} 筆 history 在 workouts 找不到對應的訓練，移除後無法由 workouts 還原：`);
+      orphans.slice(0, 20).forEach((o) => console.log(`   ${o.date}  ${o.name}（${o.why}）`));
+      if (orphans.length > 20) console.log(`   …還有 ${orphans.length - 20} 筆`);
+    }
+  }
   if (log.length) {
     console.log("\n你的選擇（可存成 --answers 答案檔重複使用）：");
     const ans = {};
@@ -292,8 +334,11 @@ const unitAnswers = new Map();  // `unit:<原字串>` -> 代碼 | "skip"        
   if (!opts.write) {
     console.log(`\n🔍 預覽模式：未寫入任何檔案。確認無誤後，加上 --write 才會輸出到 ${opts.out}`);
   } else {
+    if (orphans.length > 0 && !opts.dropOrphans) fail(`有 ${orphans.length} 筆孤兒 history 會因此遺失。請先檢查上方清單，確定可以丟棄後，加上 --drop-orphans 再執行一次`);
     if (path.resolve(opts.out) === path.resolve(opts.input)) console.log("⚠️  輸出位置與輸入相同，原檔將被覆蓋");
-    fs.writeFileSync(opts.out, JSON.stringify(data, null, 2) + "\n", "utf8");
+    const { version, schemaVersion: _sv, ...restData } = data;   // schemaVersion 緊接在 version 之後，與 App 匯出的欄位順序一致
+    const outData = { version, schemaVersion: SCHEMA_VERSION, ...restData };
+    fs.writeFileSync(opts.out, JSON.stringify(outData, null, 2) + "\n", "utf8");
     console.log(`\n✅ 已輸出 ${opts.out}\n   接著可用 npm run init-data 轉成範例資料，或直接在 App「關於」頁匯入這份 JSON。`);
   }
 })();

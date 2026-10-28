@@ -17,7 +17,7 @@
 </h5>
 
 <p align="center">
-<img src="https://img.shields.io/badge/version-2.1.5-violet.svg?style=for-the-badge"/>
+<img src="https://img.shields.io/badge/version-2.4.0_beta-violet.svg?style=for-the-badge"/>
 <a href="https://linktr.ee/rubytheduckouo"><img src="https://img.shields.io/badge/author-ruby_chen-brightgreen?style=for-the-badge"></a>
 <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge"/></a>
 </p>
@@ -262,6 +262,43 @@ Today, GymReco continues to evolve through daily real-world use — including my
 
 ## 📋 Changelog｜版本紀錄
 
+### Latest
+
+**v2.4.0_b**
+
+**Data structure**
+
+- Weight sets now store `{ value, unit, note, reps }` instead of a free-text weight string, with a per-exercise `setKind` of `weight` or `laps`.
+- New Weight / Laps toggle in the set editor. Weight units are kg and lb, distance units are m, km and mi. The free-text note is optional and does not appear in the History preview.
+- Distance and pace units are now a fixed list (`m`, `km`, `mi`) instead of free text. Legacy aliases such as `KM`, `公里` and `miles` are normalized automatically, and unknown strings are kept as-is.
+- Each exercise in `workouts` now carries a `muscleGroup` and `color` snapshot, filled at save time and backfilled once for older records. Editing a workout keeps the original snapshot, so later library changes do not rewrite past records.
+- Legacy data is converted at load and import through a single entry point, `migrateData`. Cases that need a human decision are left unchanged.
+
+**Storage**
+
+- `library[].history` is no longer stored. Per-exercise history is derived from `workouts`, which is now the only source of training data.
+- "Last session" is now the most recent by date, not by save order, so back-logged workouts no longer count as the latest.
+- Old `history` is dropped on load or import, and storage for `workouts` plus `library` shrinks by roughly 38% on the sample data.
+- Importing an old backup still works, with or without `history`.
+
+**Tooling**
+
+- Added `scripts/migrate-data.js`, which converts old backups to the new structure. It auto-converts what it can and prompts for ambiguous values.
+- The script normalizes LengthPace units, drops `library[].history`, and runs an orphan check on history entries that have no matching workout. Writing is blocked when orphans exist unless you pass `--drop-orphans`.
+- It previews by default and only writes with `--write`. Pre-answers can be supplied with `--answers`, and it is safe to run repeatedly.
+- `export-initial-data.js` now strips `history` from the sample data it generates.
+
+**Pending Chores**
+
+- [GymReco資料結構.md](./GymReco資料結構.md) has not yet been updated to reflect this release. Documentation updates are planned.
+
+---
+
+### Previous Releases
+
+<details>
+<summary>Click to view historic updates</summary>
+
 **v2.1.5**
 
 - **Back Gesture Support:** Enabled left-to-edge swipe right to navigate back to the previous page.
@@ -276,7 +313,7 @@ Today, GymReco continues to evolve through daily real-world use — including my
 
 - **Data Utility:** Added `export-initial-data.js`, a utility script that converts exported JSON data into `initialData.js`. For detailed usage instructions, see [GymReco資料結構.md](./GymReco資料結構.md).
 
-**v2.0.0 — Major UI & Cardio Expansion**
+**v2.0.0**
 
 - **Distance & Pace Mode:** Introduced Length/Pace recording with auto-calculated overall pace (built for NRC / GPS app integration).
 
@@ -284,25 +321,18 @@ Today, GymReco continues to evolve through daily real-world use — including my
 
 - **Interaction Fixes:** Refreshed exercise library icons and upgraded interactive pickers (`RepsPicker`).
 
----
+**v1.9.0 – v1.9.5 (Data & AI Workflows)**
 
-**Older Releases (v1.0 – v1.9.5)**
+- Added structured **AI-ready Markdown export** and direct TXT sharing.
 
-<details>
-<summary>Click to view historic updates (v1.0 – v1.9.5)</summary>
+- Added historical analytics views (Yearly category, monthly grouping, and multi-color calendar dots).
 
-* **v1.9.0 – v1.9.5 (Data & AI Workflows)**
+- Major modularization refactor (decoupled 1,700-line monolith into 15 components).
 
-  * Added structured **AI-ready Markdown export** and direct TXT sharing.
+- Added back-log support (up to 10 days) and network-first Service Worker.
 
-  * Added historical analytics views (Yearly category, monthly grouping, and multi-color calendar dots).
+**v1.0.0 – v1.6.0 (Foundation & PWA Infrastructure)**
 
-  * Major modularization refactor (decoupled 1,700-line monolith into 15 components).
-
-  * Added back-log support (up to 10 days) and network-first Service Worker.
-
-* **v1.0.0 – v1.6.0 (Foundation & PWA Infrastructure)**
-
-  * Complete JSON data backup feature, PWA setup, and security hardening.
+- Complete JSON data backup feature, PWA setup, and security hardening.
 
 </details>

@@ -89,7 +89,7 @@ function RoutineOverview({ routines, library, workouts, onOpenRoutines, t, C, la
   );
 }
 
-export function LogTab({ library, routines, workouts, onSave, onAddToLibrary, showToast, onOpenRoutines }) {
+export function LogTab({ library, routines, workouts, historyByLib, onSave, onAddToLibrary, showToast, onOpenRoutines }) {
   const lang = useLang(); const t = T[lang]; const C = useC();
     // 只在元件第一次掛載時讀一次草稿（切換分頁、App 重啟後回到這裡，都會從這裡還原）
   const [initialDraft] = useState(() => loadLogDraft(library));
@@ -119,10 +119,13 @@ export function LogTab({ library, routines, workouts, onSave, onAddToLibrary, sh
     saveLogDraft({ rows, selectedDate });
   }, [rows, selectedDate]);
 
+  const lastSeen = (id) => { const h = historyByLib.get(id); return h && h.length ? h[h.length - 1].date : null; };
+
   const addRow = (libId) => {
     const item = library.find(l => l.id === libId);
     const mode  = item?.recordingMode || "weight_sets";  // 舊資料無此欄位 → 視為 weight_sets
-    const lastH = item?.history.length > 0 ? item.history[item.history.length - 1] : null;
+    const hist  = historyByLib.get(libId) || [];
+    const lastH = hist.length > 0 ? hist[hist.length - 1] : null;   // 依日期最近的一筆
     // equipment 是兩種 mode 共用的欄位（跟資料結構無關），永遠沿用最近一次紀錄；
     // 只有 weightSets/lengthPace 這種「跟 mode 綁定」的資料，才需要比對 mode 是否一致才帶入
     const modeMatches = lastH && (lastH.mode || "weight_sets") === mode;
@@ -148,7 +151,7 @@ export function LogTab({ library, routines, workouts, onSave, onAddToLibrary, sh
 
   const handleAddNew = () => {
     if (!newName.trim()) return;
-    const newItem = { id: uid(), name: newName.trim(), muscleGroup: newMG, color: newColor, recordingMode: newRecMode, note:"", history:[] };
+    const newItem = { id: uid(), name: newName.trim(), muscleGroup: newMG, color: newColor, recordingMode: newRecMode, note:"" };
     onAddToLibrary(newItem);
     // 新增後直接加入本次訓練
     setRows(p => [...p, {
@@ -350,7 +353,7 @@ export function LogTab({ library, routines, workouts, onSave, onAddToLibrary, sh
                       style={{ display:"flex", alignItems:"center", gap:12, width:"100%", padding:"13px 20px", background:"none", border:"none", cursor:"pointer", textAlign:"left" }}>
                        <div style={{ width:10, height:10, borderRadius:"50%", background:it.color, flexShrink:0 }} />
                       <span style={{ flex:1, fontSize:fs(16), color:C.text }}>{it.name}</span>
-                      {it.history.length > 0 && <span style={{ fontSize:fs(11), color:C.label }}>{t.logLastSeen} {it.history[it.history.length - 1].date}</span>}
+                      {lastSeen(it.id) && <span style={{ fontSize:fs(11), color:C.label }}>{t.logLastSeen} {lastSeen(it.id)}</span>}
                       <span style={{ color:C.blue, fontSize:fs(20), lineHeight:1 }}>+</span>
                     </button>
                    </div>

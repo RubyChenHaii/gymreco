@@ -18,8 +18,8 @@
 //   +3 / -2       相對該筆「目前日期」往後 / 往前 N 天
 //
 // 處理順序：--shift-days → --set → --edit
-// 同步規則：訓練日期變動時，會同步更新該筆 weekday，以及 library 內對應（workoutId 相同）的 history 日期，
-//          並重新排序（workouts 新→舊、history 舊→新），與 App 儲存資料時的排序一致。
+// 同步規則：訓練日期變動時，會同步更新該筆 weekday，並重新排序（workouts 新→舊），與 App 儲存資料時的排序一致。
+//          library[].history 已不再使用（訓練歷史由 workouts 現算），輸出時一律移除。
 // 規律（routines）原樣輸出：週/月進度是依「今天」即時計算，與範例日期無關。
 const fs = require("fs");
 const path = require("path");
@@ -144,24 +144,13 @@ async function interactiveEdit() {
   // 3. 互動逐筆
   if (opts.edit) await interactiveEdit();
 
-  // 4. 同步：weekday、library history、排序
+  // 4. 同步：weekday、排序；並移除 library[].history（舊備份才會有）
   const changed = workouts.filter(w => w.date !== originalDates.get(String(w.id)));
-  const newDateById = new Map(workouts.map(w => [String(w.id), w.date]));
-  let orphanCount = 0;
   if (changed.length > 0) {
     changed.forEach(w => { w.weekday = weekdayOf(w.date); });
     workouts.sort((a, b) => b.date.localeCompare(a.date));   // 新→舊（穩定排序，同日維持原順序）
-    library.forEach(item => {
-      (item.history || []).forEach(h => {
-        const nd = newDateById.get(String(h.workoutId));
-        if (nd) h.date = nd;
-      });
-      (item.history || []).sort((a, b) => a.date.localeCompare(b.date)); // 舊→新
-    });
   }
-  library.forEach(item => (item.history || []).forEach(h => {
-    if (!newDateById.has(String(h.workoutId))) orphanCount++;
-  }));
+  library.forEach(item => { delete item.history; });
 
   // 5. 摘要
   if (changed.length === 0) {
@@ -170,7 +159,6 @@ async function interactiveEdit() {
     console.log(`\n📅 共調整 ${changed.length} 筆訓練日期：`);
     changed.forEach(w => console.log(`   id=${w.id}  ${originalDates.get(String(w.id))} → ${w.date}（${w.weekday.slice(0, 3)}）`));
   }
-  if (orphanCount > 0) console.log(`⚠️  有 ${orphanCount} 筆 library history 找不到對應的訓練（workoutId 不存在），日期未更動`);
 
   // 6. 輸出
   // 把 JSON 的 "key": 還原成 key:，讓輸出接近手寫風格（只處理「行首的屬性名稱」，字串內容不受影響）
