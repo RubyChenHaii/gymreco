@@ -12,7 +12,7 @@ import { SegmentedControl } from "../components/SelectionControls.jsx";
 import { Button } from "../components/Button.jsx";
 
 // ── 版本號：每次發布只需改這一行 ──────────────────────────────
-const APP_VERSION = "2.4.0_b";
+const APP_VERSION = "2.4.0_b1";
 
 // 「標題＋副標題在左、箭頭在右」的整列按鈕共用版型（匯出/匯入/重設/清除）
 const rowStyle = { marginBottom:10, textAlign:"left", display:"flex", justifyContent:"space-between", alignItems:"center" };

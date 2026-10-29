@@ -1,265 +1,220 @@
-# GymReco 資料結構 — v2.2.0
+# GymReco 資料結構
 
-> 依 Project 內實際檔案整理。圖中「→」表示 import / 呼叫關係。
-> 標示 ★ 的是 v2.2.0 新增或變更的部分（字體縮放、iOS PWA 鍵盤與縮放處理）。
+- App 版本：v2.4.0_b
+- 資料結構版本（`schemaVersion`）：**1**
+- 本文件以 `src/utils/migrateData.js` 檔頭的 schemaVersion 1 定義為準；兩者不一致時，以程式碼為準，並請同步修正本文件。
 
-## 1. 專案目錄樹
+---
 
-```
-gymreco/
-├─ package.json                    版本號由 build 腳本同步；scripts: start / build / deploy / init-data
-├─ public/
-│  ├─ index.html                   viewport-fit=cover、★maximum-scale=1（見 §7）、theme-color、apple-touch-icon、manifest 連結
-│  ├─ manifest.json                start_url=/gymreco/，standalone；icons: favicon / logo192 / logo512
-│  ├─ service-worker.js            HTML/JS/CSS 網路優先（3 秒逾時退回快取）；圖示快取優先
-│  └─ (favicon.ico, logo192.png, logo512.png, apple-touch-icon.png)
-├─ scripts/
-│  ├─ sync-sw-version.js           build 後讀 AboutTab 的 APP_VERSION → 寫入 service-worker 的 CACHE_NAME 與 package.json 的 version
-│  └─ export-initial-data.js       備份 JSON → src/data/initialData.js（預設僅預覽，加 --write 才輸出；可平移/指定訓練日期）
-└─ src/
-   ├─ App.jsx                      根元件：全域 state、導覽堆疊、持久化、匯入/重設/清除；
-   │                               ★鍵盤處理（vvHeight 外殼高度、inputFocused）、★字體縮放 state 與 Provider、★Toast 可換行
-   ├─ theme.js                     色彩（LIGHT/DARK）、RADIUS/SPACING/FONT、玻璃感、Card 陰影、月曆漸層 Context、
-   │                               ★FONT_SCALES / FontScaleCtx / useFontScale / fs()（字體縮放）
-   ├─ data/
-   │  ├─ i18n.js                   LangCtx、T（zh/en 文案，★新增 fontSize* 系列）、MG_EN
-   │  ├─ constants.js              色盤、部位、星期、記錄模式、規律週期/比對類型
-   │  └─ initialData.js            INIT_LIBRARY / INIT_WORKOUTS / INIT_ROUTINES（範例資料）
-   ├─ hooks/
-   │  └─ useStorage.js             lsGet、lsSet（寫入延後一個 tick）
-   ├─ utils/
-   │  ├─ date.js                   todayStr、localDate、uid、fmtDate
-   │  ├─ paceUtils.js              距離/配速的拆合、格式化、總時間↔配速、整體配速
-   │  ├─ routineUtils.js           週/月區間、規律達標計算、LogTab 預覽「再算 1 天」
-   │  ├─ exportUtils.js            Markdown 匯出（動作庫段落、單日段落、依範圍匯出）
-   │  └─ logDraft.js               訓練草稿：讀/寫/清除、3 小時期限、補登日期保護
-   ├─ components/
-   │  ├─ ui.jsx                    Div、Card（含 tint）、SLabel、StatusBar、BottomNav
-   │  ├─ Button.jsx                Button（見 §4）、InfoButton、CloseButton、BackButton
-   │  ├─ AutoGrowTextarea.jsx      AutoGrowTextarea（編輯，自動增高；★增高時保存/還原外層捲動位置、聚焦後捲到可視區）、
-   │  │                            CollapsibleText（顯示，可收合）
-   │  ├─ SelectionControls.jsx     SegmentedControl、ColorPicker、ChipGroup、ExerciseFieldsGroup
-   │  ├─ BottomSheet.jsx           底部玻璃面板（把手拖曳關閉）
-   │  ├─ ConfirmDialog.jsx         確認彈窗
-   │  ├─ SwipeBackView.jsx         子頁左緣右滑返回外殼
-   │  ├─ WeightSetEditor.jsx       重量/組次編輯 → RepsPicker
-   │  ├─ LengthPaceEditor.jsx      距離/配速編輯（配速/總時間切換）→ NumberPicker
-   │  ├─ NumberPicker.jsx          滾輪式數字選擇
-   │  └─ RepsPicker.jsx            NumberPicker 的次數版（1–50）
-   └─ tabs/
-      ├─ HomeTab.jsx               總覽：統計卡、月曆（漸層）、最近紀錄、「開始／繼續本次訓練」；
-      │                            ★標題列新增「Aa」按鈕與字體大小 BottomSheet
-      ├─ LogTab.jsx                記錄訓練：草稿、規律預覽、動作卡片
-      ├─ HistoryTab.jsx            歷史：年→月→日分組、搜尋
-      ├─ DetailTab.jsx             DetailTab（編輯單次訓練）、DayDetailTab（單日檢視）
-      ├─ LibraryTab.jsx            動作庫列表＋動作詳情（LibItemDetail）
-      ├─ RoutineTab.jsx            規律管理
-      └─ AboutTab.jsx              關於、版本號、匯出/匯入、月曆漸層、維護
+## 1. 儲存位置
+
+全部存於瀏覽器 localStorage，沒有後端。
+
+| Key | 內容 | 進備份 JSON |
+|---|---|---|
+| `wt_workouts` | 訓練紀錄（陣列，新存的在前） | ✅ |
+| `wt_library` | 動作庫 | ✅ |
+| `wt_routines` | 規律（每週／每月目標） | ✅ |
+| `wt_logDraft` | 訓練頁尚未完成的草稿，3 小時期限 | ❌ |
+| `wt_lang` `wt_dark` `wt_fontScale` `wt_homeStatPeriod` `wt_calGradientMode` `wt_calGradientStyle` | 偏好設定 | ❌ |
+
+**唯一的訓練資料來源是 `wt_workouts`。** 動作庫裡不再存訓練歷史；每個動作的「歷史」一律由 `workouts` 現算（見第 6 節）。
+
+---
+
+## 2. 備份 JSON 格式
+
+```json
+{
+  "version": "2.4.0_b",
+  "schemaVersion": 1,
+  "exportedAt": "2026-10-29T08:00:00.000Z",
+  "workouts": [],
+  "library": [],
+  "routines": []
+}
 ```
 
-## 2. 導覽與畫面
+- `version`：App 版本字串，僅供參考。
+- `schemaVersion`：整數，資料形狀改變時才遞增。**沒有此欄位的備份視為舊格式**；比 App 認得的更大則拒絕匯入。
+- `routines` 為選填；舊備份沒有時匯入後為空陣列。
 
-```
-App（tab state + navStack）
-├─ 底部分頁：home｜history｜log｜library｜about        （BottomNav，切換時清空堆疊）
-└─ 子頁（SUB_TABS，進入時把來源頁推入 navStack，不顯示 BottomNav）
-   ├─ detail     DetailTab      ← DayDetailTab 的「編輯此訓練」
-   ├─ daydetail  DayDetailTab   ← HomeTab 月曆/最近紀錄、HistoryTab 卡片
-   └─ routine    RoutineTab     ← HomeTab 統計卡、LogTab 規律區塊
-   以上三個子頁與 LibItemDetail 皆包在 SwipeBackView 內（邊緣右滑返回）
-   「動作庫 →」→ LibraryTab 詳情；libItemFromSub 標記讓返回回到來源頁
+---
 
-★ BottomNav 的顯示條件：不在子頁、鍵盤未開（!vvHeight）、沒有文字輸入框聚焦（!inputFocused）
-```
+## 3. Workout（`workouts[]`）
 
-## 3. 資料與持久化
+一筆 = 一次訓練（session）。同一天可以有多筆。
 
-### localStorage keys
+| 欄位 | 型別 | 說明 |
+|---|---|---|
+| `id` | string \| number | 不透明識別碼。新資料為 UUID 字串；早期範例資料為數字。**比較前請一律轉成字串** |
+| `date` | `"YYYY-MM-DD"` | 本地時間日期，沒有時分秒 |
+| `weekday` | string | 英文全名（`"Monday"`…），由 `date` 推得 |
+| `muscleGroups` | string[] | 該次訓練的部位（繁中名稱，見第 7 節）。存檔時寫入，之後不隨動作庫變動 |
+| `exercises` | Exercise[] | 見下節 |
 
-| key                   | 內容                                     | 寫入者                              |
-| --------------------- | ---------------------------------------- | ----------------------------------- |
-| `wt_workouts`         | 訓練紀錄陣列（新→舊）                    | App（lsSet）                        |
-| `wt_library`          | 動作庫陣列（含各動作 history）           | App（lsSet）                        |
-| `wt_routines`         | 規律陣列（上限 5 條）                    | App（lsSet）                        |
-| `wt_lang`             | `"zh"` / `"en"`                          | App                                 |
-| `wt_dark`             | 深色模式                                 | App                                 |
-| `wt_homeStatPeriod`   | 首頁統計看週或月規律                     | App                                 |
-| `wt_calGradientMode`  | `animated` / `static` / `off`            | App                                 |
-| `wt_calGradientStyle` | `linear` / `conic`                       | App                                 |
-| `wt_fontScale` ★      | `normal` / `large` / `xlarge`            | App（讀取時若不是合法值，退回 `normal`） |
-| `wt_logDraft`         | 草稿 `{ updatedAt, selectedDate, rows }` | logDraft.js（同步寫入，不經 lsSet） |
+**排序**：陣列是「最後存檔的在前」，**不保證依 `date` 排序**（補登舊日期的訓練會排在前面）。需要時間順序請自行依 `date` 排序，同日再依陣列位置。
 
-偏好設定類（`wt_lang`、`wt_dark`、`wt_homeStatPeriod`、`wt_calGradient*`、`wt_fontScale`）不包含在 JSON 備份內，也不受匯入／重設／清除影響。
+---
 
-草稿清除時機：完成訓練（LogTab 同步清除）、`handleImport`／`handleReset`／`handleClear`、卡片全部移除、超過 3 小時、動作全被刪除。
+## 4. Exercise（`workouts[].exercises[]`）
 
-### 資料形狀
+| 欄位 | 型別 | 說明 |
+|---|---|---|
+| `libId` | string | 對應 `library[].id`。動作被刪除後可能找不到（懸空） |
+| `muscleGroup` | string | **快照**：紀錄當下該動作的部位 |
+| `color` | string | **快照**：紀錄當下該動作的顏色（hex） |
+| `mode` | `"weight_sets"` \| `"length_pace"` | 紀錄模式。缺少時視為 `"weight_sets"` |
+| `equipment` | string | 器材設定，可為空字串 |
+| `feeling` | string | 當次感受，可為空字串 |
+| `setKind` | `"weight"` \| `"laps"` | **僅 `weight_sets` 有**。缺少時視為 `"weight"`；`length_pace` 沒有此欄位 |
+| `weightSets` | WeightSet[] | 僅 `mode = "weight_sets"` |
+| `lengthPace` | LengthPaceSegment[] | 僅 `mode = "length_pace"` |
 
-```
-workout   { id, date:"YYYY-MM-DD", weekday, muscleGroups[], exercises[] }
-exercise  { libId, mode:"weight_sets"|"length_pace", equipment, feeling,
-            weightSets:[{ weight, reps[] }]  |  lengthPace:[{ distance, unit, paceMin, paceSec }] }
-library   { id, name, muscleGroup, color, recordingMode, note,
-            history:[{ date, workoutId, mode, equipment, feeling, weightSets | lengthPace }] }
-routine   { id, period:"week"|"month", matchType:"exercise"|"color"|"muscleGroup", matchValue, targetCount }
-draft row { libId, mode, equipment, weightSets, lengthPace, feeling, noteLocal, noteDirty }
-```
+### 快照規則（`muscleGroup`、`color`）
 
-### 資料流
+- 新訓練：存檔時取動作庫的**現值**。
+- 編輯舊訓練：**沿用原本的快照**，不會被覆蓋；原本沒有才補。
+- 之後在動作庫改該動作的部位或顏色，**不會回頭改過去的訓練**。
+- 載入時（`migrateData`）會把缺快照的舊紀錄用動作庫現值補一次。動作已從動作庫刪除、又沒有快照的紀錄補不出來，這類 exercise 沒有這兩個欄位。
+- GymReco 自己的月曆圓點與規律達標，讀的是動作庫**現值**；統計類用途請讀快照。
 
-```
-LogTab 完成訓練 → App.handleSave → workouts（新增）＋ library（history 追加、note 同步）
-DetailTab 儲存 → App.handleUpdateWorkout → workouts ＋ library.history 同步
-DetailTab 刪除 → App.handleDeleteWorkout → workouts ＋ library.history 清除
+### WeightSet（`mode = "weight_sets"`）
+
+```json
+{ "value": 60, "unit": "kg", "note": "左右各 15kg", "reps": [5, 5, 5] }
 ```
 
-## 4. 元件使用對照
+| 欄位 | 說明 |
+|---|---|
+| `value` | 實質資料，≥ 0 的數字。`setKind = "weight"` 時為每組負重；`"laps"` 時為**每圈的距離** |
+| `unit` | `weight`：`kg` \| `lb`。`laps`：`m` \| `km` \| `mi` |
+| `note` | 自由文字，選填，可為空字串。不納入計算 |
+| `reps` | 整數陣列（1–50）。`weight`：每組的次數。`laps`：每組跑／游的圈數 |
 
-### Button 家族（`components/Button.jsx`）
+- 自重動作慣例為 `value: 0`、`unit: "kg"`、`note: "BW"`。使用者自己輸入 0 也會是同樣的形狀，無法單靠 `value` 區分。
+- 圈數模式的總距離 = `value × reps 總和`（單位同 `unit`）。
+- **例外（舊格式殘留）**：需要人工判斷的組別會維持舊形狀 `{ "weight": "BW", "reps": [2] }`（沒有 `unit`）。讀取端遇到沒有 `unit` 的組別，應視為「舊格式、單位不明」，不要當成錯誤，也不要猜單位。
 
-- `Button` variants：`primary`、`tinted`、`outline`、`ghost`、`danger`、`dangerOutline`、`dashed`、`segment`、`segmentOutline`；size：`lg`／`md`／`sm`
-- ★ `Button` 的字級來自 `SIZE_STYLES`（`FONT` token 數值），輸出時以 `fs()` 包裝，會跟著字體縮放
-- `InfoButton`：LibraryTab、RoutineTab×2、LengthPaceEditor
-- `BackButton`：DetailTab×2、RoutineTab、LibraryTab（LibItemDetail）
-- `CloseButton`：目前沒有任何呼叫處
+### LengthPaceSegment（`mode = "length_pace"`）
 
-| 使用者                           | 用到                           |
-| -------------------------------- | ------------------------------ |
-| AboutTab、HomeTab、LogTab        | Button                         |
-| DetailTab                        | Button、BackButton             |
-| LibraryTab、RoutineTab           | Button、BackButton、InfoButton |
-| LengthPaceEditor                 | InfoButton                     |
-| ConfirmDialog、SelectionControls | Button                         |
-
-### AutoGrowTextarea 家族（`components/AutoGrowTextarea.jsx`）
-
-| 元件               | tone / 設定                  | 使用處                                         |
-| ------------------ | ---------------------------- | ---------------------------------------------- |
-| `AutoGrowTextarea` | `feeling`（預設，最小高 64） | LogTab 當次感受、DetailTab 當次感受            |
-| `AutoGrowTextarea` | `plain`，最小高 54           | LogTab 器材設定、DetailTab 器材設定            |
-| `AutoGrowTextarea` | `plain`，最小高 90           | LogTab 動作知識筆記                            |
-| `CollapsibleText`  | `feeling`，預設收合 5 行     | DayDetailTab 當次感受、LibraryTab 訓練歷史感受 |
-
-刻意保持手刻：DayDetailTab 的動作知識筆記（收合保留 1 行）、各處唯讀的器材設定顯示、LibItemDetail 的筆記欄位（自己的增高機制）。
-
-### 其他共用元件被誰使用
-
-| 元件                                  | 使用者                                                  |
-| ------------------------------------- | ------------------------------------------------------- |
-| `BottomSheet`                         | AboutTab、LogTab×2、RoutineTab、★HomeTab（字體大小）    |
-| `ConfirmDialog`                       | AboutTab×3、DetailTab、LibraryTab、RoutineTab           |
-| `SelectionControls`                   | AboutTab、LogTab、LibraryTab、RoutineTab、★HomeTab      |
-| `SwipeBackView`                       | App（detail／daydetail／routine）、LibraryTab           |
-| `WeightSetEditor`／`LengthPaceEditor` | LogTab、DetailTab                                       |
-| `NumberPicker`                        | RoutineTab、LengthPaceEditor、RepsPicker                |
-
-## 5. 模組依賴（簡圖）
-
-```
-App ─┬─ tabs/*（Home, Log, History, Detail, Library, Routine, About）
-     ├─ components/ui、SwipeBackView
-     ├─ hooks/useStorage
-     ├─ utils/logDraft            （匯入／重設／清除時清草稿）
-     └─ data/i18n、data/initialData、theme（★含 FONT_SCALES、FontScaleCtx、fs）
-
-HomeTab    → Button、★BottomSheet、★SelectionControls、ui、routineUtils、logDraft（hasLogDraft）、date、theme
-LogTab     → Button、ui、BottomSheet、SelectionControls、WeightSetEditor、LengthPaceEditor、
-             AutoGrowTextarea、routineUtils、logDraft、date、theme
-DetailTab  → Button、ui、ConfirmDialog、WeightSetEditor、LengthPaceEditor、AutoGrowTextarea、paceUtils、date
-LibraryTab → Button、ui、ConfirmDialog、SelectionControls、SwipeBackView、AutoGrowTextarea、paceUtils、date
-RoutineTab → Button、ui、BottomSheet、ConfirmDialog、SelectionControls、NumberPicker、routineUtils、date
-AboutTab   → Button、ui、BottomSheet、ConfirmDialog、SelectionControls、exportUtils、date
-HistoryTab → ui、paceUtils、date
-
-utils/logDraft → date        utils/routineUtils → date        utils/exportUtils → paceUtils
-components/AutoGrowTextarea → theme（useC）
-★ 除 theme.js 本身與 NumberPicker 外，凡有字級的 tabs / components 皆 import theme 的 fs
+```json
+{ "distance": 2, "unit": "km", "paceMin": 6, "paceSec": 30 }
 ```
 
-## 6. ★ 字體縮放（無障礙）
+| 欄位 | 說明 |
+|---|---|
+| `distance` | 該段距離，以 0.1 為單位的小數（單段上限約 10.9） |
+| `unit` | `m` \| `km` \| `mi`（固定代碼） |
+| `paceMin`、`paceSec` | 每 1 個 `unit` 的配速，分／秒（整數） |
 
-### 為什麼有這個功能
+- 「總時間」輸入模式只是輸入方式：存檔時會換算成配速，**總時間本身不另存**。要還原總時間請用 `distance × 配速`，會有最多秒級的四捨五入誤差。
+- 各段單位不同時，App 不計算整體配速。
 
-為了修正 iOS 聚焦輸入框時的自動放大，viewport 加上 `maximum-scale=1`，整個 App 因此無法雙指縮放。字體縮放是對應的補償：使用者可在 App 內選擇文字大小。
+---
 
-### 機制
+## 5. Library（`library[]`）與 Routine（`routines[]`）
 
-```
-App（fontScaleKey，存 wt_fontScale）
- ├─ 最外層 div：style["--fs-scale"] = FONT_SCALES[fontScaleKey]       ← CSS 變數，供 fs() 使用
- └─ <FontScaleCtx.Provider value={數字}>                             ← 同一個數字，供需要 JS 數值的元件使用（useFontScale）
-```
+### 動作庫項目
 
-- `FONT_SCALES = { normal: 1, large: 1.15, xlarge: 1.3 }`
-- `fs(px)` 回傳 `calc(${px}px * var(--fs-scale, 1))`；沒設定變數時退回 1，100% 時結果與原本的 px 完全相同
-- 變數設在最外層，因此 `position:fixed` 的 BottomSheet、ConfirmDialog（DOM 上仍是後代）也讀得到
-- 入口：HomeTab 標題列「Aa」按鈕 → BottomSheet 內以 SegmentedControl 切換（預設／大／特大），並附一段範例文字即時預覽
+| 欄位 | 型別 | 說明 |
+|---|---|---|
+| `id` | string | 範例資料為 `"lib1"` 這類字串，新增的為 UUID |
+| `name` | string | 動作名稱 |
+| `muscleGroup` | string | 目前的部位（見第 7 節） |
+| `color` | string | 目前的顏色（hex）。**不保證屬於內建色盤**，範例資料就有色盤以外的值 |
+| `recordingMode` | `"weight_sets"` \| `"length_pace"` | 新增時選擇。舊動作可能沒有，視為 `"weight_sets"` |
+| `note` | string | 動作知識筆記，**每個動作只存一份**，不會複製到各筆訓練 |
 
-### 撰寫規則
+筆記的寫入時機：在訓練頁修改的筆記先存在該動作卡片的草稿，按「完成訓練」時才寫進動作庫；在動作庫頁直接編輯則立即寫入。
 
-**新增或修改任何字級時，一律寫 `fontSize: fs(13)`，不要寫死 `fontSize: 13`。** 可用下列指令找出遺漏：
+### 規律
 
-```bash
-grep -rn "fontSize" src | grep -v "fs("
-```
+| 欄位 | 說明 |
+|---|---|
+| `id` | string |
+| `period` | `"week"` \| `"month"`（一週以週日為起點） |
+| `matchType` | `"exercise"` \| `"color"` \| `"muscleGroup"` |
+| `matchValue` | 依 `matchType`：動作 `id`、顏色 hex、部位名稱。動作被刪除後會懸空 |
+| `targetCount` | 至少次數；同一天同一條規律最多算 1 次 |
 
-### 目前刻意不縮放的部分
+App 內最多 5 條規律。
 
-| 位置                                   | 原因                                                              |
-| -------------------------------------- | ----------------------------------------------------------------- |
-| `NumberPicker` 的數字（14／17px）      | 原尺寸已接近 130% 的一般文字；格高與寬度為固定值，且與捲動計算綁定 |
-| `LengthPaceEditor` 的單位輸入框        | 寬度由 `fluidSize(30, 40)` 固定，放大後 "km" 會被切掉             |
-| `StatusBar`                            | 僅桌機預覽外殼使用                                                |
-| SVG 圖示、色點、圓形按鈕               | 非文字                                                            |
-| `theme.js` 的 `FONT` token             | 尚未直接使用；`Button` 透過 `fs(s.fontSize)` 間接縮放             |
+---
 
-## 7. ★ iOS PWA 鍵盤與縮放處理
+## 6. 由 workouts 現算的資料（不儲存）
 
-實測環境：iPhone 16 Pro Max、iOS 27.0.1、加入主畫面的 PWA 獨立視窗。**下列多項是針對 iOS 行為調整出來的，iOS 版本更新後若出現新的跳動，優先檢查這裡。**
+每個動作的訓練歷史（動作庫的「上次」、歷史列表、訓練頁帶入的上次資料）：
 
-### 7.1 禁止聚焦自動放大
+1. 依 `libId` 把所有 `workouts[].exercises[]` 分組。
+2. 每一筆為 `{ date, workoutId, ...exercise 內容（不含 libId、muscleGroup、color） }`。
+3. 依 `date` 由舊到新排序，同日依存檔順序；最後一筆就是「上次」。
+4. 同一動作在同一次訓練出現兩次時，兩筆都會計入。
 
-`index.html` 的 viewport 使用 `maximum-scale=1`。iOS 在輸入框字級小於 16px 時會於聚焦時自動放大，這是最小改動的解法，代價是整個 App 無法雙指縮放，以字體縮放（§6）補償。
+---
 
-### 7.2 鍵盤開啟時的外殼高度（`App.jsx`）
+## 7. 列舉值
 
-- 監聽 `window.visualViewport` 的 `resize` / `scroll`；當 `window.innerHeight - vv.height > 100` 視為鍵盤開啟
-- 鍵盤開啟時：`vvHeight = vv.height`，外殼高度改為 `vvHeight`（否則維持 `100dvh`），並呼叫 `window.scrollTo(0, 0)` 還原 iOS 為了顯示輸入框而做的畫面平移
-- 最外層 flex 容器在手機版使用 `alignItems:"flex-start"`，避免外殼變矮時被垂直置中
-- **不使用 `transform` 補位**：任何 transform 都會讓內部 `position:fixed` 的 BottomSheet／ConfirmDialog 改以該容器定位（`SwipeBackView` 內亦有同樣註解）
+**部位（`muscleGroup`，共 12 種）**
 
-### 7.3 輸入框聚焦狀態（`inputFocused`，`App.jsx`）
+| 繁中（儲存值） | 英文顯示 |
+|---|---|
+| 胸肌 | Chest |
+| 背部 | Back |
+| 腿部 | Legs |
+| 肩部 | Shoulders |
+| 手臂 | Arms |
+| 腹部 | Abs |
+| 核心 | Core |
+| 臀部 | Glutes |
+| 有氧 | Cardio |
+| 跑步 | Running |
+| 伸展運動 | Stretching |
+| 其他 | Other |
 
-BottomNav 在文字輸入框聚焦時隱藏，鍵盤收起（失焦）後回來。
+儲存值永遠是繁中；英文只是顯示用。資料中不保證只出現這 12 種，讀取端遇到未知值請原樣保留。
 
-- 唯一的真相來源是 `document.activeElement`，由 `sync()` 讀取並更新 state
-- 觸發 `sync` 的時機：`focusin`（立即）、`focusout`（延遲 100ms，避免輸入框之間切換時閃爍）、`MutationObserver`（觀察 `#root` 的 `childList` 與 `subtree`）
-- **必須有 MutationObserver 的原因**：聚焦中的輸入框被移除（例如返回手勢、關閉 Sheet、切頁）時，瀏覽器不會觸發 `focusout`，只靠事件配對記錄狀態會永久卡在「聚焦中」，BottomNav 不會回來
-- 排除不會彈出鍵盤的 input 類型（checkbox、radio、button、submit、file、range、color）
-- 為什麼不單靠 `vvHeight`：實測在 iOS PWA 中，`vvHeight` 要等輸入內容長到讓 iOS 平移畫面（約 11 行）才會有值，鍵盤剛開時不可靠
+**內建色盤（`COLOR_OPTS`）**：`#FF6B6B` `#EA0000` `#FF9500` `#FFCC00` `#34C759` `#5AC8FA` `#007AFF` `#5856D6` `#AF52DE` `#8E8E93`
 
-### 7.4 AutoGrowTextarea
+**單位**：重量 `kg`、`lb`；距離 `m`、`km`、`mi`。
 
-- 增高前先記住外層可捲動祖先的 `scrollTop`，設完高度後還原（量測時高度會先塌縮成 `auto`，會讓捲動位置被夾回去而造成跳動）
-- 聚焦後等 350ms（鍵盤動畫與外殼高度調整）再 `scrollIntoView({ block:"center" })`；350ms 為經驗值，非規格
+---
 
-### 7.5 刻意沒有做的事
+## 8. 載入與轉換
 
-- **沒有**在鍵盤收起時主動對輸入框 `blur()`：這在 Android 按返回鍵只收鍵盤（輸入框仍聚焦）時可補強，但在 iOS 可能因 `vvHeight` 回報不同步而誤判，在打字途中被踢出輸入。若日後 Android 實測確實遇到 BottomNav 沒回來，再依實際現象補上
+載入 localStorage 與匯入備份都經過同一個入口 `migrateData`（純函式、可重複執行；沒有東西要轉換時原樣回傳）：
 
-### 7.6 其他
+1. 重量組次：`{ weight: "15kg", reps }` → `{ value, unit, note, reps }`，並補 `setKind`。
+2. 距離單位別名（`KM`、`公里`、`miles`…）統一成 `m` / `km` / `mi`；認不得的原樣保留。
+3. 補存 `muscleGroup` / `color` 快照。
+4. 丟棄舊的 `library[].history`。
 
-- Toast：`width:max-content` ＋ `maxWidth:calc(100% - 32px)` ＋ 置中文字。Toast 以 `left:50%` 定位，若只移除 `nowrap`，可用寬度只剩容器一半，會太早換行
+**會保持舊格式、交給腳本處理的情況**：解析不出數字加單位的字串、`有氧` / `跑步` 動作的自重（可能是游泳或跑步的圈數）、同一筆同時出現重量與距離單位。
 
-## 8. 版本與建置
+**轉換腳本**：`node scripts/migrate-data.js <備份.json> [--write] [--out 路徑] [--drop-orphans] [--answers 答案.json]`
 
-- 版本單一來源：`tabs/AboutTab.jsx` 的 `APP_VERSION`（目前 `2.2.0`）
-- `npm run build` 後由 `scripts/sync-sw-version.js` 把版本寫入 `build/service-worker.js` 的 `CACHE_NAME` 與 `package.json`
-- 部署：`npm run deploy`（`gh-pages -d build`）
-- `export-initial-data.js` 範例資料更新腳本：`npm run init-data -- <備份.json> [--shift-days N] [--set id=日期] [--edit] [--write]`
+- 預設只預覽，加 `--write` 才輸出；不會覆蓋原檔。
+- 涵蓋上述四項，加上 `schemaVersion`；無法自動判斷時會詢問，同一種資料只問一次。
+- 移除 `library[].history` 前會做孤兒檢查（history 在 workouts 找不到對應訓練）；有孤兒時必須加 `--drop-orphans` 才會輸出。
+- 輸出的備份結構與 App 匯出的一致。
 
-## 9. 已知限制
+---
 
-- 字體縮放特大（130%）下，LibraryTab 標題「Exercise Library」可能換成兩行，使右側資訊按鈕貼近「新增」按鈕；影響不大，暫不處理
-- `NumberPicker` 與 `LengthPaceEditor` 的滾輪寬度與觸控範圍為固定／半動態寬度，對視力或手部操作不便的使用者可能偏窄；若要改善需動到動態寬度計算，暫不處理
-- Android 上以系統返回鍵只收鍵盤時，輸入框可能仍保持聚焦，BottomNav 可能維持隱藏；尚未在 Android 實機驗證（見 §7.5）
+## 9. 給資料讀取端（例如 GymStats）的重點
+
+1. 只讀 `workouts`；忽略舊備份可能殘留的 `library[].history`。
+2. 部位與顏色一律讀 exercise 上的快照；缺少時才退回動作庫現值，兩者都沒有就標為未知。
+3. `workout.id` 當不透明字串處理。
+4. `mode` 缺少視為 `weight_sets`，`setKind` 缺少視為 `weight`，動作的 `recordingMode` 缺少視為 `weight_sets`。
+5. 沒有 `unit` 的組別是舊格式殘留，不要猜單位。
+6. 總時間不另存；配速是唯一的時間資料。
+7. 資料中沒有訓練時長或時刻，只有日期。
+
+---
+
+## 10. 結構版本紀錄
+
+| schemaVersion | 內容 |
+|---|---|
+| 無（舊格式） | 重量為 `{ weight: "15kg", reps }` 字串；距離單位為自由文字；`library[].history` 與 `workouts` 各存一份；exercise 無快照 |
+| 1 | 重量組次為 `{ value, unit, note, reps }` 並有 `setKind`；距離單位固定為 `m` / `km` / `mi`；exercise 有 `muscleGroup` / `color` 快照；移除 `library[].history`，`workouts` 為唯一來源；匯出帶 `schemaVersion` |

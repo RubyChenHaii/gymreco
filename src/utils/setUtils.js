@@ -93,7 +93,7 @@ export const hasEmptyCore = (rows) =>
     (r.weightSets || []).some(ws => ws.value === "" || ws.value == null));
 
 // ── 距離單位（LengthPaceEditor 與「圈數」模式共用同一份代碼清單）────────
-// 儲存用代碼固定為 DISTANCE_UNITS（"m" / "km" / "mi"）。舊資料裡的自由字串用別名表對應；
+// 儲存用代碼固定為 DISTANCE_UNITS（"m" / "km" / "mi"）。舊資料裡的自由字串用別名表對應（載入時由 migrateData 轉換）；
 // 對不上的回傳 null（App 內保留原字串並仍可顯示，轉換腳本則會詢問）
 // ⚠️ 別名表與 scripts/migrate-data.js 內的 DISTANCE_ALIASES 必須保持一致
 const DISTANCE_ALIASES = {
@@ -105,7 +105,3 @@ export const normalizeDistanceUnit = (raw) => {
   const s = String(raw ?? "").trim().toLowerCase().replace(/\.$/, "");
   return DISTANCE_ALIASES[s] || null;
 };
-
-// 把距離/配速分段的單位換成標準代碼；認得的別名轉成代碼，認不得的原樣保留（不會遺失資料）
-export const upgradeLengthPace = (lengthPace) =>
-  (lengthPace || []).map(seg => ({ ...seg, unit: normalizeDistanceUnit(seg.unit) || seg.unit }));

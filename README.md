@@ -264,21 +264,22 @@ Today, GymReco continues to evolve through daily real-world use — including my
 
 ### Latest
 
-**v2.4.0_b**
+**v2.4.0_b - Preparation for GymStats**
 
 **Data structure**
 
-- Weight sets now store `{ value, unit, note, reps }` instead of a free-text weight string, with a per-exercise `setKind` of `weight` or `laps`.
-- New Weight / Laps toggle in the set editor. Weight units are kg and lb, distance units are m, km and mi. The free-text note is optional and does not appear in the History preview.
+- Introduced a unified `schemaVersion` to identify the data format and support future migrations.
+- `Weightsets`  is now expanded into `Data & Sets` . It now stores `{ value, unit, note, reps }` instead of a free-text string, with a per-exercise `setKind` of `weight` or `laps`.
+- New Weight / Laps toggle in the `Data & Sets` editor. Weight units are now a fixed list (`kg` and `lb`). The free-text note is optional and does not appear in the History preview.
 - Distance and pace units are now a fixed list (`m`, `km`, `mi`) instead of free text. Legacy aliases such as `KM`, `公里` and `miles` are normalized automatically, and unknown strings are kept as-is.
 - Each exercise in `workouts` now carries a `muscleGroup` and `color` snapshot, filled at save time and backfilled once for older records. Editing a workout keeps the original snapshot, so later library changes do not rewrite past records.
 - Legacy data is converted at load and import through a single entry point, `migrateData`. Cases that need a human decision are left unchanged.
 
 **Storage**
 
-- `library[].history` is no longer stored. Per-exercise history is derived from `workouts`, which is now the only source of training data.
+- Removed `library[].history` as a stored data source. Per-exercise history is now derived from `workouts`, the single source of truth for training records.
 - "Last session" is now the most recent by date, not by save order, so back-logged workouts no longer count as the latest.
-- Old `history` is dropped on load or import, and storage for `workouts` plus `library` shrinks by roughly 38% on the sample data.
+- Legacy `history` data is dropped on load or import. Storage usage for `workouts` and `library` decreased by approximately **38%** in sample data, with similar savings expected in localStorage depending on the dataset.
 - Importing an old backup still works, with or without `history`.
 
 **Tooling**
@@ -287,10 +288,7 @@ Today, GymReco continues to evolve through daily real-world use — including my
 - The script normalizes LengthPace units, drops `library[].history`, and runs an orphan check on history entries that have no matching workout. Writing is blocked when orphans exist unless you pass `--drop-orphans`.
 - It previews by default and only writes with `--write`. Pre-answers can be supplied with `--answers`, and it is safe to run repeatedly.
 - `export-initial-data.js` now strips `history` from the sample data it generates.
-
-**Pending Chores**
-
-- [GymReco資料結構.md](./GymReco資料結構.md) has not yet been updated to reflect this release. Documentation updates are planned.
+- Updated [GymReco資料結構.md](./GymReco資料結構.md) .
 
 ---
 

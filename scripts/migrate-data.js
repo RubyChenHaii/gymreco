@@ -26,7 +26,7 @@
 // 自動轉換規則（字串偵測）：
 //   "15kg" / "70 lbs" / "400m"      → 數字 + 單位（kg、lb → 重量模式；m、km、mi → 圈數模式）
 //   "60kg 左右各15kg"                → 數字 + 單位，整串原文保留在 note
-//   "BW" / "自重" / "bodyweight"     → value 0、kg、原文放進 note（動作部位為「有氧」時改為詢問，因為可能是游泳/跑步的圈數）
+//   "BW" / "自重" / "bodyweight"     → value 0、kg、原文放進 note（動作部位為「有氧」或「跑步」時改為詢問，因為可能是游泳/跑步的圈數）
 // 無法自動判斷的情況（沒有單位的數字、看不懂的文字、同一動作同時出現重量與距離單位…）會停下來詢問。
 // 同一個「動作 + 原始字串」只問一次，答案套用到所有出現的地方。
 //
@@ -116,7 +116,8 @@ if (opts.answers) {
 
 const libById = new Map(data.library.map((l) => [String(l.id), l]));
 const libLabel = (id) => libById.get(String(id))?.name ?? `(已刪除:${id})`;
-const isCardio = (id) => libById.get(String(id))?.muscleGroup === "有氧";
+const CARDIO_GROUPS = ["有氧", "跑步"]; // ⚠️ 與 src/utils/migrateData.js 的 CARDIO_GROUPS 保持一致
+const isCardio = (id) => CARDIO_GROUPS.includes(libById.get(String(id))?.muscleGroup);
 
 // ── 蒐集要處理的紀錄 ───────────────────────────────────────
 // target = { entry, libId, where }

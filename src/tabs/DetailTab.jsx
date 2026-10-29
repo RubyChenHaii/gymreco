@@ -11,7 +11,7 @@ import { calcOverallPace, fmtDistance, fmtPace } from "../utils/paceUtils.js";
 import { ConfirmDialog } from "../components/ConfirmDialog.jsx";
 import { Button, BackButton } from "../components/Button.jsx";
 import { AutoGrowTextarea, CollapsibleText } from "../components/AutoGrowTextarea.jsx";
-import { upgradeWeightSets, upgradeLengthPace, hasEmptyCore, coreText, noteText, kindOf, repUnitLabel } from "../utils/setUtils.js";
+import { upgradeWeightSets, hasEmptyCore, coreText, noteText, kindOf, repUnitLabel } from "../utils/setUtils.js";
 
 // 載入編輯用的資料：weight_sets 動作的組次升級為新結構（舊版 weight 字串盡力轉換），其餘原樣深拷貝
 const upgradedSets = (ex) => {
@@ -36,7 +36,7 @@ function DetailTabInner({ workout, library, onBack, onOpenLibItem, onUpdateWorko
     workout.exercises.map(ex => ({
      ...ex,
      ...upgradedSets(ex),
-     lengthPace: ex.lengthPace ? upgradeLengthPace(JSON.parse(JSON.stringify(ex.lengthPace))) : undefined,
+     lengthPace: ex.lengthPace ? JSON.parse(JSON.stringify(ex.lengthPace)) : undefined,
     }))
   );
 
