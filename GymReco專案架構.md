@@ -1,7 +1,7 @@
 # GymReco 資料結構 — v2.4.0_b1
 
 > 依 Project 內實際檔案（已同步至 v2.4.0_b1）整理。圖中「→」表示 import / 呼叫關係；★ 表示相對 v2.1.5 新增或有結構性改動。
-> 欄位逐項定義、單位列舉與讀取規則，請見 `GymReco資料結構.md`（schemaVersion 1）。
+> 欄位逐項定義、單位列舉與讀取規則，請見 `GymReco資料契約`（schemaVersion 1）。
 
 ## 1. 專案目錄樹
 
@@ -74,18 +74,18 @@ App（tab state + navStack）
 
 ### localStorage keys
 
-| key                   | 內容                                                         | 寫入者                              |
-| --------------------- | ------------------------------------------------------------ | ----------------------------------- |
-| `wt_workouts`         | 訓練紀錄陣列（新存的在前）— **唯一的訓練資料來源** ★         | App（lsSet）                        |
-| `wt_library`          | 動作庫陣列（**不含 history** ★）                             | App（lsSet）                        |
-| `wt_routines`         | 規律陣列（上限 5 條）                                        | App（lsSet）                        |
-| `wt_lang`             | `"zh"` / `"en"`                                              | App                                 |
-| `wt_dark`             | 深色模式                                                     | App                                 |
-| `wt_fontScale`        | `normal` / `large` / `xlarge`                                | App                                 |
-| `wt_homeStatPeriod`   | 首頁統計看週或月規律                                         | App                                 |
-| `wt_calGradientMode`  | `animated` / `static` / `off`                                | App                                 |
-| `wt_calGradientStyle` | `linear` / `conic`                                           | App                                 |
-| `wt_logDraft`         | 草稿 `{ updatedAt, selectedDate, rows }`                     | logDraft.js（同步寫入，不經 lsSet） |
+| key                   | 內容                                                 | 寫入者                              |
+| --------------------- | ---------------------------------------------------- | ----------------------------------- |
+| `wt_workouts`         | 訓練紀錄陣列（新存的在前）— **唯一的訓練資料來源** ★ | App（lsSet）                        |
+| `wt_library`          | 動作庫陣列（**不含 history** ★）                     | App（lsSet）                        |
+| `wt_routines`         | 規律陣列（上限 5 條）                                | App（lsSet）                        |
+| `wt_lang`             | `"zh"` / `"en"`                                      | App                                 |
+| `wt_dark`             | 深色模式                                             | App                                 |
+| `wt_fontScale`        | `normal` / `large` / `xlarge`                        | App                                 |
+| `wt_homeStatPeriod`   | 首頁統計看週或月規律                                 | App                                 |
+| `wt_calGradientMode`  | `animated` / `static` / `off`                        | App                                 |
+| `wt_calGradientStyle` | `linear` / `conic`                                   | App                                 |
+| `wt_logDraft`         | 草稿 `{ updatedAt, selectedDate, rows }`             | logDraft.js（同步寫入，不經 lsSet） |
 
 草稿清除時機：完成訓練（LogTab 同步清除）、`handleImport`／`handleReset`／`handleClear`、卡片全部移除、超過 3 小時、動作全被刪除。
 偏好設定（lang／dark／fontScale／homeStatPeriod／calGradient*）與草稿都不進備份 JSON。
@@ -146,13 +146,13 @@ LibraryTab 編輯 → 只改 library（過去訓練的快照不變；月曆與�
 - `BackButton`：DetailTab×2、RoutineTab、LibraryTab（LibItemDetail）
 - `CloseButton`：目前沒有任何呼叫處
 
-| 使用者                                       | 用到                           |
-| -------------------------------------------- | ------------------------------ |
-| AboutTab、HomeTab、LogTab                    | Button                         |
-| DetailTab                                    | Button、BackButton             |
-| LibraryTab、RoutineTab                       | Button、BackButton、InfoButton |
-| LengthPaceEditor、WeightSetEditor            | InfoButton                     |
-| ConfirmDialog、SelectionControls             | Button                         |
+| 使用者                            | 用到                           |
+| --------------------------------- | ------------------------------ |
+| AboutTab、HomeTab、LogTab         | Button                         |
+| DetailTab                         | Button、BackButton             |
+| LibraryTab、RoutineTab            | Button、BackButton、InfoButton |
+| LengthPaceEditor、WeightSetEditor | InfoButton                     |
+| ConfirmDialog、SelectionControls  | Button                         |
 
 ### AutoGrowTextarea 家族（`components/AutoGrowTextarea.jsx`）
 
@@ -167,17 +167,17 @@ LibraryTab 編輯 → 只改 library（過去訓練的快照不變；月曆與�
 
 ### 其他共用元件被誰使用
 
-| 元件                                  | 使用者                                                      |
-| ------------------------------------- | ----------------------------------------------------------- |
-| `BottomSheet`                         | AboutTab、HomeTab、LogTab×3、RoutineTab                     |
-| `ConfirmDialog`                       | AboutTab×3、DetailTab、LibraryTab、RoutineTab               |
-| `SegmentedControl`                    | AboutTab×2、HomeTab、RoutineTab×3                           |
-| `ColorPicker`／`ChipGroup`            | RoutineTab                                                  |
-| `ExerciseFieldsGroup`                 | LogTab、LibraryTab×2                                        |
-| `SwipeBackView`                       | App（detail／daydetail／routine）、LibraryTab               |
-| `WeightSetEditor`／`LengthPaceEditor` | LogTab、DetailTab                                           |
-| `NumberPicker`                        | RoutineTab、LengthPaceEditor、RepsPicker                    |
-| `RepsPicker`                          | WeightSetEditor                                             |
+| 元件                                  | 使用者                                        |
+| ------------------------------------- | --------------------------------------------- |
+| `BottomSheet`                         | AboutTab、HomeTab、LogTab×3、RoutineTab       |
+| `ConfirmDialog`                       | AboutTab×3、DetailTab、LibraryTab、RoutineTab |
+| `SegmentedControl`                    | AboutTab×2、HomeTab、RoutineTab×3             |
+| `ColorPicker`／`ChipGroup`            | RoutineTab                                    |
+| `ExerciseFieldsGroup`                 | LogTab、LibraryTab×2                          |
+| `SwipeBackView`                       | App（detail／daydetail／routine）、LibraryTab |
+| `WeightSetEditor`／`LengthPaceEditor` | LogTab、DetailTab                             |
+| `NumberPicker`                        | RoutineTab、LengthPaceEditor、RepsPicker      |
+| `RepsPicker`                          | WeightSetEditor                               |
 
 ## 5. 模組依賴（簡圖）
 
