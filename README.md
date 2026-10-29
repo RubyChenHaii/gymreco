@@ -284,11 +284,10 @@ Today, GymReco continues to evolve through daily real-world use — including my
 
 **Tooling**
 
-- Added `scripts/migrate-data.js`, which converts old backups to the new structure. It auto-converts what it can and prompts for ambiguous values.
+- Added `scripts/migrate-data.js`, which converts old backups to the new structure. It auto-converts what it can and prompts for ambiguous values. For detailed usage instructions, see [GymReco專案架構.md](./GymReco專案架構.md).
 - The script normalizes LengthPace units, drops `library[].history`, and runs an orphan check on history entries that have no matching workout. Writing is blocked when orphans exist unless you pass `--drop-orphans`.
 - It previews by default and only writes with `--write`. Pre-answers can be supplied with `--answers`, and it is safe to run repeatedly.
 - `export-initial-data.js` now strips `history` from the sample data it generates.
-- Updated [GymReco資料結構.md](./GymReco資料結構.md) .
 
 ---
 
@@ -309,7 +308,7 @@ Today, GymReco continues to evolve through daily real-world use — including my
 
 - **Architecture Refactoring:** Standardized global design system and extracted shared UI components (e.g., `BottomTab`, `Buttons` ).
 
-- **Data Utility:** Added `export-initial-data.js`, a utility script that converts exported JSON data into `initialData.js`. For detailed usage instructions, see [GymReco資料結構.md](./GymReco資料結構.md).
+- **Data Utility:** Added `export-initial-data.js`, a utility script that converts exported JSON data into `initialData.js`. For detailed usage instructions, see [GymReco專案架構.md](./GymReco專案架構.md).
 
 **v2.0.0**
 
