@@ -207,13 +207,25 @@ export function HistoryTab({ workouts, library, onOpenDay }) {
                                   </div>
                                   {allExercises.map((ex, i) => {
                                     const it = library.find(l => l.id === ex.libId);
+                                    // 實質資料（如「90 kg」「1.1km」）加粗顯示，其餘（次數、配速）維持灰色小字
+                                    const coreStyle = { fontSize:fs(11), fontWeight:750, color:`${C.sub}70`, marginRight:2 };
                                     const summary = (ex.mode || "weight_sets") === "length_pace"
-                                     ? (ex.lengthPace || []).map(seg => `${fmtDistance(seg.distance)}${seg.unit} @${fmtPace(seg.paceMin, seg.paceSec)}`).join("  ")
-                                     : (ex.weightSets || []).map(ws => `${coreText(ws)} ×${ws.reps.join("/")}${repUnitLabel(kindOf(ex), t)}`).join("  ");
+                                      ? (ex.lengthPace || []).map((seg, si) => (
+                                          <span key={si} style={{ marginRight:7 }}>
+                                            <span style={coreStyle}>{fmtDistance(seg.distance)}{seg.unit}</span>
+                                            {`@ ${fmtPace(seg.paceMin, seg.paceSec)}`}
+                                          </span>
+                                        ))
+                                      : (ex.weightSets || []).map((ws, si) => (
+                                          <span key={si} style={{ marginRight:7 }}>
+                                            <span style={coreStyle}>{coreText(ws)}</span>
+                                            {`× ${ws.reps.join("/")}${repUnitLabel(kindOf(ex), t)}`}
+                                          </span>
+                                        ));
                                     return (
-                                      <div key={i} style={{ display:"flex", alignItems:"baseline", gap:7, marginBottom:2 }}>
+                                      <div key={i} style={{ display:"flex", alignItems:"baseline", gap:8, marginBottom:2 }}>
                                         {it && <div style={{ width:6, height:6, borderRadius:"50%", background:it.color, flexShrink:0 }} />}
-                                        <span style={{ fontSize:fs(13), fontWeight:500, color:C.text, flexShrink:0 }}>{it ? it.name : (lang === "en" ? "(Deleted)" : "(已刪除)")}</span>
+                                        <span style={{ fontSize:fs(13), fontWeight:500, color:C.text, flexShrink:0, marginRight:3 }}>{it ? it.name : (lang === "en" ? "(Deleted)" : "(已刪除)")}</span>
                                         <span style={{ fontSize:fs(11), color:C.label, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
                                           {summary}
                                         </span>
