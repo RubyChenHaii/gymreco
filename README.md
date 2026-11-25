@@ -17,7 +17,7 @@
 </h5>
 
 <p align="center">
-<img src="https://img.shields.io/badge/version-2.4.0_beta-violet.svg?style=for-the-badge"/>
+<img src="https://img.shields.io/badge/version-2.4.0-violet.svg?style=for-the-badge"/>
 <a href="https://linktr.ee/rubytheduckouo"><img src="https://img.shields.io/badge/author-ruby_chen-brightgreen?style=for-the-badge"></a>
 <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge"/></a>
 </p>
@@ -264,7 +264,7 @@ Today, GymReco continues to evolve through daily real-world use — including my
 
 ### Latest
 
-**v2.4.0_b - Preparation for GymStats**
+**v2.4.0 - Preparation for GymStats**
 
 **Data structure**
 
